@@ -8,6 +8,9 @@ public class CorreoModel {
     private int idCorreo;
     private String correo;
 
+    public CorreoModel() {
+    }
+
     public CorreoModel(int idCorreo, String correo) {
         this.idCorreo = idCorreo;
         this.correo = correo;
@@ -29,12 +32,12 @@ public class CorreoModel {
         this.correo = correo;
     }
 
-    public void crearCorreo() {
+    public void crearCorreo(String correo) {
         try{
             Connection connection = ConexionDB.connection();
             PreparedStatement statement = connection.prepareStatement("INSERT INTO tblcorreos (correo) VALUES (?)");
             statement.setString(1, correo);
-            System.out.println(statement.executeUpdate());
+            statement.executeUpdate();
         }
         catch (SQLException e){
             System.out.println(e.getMessage());
@@ -58,6 +61,26 @@ public class CorreoModel {
         catch (SQLException e){
             System.out.println(e.getMessage());
             return -1;
+        }
+    }
+    //Metodo para saber si el correo ya existe
+    public boolean correoExistente(String correo) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcorreos WHERE correo = ?");
+            statement.setString(1, correo);
+            ResultSet result = statement.executeQuery();
+            if(result.next()){
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        }
+        catch (SQLException e){
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 }

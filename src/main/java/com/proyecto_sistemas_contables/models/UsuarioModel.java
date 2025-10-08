@@ -2,9 +2,7 @@ package com.proyecto_sistemas_contables.models;
 
 import com.proyecto_sistemas_contables.Conexion.ConexionDB;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class UsuarioModel {
     private int idUsuario;
@@ -14,6 +12,9 @@ public class UsuarioModel {
     private String clave;
     private int idCorreo;
     private int idAcceso;
+
+    public UsuarioModel() {
+    }
 
     public UsuarioModel(String nombreUsuario, String nombre, String apellido, String clave, int idCorreo, int idAcceso) {
         this.nombreUsuario = nombreUsuario;
@@ -80,18 +81,52 @@ public class UsuarioModel {
         this.idAcceso = idAcceso;
     }
 
+    //Metodo para crear usuario
     public void crearUsuario(String nombreUsuario, String nombre, String apellido, String clave, int idCorreo, int idAcceso) {
         try {
             Connection connection = ConexionDB.connection();
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO tblusuarios(nombreusuario, nombre, apellido, idcorreo, idaccceso, clave)" +
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO tblusuarios(nombreusuario, nombre, apellido, idcorreo, idacceso, clave)" +
                     "VALUES(?, ?, ?, ?, ?, ?)");
             statement.setString(1, nombreUsuario);
             statement.setString(2, nombre);
             statement.setString(3, apellido);
             statement.setInt(4, idCorreo);
             statement.setInt(5, idAcceso);
+            clave = Encripter.encrypt(clave);
             statement.setString(6, clave);
             System.out.println(statement.executeUpdate());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+    //Metodo para validar el inicio de sesión
+    public boolean inicioSesion(String nombreUsuario, String clave) {
+        try{
+            //Hacemos la conexión con la base de datos
+            Connection connection = ConexionDB.connection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM tblusuarios WHERE nombreusuario='" + nombreUsuario + "'");
+
+            //Obtenemos los registros encontrados
+            while (resultSet.next()) {
+                //Almacenamos la contraseña
+                UsuarioModel usuario = new UsuarioModel();
+                usuario.setNombreUsuario(resultSet.getString("nombreusuario"));
+                usuario.setClave(resultSet.getString("clave"));
+
+                //Validamos si la contraseña ingresa es indentica a la almacenada
+                if(Encripter.verificarClave(clave, usuario.getClave())) {
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+
+            resultSet.close();
+            //Dado caso no existe el usuario ingresado
+            return false;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
