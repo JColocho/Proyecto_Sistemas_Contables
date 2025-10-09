@@ -57,7 +57,7 @@ public class LoginController {
                     Alert alerta = new Alert(Alert.AlertType.INFORMATION);
                     alerta.setContentText("Has iniciado sesión");
                     alerta.show();
-                    Main.setRoot("dashboard-view");
+                    Main.setRoot("navbar-view");
                 }
                 else {
                     Alert alerta = new Alert(Alert.AlertType.ERROR);
