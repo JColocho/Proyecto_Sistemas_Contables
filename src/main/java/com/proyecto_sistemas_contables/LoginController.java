@@ -46,7 +46,6 @@ public class LoginController {
             }
         });
 
-
         btnIniciarSesion.setOnAction(e -> {
             //Validamos que los campos no estén vacíos
             if(!txtUsuario.getText().isEmpty() && !txtClave.getText().isEmpty()) {
