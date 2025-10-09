@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="440.0" prefWidth="680.0" style="-fx-background-color: rgb(53,143,100);" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.SeleccionarEmpresaController">
+   <children>
+      <AnchorPane layoutX="54.0" layoutY="39.0" prefHeight="362.0" prefWidth="570.0" style="-fx-background-color: white; -fx-background-radius: 5px;">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" text="Seleccione la empresa">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <AnchorPane fx:id="btn_agregar_empresa" layoutX="14.0" layoutY="50.0" prefHeight="75.0" prefWidth="103.0" style="-fx-background-color: rgb(0,153,81); -fx-background-radius: 5px;">
+               <children>
+                  <ImageView fitHeight="38.0" fitWidth="49.0" layoutX="33.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../img/plus.png" />
+                     </image>
+                  </ImageView>
+                  <Label layoutX="7.0" layoutY="52.0" text="Agregar empresa">
+                     <font>
+                        <Font name="System Bold" size="11.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="95.0" layoutY="23.0" prefHeight="316.0" prefWidth="380.0" style="-fx-background-color: rgb(220,220,220);">
+               <children>
+                  <Label layoutX="17.0" layoutY="20.0" text="Registrar empresa">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="17.0" layoutY="53.0" text="Nombre de la empresa" />
+                  <TextField fx:id="txt_nombre_empresa" layoutX="17.0" layoutY="71.0" prefHeight="26.0" prefWidth="162.0" />
+                  <Label layoutX="17.0" layoutY="102.0" text="NIT" />
+                  <TextField fx:id="txt_nit" layoutX="17.0" layoutY="120.0" prefHeight="26.0" prefWidth="162.0" />
+                  <Label layoutX="17.0" layoutY="153.0" text="Dirección" />
+                  <TextField fx:id="txt_direccion" layoutX="17.0" layoutY="171.0" prefHeight="26.0" prefWidth="162.0" />
+                  <Label layoutX="17.0" layoutY="207.0" text="Actividad económica" />
+                  <ComboBox fx:id="cb_actividad_eco" layoutX="17.0" layoutY="225.0" prefHeight="26.0" prefWidth="162.0" promptText="Seleccione la actividad" />
+                  <Label layoutX="201.0" layoutY="53.0" text="Correo" />
+                  <TextField fx:id="txt_correo" layoutX="201.0" layoutY="71.0" prefHeight="26.0" prefWidth="162.0" />
+                  <Label layoutX="201.0" layoutY="102.0" text="NRC" />
+                  <TextField fx:id="txt_nrc" layoutX="201.0" layoutY="120.0" prefHeight="26.0" prefWidth="162.0" />
+                  <Label layoutX="201.0" layoutY="153.0" text="Teléfono" />
+                  <TextField fx:id="txt_telefono" layoutX="201.0" layoutY="171.0" prefHeight="26.0" prefWidth="162.0" />
+                  <Button fx:id="btn_cancelar" layoutX="16.0" layoutY="271.0" mnemonicParsing="false" style="-fx-background-color: rgb(255,95,87);" text="Cancelar" textFill="WHITE" />
+                  <Button fx:id="btn_agregar" layoutX="252.0" layoutY="271.0" mnemonicParsing="false" style="-fx-background-color: rgb(64,167,75);" text="Agregar empresa" textFill="WHITE" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
