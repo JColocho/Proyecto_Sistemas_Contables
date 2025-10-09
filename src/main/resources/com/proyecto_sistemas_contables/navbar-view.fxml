@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane stylesheets="@static/css/navbar.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.NavbarController">
+    <!-- Navbar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="30" style="-fx-background-color: #009951; -fx-padding: 10;">
+            <ImageView fitHeight="24" fitWidth="24" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@static/img/logo.png" />
+                </image>
+            </ImageView>
+            <Pane HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_RIGHT" spacing="5">
+                <Button fx:id="btnDashboard" onAction="#cambiarVista" styleClass="nav-button" text="Dashboard" />
+                <Button fx:id="btnUsuarios" onAction="#cambiarVista" styleClass="nav-button" text="Usuarios" />
+                <Button fx:id="btnAuditoria" onAction="#cambiarVista" styleClass="nav-button" text="Auditoría" />
+                <Button fx:id="btnCatalogo" onAction="#cambiarVista" styleClass="nav-button" text="Catálogo de cuentas" />
+                <Button fx:id="btnPartidas" onAction="#cambiarVista" styleClass="nav-button" text="Partidas" />
+                <Button fx:id="btnReporte" onAction="#cambiarVista" styleClass="nav-button" text="Generar reporte" />
+                <Button fx:id="btnDocumentos" onAction="#cambiarVista" styleClass="nav-button" text="Documentos" />
+            </HBox>
+        </HBox>
+    </top>
+
+    <!-- Contenido dinámico -->
+    <center>
+        <AnchorPane fx:id="contentPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    </center>
+
+</BorderPane>
