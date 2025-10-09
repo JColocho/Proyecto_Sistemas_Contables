@@ -132,4 +132,22 @@ public class UsuarioModel {
         }
     }
 
+    //Metodo para validar si el usuario ya existe
+    public boolean usuarioExistente(String nombreUsuario) {
+        try {
+            Connection connection = ConexionDB.connection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM tblusuarios WHERE nombreusuario='" + nombreUsuario + "'");
+
+            while (resultSet.next()) {
+                return true;
+            }
+            resultSet.close();
+            return false;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
