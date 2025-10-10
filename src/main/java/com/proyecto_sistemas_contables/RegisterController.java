@@ -112,8 +112,8 @@ public class RegisterController {
         btnCrearUsuario.setOnAction(e -> {
 
             //Declaramos las variables y capturamos los datos ingresados
-            String nombre = txtNombre.getText().trim().replace("   ", " ").replace("  ", " ");
-            String apellido = txtApellido.getText().trim().replace("   ", " ").replace("  ", " ");
+            String nombre = txtNombre.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase();
+            String apellido = txtApellido.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase();
             String nombreUsuario = txtNombreUsuario.getText().trim();
             String clave = txtClave.getText();
             String confirmClave = txtConfirmClave.getText();
@@ -126,23 +126,23 @@ public class RegisterController {
 
                 //Validamos que la clave y la clave de confirmación sean identicas
                 if (clave.equals(confirmClave)) {
-                    //Validamos que haya seleccionado el nivel de acceso
-                    if(cmbNivelAcceso.getSelectionModel().getSelectedItem() != null) {
-                        //Validamos que el campo de clave de acceso no este vacía
-                        if (!claveAcceso.isEmpty()){
+                    CorreoModel correoModel = new CorreoModel();
+                    //Validamos que el correo ingresado no este registrado
+                    if(!correoModel.correoExistente(correo)) {
+                        UsuarioModel usuarioModel = new UsuarioModel();
+                        if(!usuarioModel.usuarioExistente(nombreUsuario)){
+                            //Validamos que haya seleccionado el nivel de acceso
+                            if(cmbNivelAcceso.getSelectionModel().getSelectedItem() != null) {
+                                //Validamos que el campo de clave de acceso no este vacía
+                                if (!claveAcceso.isEmpty()){
 
-                            AccesoModel acceso = new AccesoModel();
-                            //Validamos que la clave de acceso ingresada sea la correcta para
-                            //el acceso que está solicitando
-                            if(acceso.darAcceso(
-                                    cmbNivelAcceso.getSelectionModel().getSelectedItem().getIdAcceso(),
-                                    claveAcceso)){
+                                    AccesoModel acceso = new AccesoModel();
+                                    //Validamos que la clave de acceso ingresada sea la correcta para
+                                    //el acceso que está solicitando
+                                    if(acceso.darAcceso(
+                                            cmbNivelAcceso.getSelectionModel().getSelectedItem().getIdAcceso(),
+                                            claveAcceso)){
 
-                                CorreoModel correoModel = new CorreoModel();
-                                //Validamos que el correo ingresado no este registrado
-                                if(!correoModel.correoExistente(correo)) {
-                                    UsuarioModel usuarioModel = new UsuarioModel();
-                                    if(!usuarioModel.usuarioExistente(nombreUsuario)){
                                         //Creamos el nuevo correo ingresado
                                         correoModel.crearCorreo(correo);
 
@@ -159,51 +159,54 @@ public class RegisterController {
                                         alert.show();
                                         //Redirigimos al login
                                         Main.setRoot("login-view");
+
+
                                     }
-                                    else {
+                                    else{
                                         Alert alert = new Alert(Alert.AlertType.ERROR);
                                         alert.setTitle("Error");
-                                        alert.setContentText("El nombre de usuario ya existe, ingrese otro nombre de usuario.");
+                                        alert.setContentText("La clave para el acceso solicitado es incorrecta: la clave de acceso debe ser " +
+                                                "correspondiente al nivel de acceso solicitado.");
                                         alert.show();
-                                        txtNombreUsuario.requestFocus();
+                                        txtClaveAccesoPWD.requestFocus();
+                                        txtClaveAcceso.requestFocus();
                                     }
+
                                 }
                                 else{
                                     Alert alert = new Alert(Alert.AlertType.ERROR);
                                     alert.setTitle("Error");
-                                    alert.setContentText("El correo ingresado ya se encuentra registrado.");
+                                    alert.setContentText("No se ha ingresado la clave para el acceso solicitado: recuerda que la clave debe ser " +
+                                            "para el acceso que se esta solicitando.");
                                     alert.show();
-                                    txtCorreo.requestFocus();
+                                    txtClaveAccesoPWD.requestFocus();
+                                    txtClaveAcceso.requestFocus();
                                 }
+
                             }
-                            else{
+                            else {
                                 Alert alert = new Alert(Alert.AlertType.ERROR);
                                 alert.setTitle("Error");
-                                alert.setContentText("La clave para el acceso solicitado es incorrecta: la clave de acceso debe ser " +
-                                        "correspondiente al nivel de acceso solicitado.");
+                                alert.setContentText("No se ha seleccionado el acceso para su usuario");
                                 alert.show();
-                                txtClaveAccesoPWD.requestFocus();
-                                txtClaveAcceso.requestFocus();
                             }
-
                         }
-                        else{
+                        else {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
                             alert.setTitle("Error");
-                            alert.setContentText("No se ha ingresado la clave para el acceso solicitado: recuerda que la clave debe ser " +
-                                    "para el acceso que se esta solicitando.");
+                            alert.setContentText("El nombre de usuario ya existe, ingrese otro nombre de usuario.");
                             alert.show();
-                            txtClaveAccesoPWD.requestFocus();
-                            txtClaveAcceso.requestFocus();
+                            txtNombreUsuario.requestFocus();
                         }
-
                     }
-                    else {
+                    else{
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setTitle("Error");
-                        alert.setContentText("No se ha seleccionado el acceso para su usuario");
+                        alert.setContentText("El correo ingresado ya se encuentra registrado.");
                         alert.show();
+                        txtCorreo.requestFocus();
                     }
+
                 }
                 else {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
