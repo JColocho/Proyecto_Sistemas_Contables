@@ -50,7 +50,7 @@ public class NavbarController {
         }else if (source == btnAuditoria) {
             loadView("auditoria-view.fxml");
         }else if (source == btnCatalogo) {
-            loadView("catalogo-view.fxml");
+            loadView("catalogo-cuentas-view.fxml");
         }else if (source == btnPartidas) {
             loadView("partidas-view.fxml");
         }else if (source == btnReporte) {

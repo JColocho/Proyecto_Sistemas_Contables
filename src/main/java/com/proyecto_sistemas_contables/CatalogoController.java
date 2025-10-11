@@ -1,11 +1,14 @@
 package com.proyecto_sistemas_contables;
 
+import com.proyecto_sistemas_contables.util.DialogoUtil;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class CatalogoController {
 
@@ -49,6 +52,12 @@ public class CatalogoController {
         clEditar.prefWidthProperty().bind(tbCuentas.widthProperty().multiply(0.125));
         clEliminar.prefWidthProperty().bind(tbCuentas.widthProperty().multiply(0.125));
 
+    }
+
+    @FXML
+    private void agregarCuenta(ActionEvent event) {
+        Stage stage = (Stage) tbCuentas.getScene().getWindow();
+        DialogoUtil.showDialog("agregar-cuenta", "Agregar Cuenta", stage);
     }
 
 }

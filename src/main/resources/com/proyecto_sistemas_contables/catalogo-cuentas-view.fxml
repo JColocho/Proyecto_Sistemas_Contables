@@ -47,7 +47,7 @@
                      <Insets left="50.0" />
                   </GridPane.margin></ComboBox>
 
-                 <Button fx:id="btnAgregarCuenta" styleClass="agregar-boton" text="Agregar cuenta" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" />
+                 <Button fx:id="btnAgregarCuenta" onAction="#agregarCuenta" styleClass="agregar-boton" text="Agregar cuenta" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" />
              </GridPane>
             <TableView fx:id="tbCuentas" prefHeight="320.0" prefWidth="472.0">
               <columns>
