@@ -22,7 +22,7 @@
                <children>
                   <ImageView fitHeight="38.0" fitWidth="49.0" layoutX="33.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../img/plus.png" />
+                        <Image url="@../../static/css/img/plus.png" />
                      </image>
                   </ImageView>
                   <Label layoutX="7.0" layoutY="52.0" text="Agregar empresa">

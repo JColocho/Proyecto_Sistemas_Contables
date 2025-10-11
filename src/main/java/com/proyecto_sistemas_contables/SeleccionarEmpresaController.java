@@ -1,11 +1,20 @@
 package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.Conexion.ConexionDB;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +23,34 @@ import java.sql.ResultSet;
 public class SeleccionarEmpresaController {
 
     @FXML
-    private FlowPane fpEmpresas; // Contenedor dinámico de empresas
+    private TableView<Empresa> tablaEmpresas;
+
+    @FXML
+    private TableColumn<Empresa, Integer> colId;
+
+    @FXML
+    private TableColumn<Empresa, String> colNombre;
+
+    @FXML
+    private TableColumn<Empresa, String> colNit;
+
+    @FXML
+    private TableColumn<Empresa, String> colNrc;
+
+    @FXML
+    private TableColumn<Empresa, String> colDireccion;
+
+    @FXML
+    private TableColumn<Empresa, String> colTelefono;
+
+    @FXML
+    private TableColumn<Empresa, String> colCorreo;
+
+    @FXML
+    private TableColumn<Empresa, String> colActividad;
+
+    @FXML
+    private TableColumn<Empresa, Void> colAcciones;
 
     @FXML
     private AnchorPane formulario_empresa;
@@ -29,8 +65,17 @@ public class SeleccionarEmpresaController {
     private Button btn_agregar, btn_cancelar;
 
     @FXML
+    private TextField txt_buscar;
+
+    @FXML
+    private ComboBox<String> cb_buscar;
+
+    private ObservableList<Empresa> listaEmpresas = FXCollections.observableArrayList();
+    private FilteredList<Empresa> listaFiltrada;
+    private Empresa empresaEditando = null;
+
+    @FXML
     private void initialize() {
-        // Inicializar formulario oculto
         formulario_empresa.setVisible(false);
 
         // Inicializar ComboBox de actividad económica
@@ -38,25 +83,188 @@ public class SeleccionarEmpresaController {
                 "Comercio", "Servicios", "Manufactura", "Construcción", "Turismo"
         );
 
-        // Cargar empresas existentes de la base de datos
+        // Inicializar ComboBox de búsqueda
+        cb_buscar.setItems(FXCollections.observableArrayList(
+                "Todos",
+                "Nombre",
+                "NIT",
+                "NRC",
+                "Actividad Económica"
+        ));
+        cb_buscar.setValue("Todos"); // Valor por defecto
+
+        // Configurar columnas y acciones
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colNit.setCellValueFactory(new PropertyValueFactory<>("nit"));
+        colNrc.setCellValueFactory(new PropertyValueFactory<>("nrc"));
+        colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
+        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
+        colActividad.setCellValueFactory(new PropertyValueFactory<>("actividadEconomica"));
+        configurarColumnaAcciones();
+
+        // Cargar empresas y configurar filtro
         cargarEmpresas();
+        configurarFiltro();
+
+        // Hacer responsive
+        hacerFormularioResponsive();
+    }
+
+    // ------------------------
+    // Configurar filtro de búsqueda
+    // ------------------------
+    private void configurarFiltro() {
+        // Crear FilteredList
+        listaFiltrada = new FilteredList<>(listaEmpresas, p -> true);
+        tablaEmpresas.setItems(listaFiltrada);
+
+        // Listener para el TextField de búsqueda
+        txt_buscar.textProperty().addListener((observable, oldValue, newValue) -> {
+            filtrarTabla();
+        });
+
+        // Listener para el ComboBox de filtro
+        cb_buscar.valueProperty().addListener((observable, oldValue, newValue) -> {
+            filtrarTabla();
+        });
+    }
+
+    private void filtrarTabla() {
+        String textoBusqueda = txt_buscar.getText().toLowerCase().trim();
+        String criterio = cb_buscar.getValue();
+
+        listaFiltrada.setPredicate(empresa -> {
+            // Si el campo está vacío, mostrar todo
+            if (textoBusqueda.isEmpty()) {
+                return true;
+            }
+
+            // Filtrar según el criterio seleccionado
+            switch (criterio) {
+                case "Nombre":
+                    return empresa.getNombre().toLowerCase().contains(textoBusqueda);
+
+                case "NIT":
+                    return empresa.getNit().toLowerCase().contains(textoBusqueda);
+
+                case "NRC":
+                    return empresa.getNrc().toLowerCase().contains(textoBusqueda);
+
+                case "Actividad Económica":
+                    return empresa.getActividadEconomica().toLowerCase().contains(textoBusqueda);
+
+                case "Todos":
+                default:
+                    // Buscar en todos los campos
+                    return empresa.getNombre().toLowerCase().contains(textoBusqueda) ||
+                            empresa.getNit().toLowerCase().contains(textoBusqueda) ||
+                            empresa.getNrc().toLowerCase().contains(textoBusqueda) ||
+                            empresa.getDireccion().toLowerCase().contains(textoBusqueda) ||
+                            empresa.getTelefono().toLowerCase().contains(textoBusqueda) ||
+                            empresa.getCorreo().toLowerCase().contains(textoBusqueda) ||
+                            empresa.getActividadEconomica().toLowerCase().contains(textoBusqueda);
+            }
+        });
+    }
+
+    // ------------------------
+    // Responsive del formulario
+    // ------------------------
+    private void hacerFormularioResponsive() {
+        AnchorPane parent = (AnchorPane) formulario_empresa.getParent();
+        double maxWidth = formulario_empresa.getPrefWidth();
+        double maxHeight = formulario_empresa.getPrefHeight();
+
+        // Listener del ancho del padre
+        parent.widthProperty().addListener((obs, oldVal, newVal) -> ajustarFormulario(maxWidth, maxHeight));
+        parent.heightProperty().addListener((obs, oldVal, newVal) -> ajustarFormulario(maxWidth, maxHeight));
+    }
+
+    private void ajustarFormulario(double maxWidth, double maxHeight) {
+        AnchorPane parent = (AnchorPane) formulario_empresa.getParent();
+        double parentWidth = parent.getWidth();
+        double parentHeight = parent.getHeight();
+
+        // Ajustar tamaño
+        double newWidth = Math.min(maxWidth, parentWidth - 40);
+        double newHeight = Math.min(maxHeight, parentHeight - 40);
+
+        formulario_empresa.setPrefWidth(newWidth);
+        formulario_empresa.setPrefHeight(newHeight);
+
+        // Centrar
+        formulario_empresa.setLayoutX((parentWidth - newWidth) / 2);
+        formulario_empresa.setLayoutY((parentHeight - newHeight) / 2);
+    }
+
+    // Configurar botones de acción en cada fila
+    private void configurarColumnaAcciones() {
+        colAcciones.setCellFactory(param -> new TableCell<>() {
+            private final Button btnEditar = new Button();
+            private final Button btnEliminar = new Button();
+            private final HBox pane = new HBox(5);
+
+            {
+                // Crear iconos
+                ImageView iconEditar = new ImageView(new Image(getClass().getResourceAsStream("/static/img/write.png")));
+                iconEditar.setFitWidth(16);
+                iconEditar.setFitHeight(16);
+
+                ImageView iconEliminar = new ImageView(new Image(getClass().getResourceAsStream("/static/img/bin.png")));
+                iconEliminar.setFitWidth(16);
+                iconEliminar.setFitHeight(16);
+
+                // Asignar iconos a los botones
+                btnEditar.setGraphic(iconEditar);
+                btnEliminar.setGraphic(iconEliminar);
+
+                btnEditar.setStyle("-fx-background-color: rgb(210, 240, 240); -fx-text-fill: white; -fx-cursor: hand;");
+                btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
+
+                btnEditar.setOnAction(event -> {
+                    Empresa empresa = getTableView().getItems().get(getIndex());
+                    editarEmpresa(empresa);
+                });
+
+                btnEliminar.setOnAction(event -> {
+                    Empresa empresa = getTableView().getItems().get(getIndex());
+                    confirmarEliminar(empresa);
+                });
+
+                pane.setAlignment(Pos.CENTER);
+                pane.getChildren().addAll(btnEditar, btnEliminar);
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : pane);
+            }
+        });
     }
 
     // Mostrar formulario al hacer click en "Agregar empresa"
     @FXML
     void abrirFormularioEmpresa(MouseEvent event) {
+        limpiarFormulario();
+        empresaEditando = null;
+        btn_agregar.setText("Guardar");
         formulario_empresa.setVisible(true);
     }
 
     // Cancelar formulario
     @FXML
     private void cancelar() {
+        limpiarFormulario();
+        empresaEditando = null;
         formulario_empresa.setVisible(false);
     }
 
-    // Agregar empresa
+    // Guardar empresa (agregar o editar)
     @FXML
-    private void agregarEmpresa() {
+    private void guardarEmpresa() {
         String nombre = txt_nombre_empresa.getText();
         String nit = txt_nit.getText();
         String nrc = txt_nrc.getText();
@@ -65,120 +273,179 @@ public class SeleccionarEmpresaController {
         String correo = txt_correo.getText();
         String actividad_economica = cb_actividad_eco.getSelectionModel().getSelectedItem();
 
-        if (nombre.isEmpty() || nit.isEmpty() || correo.isEmpty()) {
-            mostrarAlerta("Error", "Debe completar los campos obligatorios.", Alert.AlertType.ERROR);
+        if (nombre.isEmpty() || nit.isEmpty() || nrc.isEmpty() || direccion.isEmpty() || telefono.isEmpty() || correo.isEmpty() || actividad_economica == null) {
+            mostrarAlerta("Error", "Debe completar los campos", Alert.AlertType.ERROR);
             return;
         }
 
         try (Connection conn = ConexionDB.connection()) {
-            // Insertar correo y obtener id
-            String sqlCorreo = "INSERT INTO tblcorreos (correo) VALUES (?) RETURNING idcorreo";
-            PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
-            psCorreo.setString(1, correo);
-            ResultSet rsCorreo = psCorreo.executeQuery();
-            int idCorreo = 0;
-            if (rsCorreo.next()) {
-                idCorreo = rsCorreo.getInt("idcorreo");
+            if (empresaEditando == null) {
+                // Modo agregar
+                // Insertar correo y obtener id
+                String sqlCorreo = "INSERT INTO tblcorreos (correo) VALUES (?) RETURNING idcorreo";
+                PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
+                psCorreo.setString(1, correo);
+                ResultSet rsCorreo = psCorreo.executeQuery();
+                int idCorreo = 0;
+                if (rsCorreo.next()) {
+                    idCorreo = rsCorreo.getInt("idcorreo");
+                }
+
+                // Insertar empresa con actividad económica
+                String sqlEmpresa = """
+                        INSERT INTO tblempresas (nombre, nit, nrc, direccion, telefono, idcorreo, actividad_economica)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        """;
+                PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
+                psEmpresa.setString(1, nombre);
+                psEmpresa.setString(2, nit);
+                psEmpresa.setString(3, nrc);
+                psEmpresa.setString(4, direccion);
+                psEmpresa.setString(5, telefono);
+                psEmpresa.setInt(6, idCorreo);
+                psEmpresa.setString(7, actividad_economica);
+                psEmpresa.executeUpdate();
+
+                mostrarAlerta("Éxito", "Empresa registrada correctamente.", Alert.AlertType.INFORMATION);
+            } else {
+                // Modo editar
+                // Actualizar correo
+                String sqlCorreo = "UPDATE tblcorreos SET correo = ? WHERE idcorreo = ?";
+                PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
+                psCorreo.setString(1, correo);
+                psCorreo.setInt(2, empresaEditando.getIdCorreo());
+                psCorreo.executeUpdate();
+
+                // Actualizar empresa
+                String sqlEmpresa = """
+                        UPDATE tblempresas 
+                        SET nombre = ?, nit = ?, nrc = ?, direccion = ?, telefono = ?, actividad_economica = ?
+                        WHERE idempresa = ?
+                        """;
+                PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
+                psEmpresa.setString(1, nombre);
+                psEmpresa.setString(2, nit);
+                psEmpresa.setString(3, nrc);
+                psEmpresa.setString(4, direccion);
+                psEmpresa.setString(5, telefono);
+                psEmpresa.setString(6, actividad_economica);
+                psEmpresa.setInt(7, empresaEditando.getId());
+                psEmpresa.executeUpdate();
+
+                mostrarAlerta("Éxito", "Empresa actualizada correctamente.", Alert.AlertType.INFORMATION);
             }
 
-            // Insertar empresa con actividad económica
-            String sqlEmpresa = """
-                    INSERT INTO tblempresas (nombre, nit, nrc, direccion, telefono, idcorreo, actividad_economica)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                    RETURNING idempresa
-                    """;
-            PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
-            psEmpresa.setString(1, nombre);
-            psEmpresa.setString(2, nit);
-            psEmpresa.setString(3, nrc);
-            psEmpresa.setString(4, direccion);
-            psEmpresa.setString(5, telefono);
-            psEmpresa.setInt(6, idCorreo);
-            psEmpresa.setString(7, actividad_economica);
-
-            ResultSet rsEmpresa = psEmpresa.executeQuery();
-            int idEmpresa = 0;
-            if (rsEmpresa.next()) {
-                idEmpresa = rsEmpresa.getInt("idempresa");
-            }
-
-            // Agregar empresa al FlowPane dinámicamente (solo el nombre)
-            agregarEmpresaAlGrid(nombre, idEmpresa);
-
-            // Limpiar formulario y ocultarlo
-            txt_nombre_empresa.clear();
-            txt_nit.clear();
-            txt_nrc.clear();
-            txt_direccion.clear();
-            txt_telefono.clear();
-            txt_correo.clear();
-            cb_actividad_eco.getSelectionModel().clearSelection();
+            // Recargar tabla y cerrar formulario
+            cargarEmpresas();
+            limpiarFormulario();
+            empresaEditando = null;
             formulario_empresa.setVisible(false);
-
-            mostrarAlerta("Éxito", "Empresa registrada correctamente.", Alert.AlertType.INFORMATION);
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo registrar la empresa.", Alert.AlertType.ERROR);
+            mostrarAlerta("Error", "No se pudo guardar la empresa: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
-    // Agregar empresa al FlowPane (solo nombre visible)
-    private void agregarEmpresaAlGrid(String nombre, int idEmpresa) {
-        AnchorPane empresaPane = new AnchorPane();
-        empresaPane.setPrefSize(120, 75);
-        empresaPane.setStyle("-fx-background-color: #ffffff; -fx-border-color: #ccc; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+    // Editar empresa
+    private void editarEmpresa(Empresa empresa) {
+        empresaEditando = empresa;
 
-        Label lblNombre = new Label(nombre);
-        lblNombre.setLayoutX(10);
-        lblNombre.setLayoutY(10);
+        txt_nombre_empresa.setText(empresa.getNombre());
+        txt_nit.setText(empresa.getNit());
+        txt_nrc.setText(empresa.getNrc());
+        txt_direccion.setText(empresa.getDireccion());
+        txt_telefono.setText(empresa.getTelefono());
+        txt_correo.setText(empresa.getCorreo());
+        cb_actividad_eco.getSelectionModel().select(empresa.getActividadEconomica());
 
-        Button btnEliminar = new Button("X");
-        btnEliminar.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-        btnEliminar.setLayoutX(80);
-        btnEliminar.setLayoutY(10);
-        btnEliminar.setVisible(false);
+        btn_agregar.setText("Actualizar");
+        formulario_empresa.setVisible(true);
+    }
 
-        // Acción eliminar
-        btnEliminar.setOnAction(e -> {
-            eliminarEmpresa(idEmpresa);
-            fpEmpresas.getChildren().remove(empresaPane);
+    // Confirmar y eliminar empresa
+    private void confirmarEliminar(Empresa empresa) {
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText("¿Está seguro de eliminar esta empresa?");
+        confirmacion.setContentText(empresa.getNombre());
+
+        confirmacion.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                eliminarEmpresa(empresa);
+            }
         });
+    }
 
-        empresaPane.setOnMouseEntered(e -> btnEliminar.setVisible(true));
-        empresaPane.setOnMouseExited(e -> btnEliminar.setVisible(false));
+    // Eliminar empresa de la base de datos
+    private void eliminarEmpresa(Empresa empresa) {
+        try (Connection conn = ConexionDB.connection()) {
+            // Eliminar empresa
+            String sqlEmpresa = "DELETE FROM tblempresas WHERE idempresa = ?";
+            PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
+            psEmpresa.setInt(1, empresa.getId());
+            psEmpresa.executeUpdate();
 
-        empresaPane.getChildren().addAll(lblNombre, btnEliminar);
-        fpEmpresas.getChildren().add(empresaPane);
+            // Eliminar correo asociado
+            String sqlCorreo = "DELETE FROM tblcorreos WHERE idcorreo = ?";
+            PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
+            psCorreo.setInt(1, empresa.getIdCorreo());
+            psCorreo.executeUpdate();
+
+            // Recargar tabla
+            cargarEmpresas();
+            mostrarAlerta("Éxito", "Empresa eliminada correctamente.", Alert.AlertType.INFORMATION);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo eliminar la empresa: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     // Cargar empresas desde la base de datos
     private void cargarEmpresas() {
+        listaEmpresas.clear();
         try (Connection conn = ConexionDB.connection()) {
-            String sql = "SELECT e.idempresa, e.nombre FROM tblempresas e";
+            String sql = """
+                    SELECT e.idempresa, e.nombre, e.nit, e.nrc, e.direccion, 
+                           e.telefono, e.idcorreo, c.correo, e.actividad_economica
+                    FROM tblempresas e
+                    LEFT JOIN tblcorreos c ON e.idcorreo = c.idcorreo
+                    ORDER BY e.idempresa
+                    """;
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                int id = rs.getInt("idempresa");
-                String nombre = rs.getString("nombre");
-                agregarEmpresaAlGrid(nombre, id);
+                Empresa empresa = new Empresa(
+                        rs.getInt("idempresa"),
+                        rs.getString("nombre"),
+                        rs.getString("nit"),
+                        rs.getString("nrc"),
+                        rs.getString("direccion"),
+                        rs.getString("telefono"),
+                        rs.getInt("idcorreo"),
+                        rs.getString("correo"),
+                        rs.getString("actividad_economica")
+                );
+                listaEmpresas.add(empresa);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
+            mostrarAlerta("Error", "No se pudieron cargar las empresas: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
-    // Eliminar empresa de la base de datos
-    private void eliminarEmpresa(int idEmpresa) {
-        try (Connection conn = ConexionDB.connection()) {
-            String sql = "DELETE FROM tblempresas WHERE idempresa=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, idEmpresa);
-            ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo eliminar la empresa.", Alert.AlertType.ERROR);
-        }
+    // Limpiar formulario
+    private void limpiarFormulario() {
+        txt_nombre_empresa.clear();
+        txt_nit.clear();
+        txt_nrc.clear();
+        txt_direccion.clear();
+        txt_telefono.clear();
+        txt_correo.clear();
+        cb_actividad_eco.getSelectionModel().clearSelection();
     }
 
     // Mostrar alertas
@@ -188,5 +455,41 @@ public class SeleccionarEmpresaController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    // Clase interna para representar una Empresa
+    public static class Empresa {
+        private final SimpleIntegerProperty id;
+        private final SimpleStringProperty nombre;
+        private final SimpleStringProperty nit;
+        private final SimpleStringProperty nrc;
+        private final SimpleStringProperty direccion;
+        private final SimpleStringProperty telefono;
+        private final SimpleIntegerProperty idCorreo;
+        private final SimpleStringProperty correo;
+        private final SimpleStringProperty actividadEconomica;
+
+        public Empresa(int id, String nombre, String nit, String nrc, String direccion,
+                       String telefono, int idCorreo, String correo, String actividadEconomica) {
+            this.id = new SimpleIntegerProperty(id);
+            this.nombre = new SimpleStringProperty(nombre);
+            this.nit = new SimpleStringProperty(nit);
+            this.nrc = new SimpleStringProperty(nrc);
+            this.direccion = new SimpleStringProperty(direccion);
+            this.telefono = new SimpleStringProperty(telefono);
+            this.idCorreo = new SimpleIntegerProperty(idCorreo);
+            this.correo = new SimpleStringProperty(correo);
+            this.actividadEconomica = new SimpleStringProperty(actividadEconomica);
+        }
+
+        public int getId() { return id.get(); }
+        public String getNombre() { return nombre.get(); }
+        public String getNit() { return nit.get(); }
+        public String getNrc() { return nrc.get(); }
+        public String getDireccion() { return direccion.get(); }
+        public String getTelefono() { return telefono.get(); }
+        public int getIdCorreo() { return idCorreo.get(); }
+        public String getCorreo() { return correo.get(); }
+        public String getActividadEconomica() { return actividadEconomica.get(); }
     }
 }
