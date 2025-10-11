@@ -1,6 +1,7 @@
 package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.Conexion.ConexionDB;
+import com.proyecto_sistemas_contables.models.EmpresaModel;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,34 +24,34 @@ import java.sql.ResultSet;
 public class SeleccionarEmpresaController {
 
     @FXML
-    private TableView<Empresa> tablaEmpresas;
+    private TableView<EmpresaModel> tablaEmpresas;
 
     @FXML
-    private TableColumn<Empresa, Integer> colId;
+    private TableColumn<EmpresaModel, Integer> colId;
 
     @FXML
-    private TableColumn<Empresa, String> colNombre;
+    private TableColumn<EmpresaModel, String> colNombre;
 
     @FXML
-    private TableColumn<Empresa, String> colNit;
+    private TableColumn<EmpresaModel, String> colNit;
 
     @FXML
-    private TableColumn<Empresa, String> colNrc;
+    private TableColumn<EmpresaModel, String> colNrc;
 
     @FXML
-    private TableColumn<Empresa, String> colDireccion;
+    private TableColumn<EmpresaModel, String> colDireccion;
 
     @FXML
-    private TableColumn<Empresa, String> colTelefono;
+    private TableColumn<EmpresaModel, String> colTelefono;
 
     @FXML
-    private TableColumn<Empresa, String> colCorreo;
+    private TableColumn<EmpresaModel, String> colCorreo;
 
     @FXML
-    private TableColumn<Empresa, String> colActividad;
+    private TableColumn<EmpresaModel, String> colActividad;
 
     @FXML
-    private TableColumn<Empresa, Void> colAcciones;
+    private TableColumn<EmpresaModel, Void> colAcciones;
 
     @FXML
     private AnchorPane formulario_empresa;
@@ -70,9 +71,9 @@ public class SeleccionarEmpresaController {
     @FXML
     private ComboBox<String> cb_buscar;
 
-    private ObservableList<Empresa> listaEmpresas = FXCollections.observableArrayList();
-    private FilteredList<Empresa> listaFiltrada;
-    private Empresa empresaEditando = null;
+    private ObservableList<EmpresaModel> listaEmpresas = FXCollections.observableArrayList();
+    private FilteredList<EmpresaModel> listaFiltrada;
+    private EmpresaModel empresaEditando = null;
 
     @FXML
     private void initialize() {
@@ -208,11 +209,11 @@ public class SeleccionarEmpresaController {
 
             {
                 // Crear iconos
-                ImageView iconEditar = new ImageView(new Image(getClass().getResourceAsStream("/static/img/write.png")));
+                ImageView iconEditar = new ImageView(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/write.png")));
                 iconEditar.setFitWidth(16);
                 iconEditar.setFitHeight(16);
 
-                ImageView iconEliminar = new ImageView(new Image(getClass().getResourceAsStream("/static/img/bin.png")));
+                ImageView iconEliminar = new ImageView(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/bin.png")));
                 iconEliminar.setFitWidth(16);
                 iconEliminar.setFitHeight(16);
 
@@ -224,12 +225,12 @@ public class SeleccionarEmpresaController {
                 btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
 
                 btnEditar.setOnAction(event -> {
-                    Empresa empresa = getTableView().getItems().get(getIndex());
+                    EmpresaModel empresa = getTableView().getItems().get(getIndex());
                     editarEmpresa(empresa);
                 });
 
                 btnEliminar.setOnAction(event -> {
-                    Empresa empresa = getTableView().getItems().get(getIndex());
+                    EmpresaModel empresa = getTableView().getItems().get(getIndex());
                     confirmarEliminar(empresa);
                 });
 
@@ -348,7 +349,7 @@ public class SeleccionarEmpresaController {
     }
 
     // Editar empresa
-    private void editarEmpresa(Empresa empresa) {
+    private void editarEmpresa(EmpresaModel empresa) {
         empresaEditando = empresa;
 
         txt_nombre_empresa.setText(empresa.getNombre());
@@ -364,7 +365,7 @@ public class SeleccionarEmpresaController {
     }
 
     // Confirmar y eliminar empresa
-    private void confirmarEliminar(Empresa empresa) {
+    private void confirmarEliminar(EmpresaModel empresa) {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar eliminación");
         confirmacion.setHeaderText("¿Está seguro de eliminar esta empresa?");
@@ -378,7 +379,7 @@ public class SeleccionarEmpresaController {
     }
 
     // Eliminar empresa de la base de datos
-    private void eliminarEmpresa(Empresa empresa) {
+    private void eliminarEmpresa(EmpresaModel empresa) {
         try (Connection conn = ConexionDB.connection()) {
             // Eliminar empresa
             String sqlEmpresa = "DELETE FROM tblempresas WHERE idempresa = ?";
@@ -417,7 +418,7 @@ public class SeleccionarEmpresaController {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Empresa empresa = new Empresa(
+                EmpresaModel empresa = new EmpresaModel(
                         rs.getInt("idempresa"),
                         rs.getString("nombre"),
                         rs.getString("nit"),
@@ -455,41 +456,5 @@ public class SeleccionarEmpresaController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
-    }
-
-    // Clase interna para representar una Empresa
-    public static class Empresa {
-        private final SimpleIntegerProperty id;
-        private final SimpleStringProperty nombre;
-        private final SimpleStringProperty nit;
-        private final SimpleStringProperty nrc;
-        private final SimpleStringProperty direccion;
-        private final SimpleStringProperty telefono;
-        private final SimpleIntegerProperty idCorreo;
-        private final SimpleStringProperty correo;
-        private final SimpleStringProperty actividadEconomica;
-
-        public Empresa(int id, String nombre, String nit, String nrc, String direccion,
-                       String telefono, int idCorreo, String correo, String actividadEconomica) {
-            this.id = new SimpleIntegerProperty(id);
-            this.nombre = new SimpleStringProperty(nombre);
-            this.nit = new SimpleStringProperty(nit);
-            this.nrc = new SimpleStringProperty(nrc);
-            this.direccion = new SimpleStringProperty(direccion);
-            this.telefono = new SimpleStringProperty(telefono);
-            this.idCorreo = new SimpleIntegerProperty(idCorreo);
-            this.correo = new SimpleStringProperty(correo);
-            this.actividadEconomica = new SimpleStringProperty(actividadEconomica);
-        }
-
-        public int getId() { return id.get(); }
-        public String getNombre() { return nombre.get(); }
-        public String getNit() { return nit.get(); }
-        public String getNrc() { return nrc.get(); }
-        public String getDireccion() { return direccion.get(); }
-        public String getTelefono() { return telefono.get(); }
-        public int getIdCorreo() { return idCorreo.get(); }
-        public String getCorreo() { return correo.get(); }
-        public String getActividadEconomica() { return actividadEconomica.get(); }
     }
 }
