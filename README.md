@@ -1,4 +1,3 @@
-# Proyecto_Sistemas_Contables
 # Pasos para ejecución del proyecto
 ## 📋 Requisitos previos
 
