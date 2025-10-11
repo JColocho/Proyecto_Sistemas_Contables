@@ -39,3 +39,12 @@ Antes de ejecutar el proyecto debe tener instalado lo siguiente:
 
 ### 🖥️ Ejecución de la aplicación
 Al estar en ejecución el proyecto se abrirá el formulario de inicio de sesión pero puede crearse un nuevo usuario y con eso estará listo para usar las funciones del proyecto.
+
+
+### Autores
+- Jairo Alexander Argueta Alvarenga
+- Josué Iván Molina Romero
+- Javier Orlando Colocho Bolainez
+
+### Repositorio
+[Sistema Contable](https://github.com/JColocho/Proyecto_Sistemas_Contables)
