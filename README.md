@@ -40,6 +40,8 @@ Antes de ejecutar el proyecto debe tener instalado lo siguiente:
 ### 🖥️ Ejecución de la aplicación
 Al estar en ejecución el proyecto se abrirá el formulario de inicio de sesión pero puede crearse un nuevo usuario y con eso estará listo para usar las funciones del proyecto.
 
+### Nota
+El archivo clavesAccesos.txt están las claves de acceso para la creación de un nuevo usuario
 
 ### Autores
 - Jairo Alexander Argueta Alvarenga
