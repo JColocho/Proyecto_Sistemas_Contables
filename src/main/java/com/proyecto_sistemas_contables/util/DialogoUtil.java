@@ -11,7 +11,7 @@ public class DialogoUtil {
 
     public static <T> T showDialog(String fxml, String title, Stage owner) {
         try {
-            // 🔹 Ruta completa dentro de resources
+            //Ruta completa dentro de resources
             FXMLLoader loader = new FXMLLoader(DialogoUtil.class.getResource("/com/proyecto_sistemas_contables/dialogos/" + fxml + ".fxml"
             ));
 
