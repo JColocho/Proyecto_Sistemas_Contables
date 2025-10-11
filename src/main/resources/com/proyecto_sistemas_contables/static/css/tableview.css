@@ -1,0 +1,215 @@
+/* Fondo transparente de la tabla */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.table-view .virtual-flow {
+    -fx-background-color: transparent;
+}
+
+/* Color del encabezado con border-radius */
+.table-view .column-header-background {
+    -fx-background-color: rgb(0,153,81);
+    -fx-background-radius: 5px;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* Cada fila con border-radius y espaciado */
+.table-row-cell {
+    -fx-background-color: rgb(200, 235, 220);
+    -fx-background-radius: 5px;
+    -fx-background-insets: 2px 0 2px 0;
+    -fx-padding: 4px 0;
+    -fx-border-width: 0;
+}
+
+/* Fila seleccionada */
+.table-row-cell:selected {
+    -fx-background-color: rgba(0,153,81, 0.4);
+    -fx-background-radius: 5px;
+}
+
+/* Eliminar líneas entre filas */
+.table-row-cell {
+    -fx-border-width: 0;
+}
+
+/* Eliminar líneas verticales entre columnas */
+.table-view .column-header,
+.table-view .table-cell {
+    -fx-border-width: 0;
+}
+
+/* Centrar texto en las celdas */
+.table-cell {
+    -fx-alignment: CENTER;
+    -fx-background-color: transparent;
+}
+
+/* Eliminar el borde azul al hacer focus */
+.table-cell:focused {
+    -fx-border-color: transparent;
+}
+
+.table-view:focused {
+    -fx-background-insets: 0;
+}
+
+/* PERSONALIZACIÓN DEL SCROLL */
+/* Fondo del scroll bar */
+.table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10px;
+}
+
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-height: 10px;
+}
+
+/* Track (fondo donde se mueve el scroll) */
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 5px;
+}
+
+.table-view .scroll-bar:horizontal .track {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 5px;
+}
+
+/* Thumb (la parte que se arrastra) */
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(0,153,81, 0.5);
+    -fx-background-radius: 5px;
+}
+
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(0,153,81, 0.5);
+    -fx-background-radius: 5px;
+}
+
+/* Hover en el thumb */
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: rgba(0,153,81, 0.7);
+}
+
+.table-view .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: rgba(0,153,81, 0.7);
+}
+
+/* Presionado */
+.table-view .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: rgb(0,153,81);
+}
+
+.table-view .scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: rgb(0,153,81);
+}
+
+/* Ocultar botones de incremento/decremento */
+.table-view .scroll-bar .increment-button,
+.table-view .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-pref-width: 0;
+}
+
+.table-view .scroll-bar .increment-arrow,
+.table-view .scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+/* Placeholder del encabezado (el área clickeable) con border-radius */
+.table-view .column-header-background .filler {
+    -fx-background-color: rgb(0,153,81);
+    -fx-background-radius: 0 5px 0 0; /* Solo esquina superior derecha */
+}
+
+/* ============================================== */
+/* ===== FORMULARIO  =====*/
+/* COMBO BOX */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: rgba(0,153,81, 0.4);
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 4px 8px;
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+/* Efecto hover (ComboBox cerrado) */
+.combo-box:hover {
+    -fx-background-color: rgba(0,153,81, 0.1);
+    -fx-border-color: rgb(0,153,81);
+}
+
+/* Quita el borde azul al enfocar */
+.combo-box:focused {
+    -fx-border-color: rgb(0,153,81);
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-effect: none;
+}
+
+/* Flecha del ComboBox */
+.combo-box .arrow {
+    -fx-background-color: rgb(0,153,81);
+}
+
+/* Fondo del popup (lista desplegable) */
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: rgb(0,153,81);
+    -fx-border-radius: 5px;
+}
+
+/* Hover sobre los ítems (cuando pasás el mouse) */
+.list-cell:hover {
+    -fx-background-color: rgba(0,153,81, 0.3);
+    -fx-text-fill: black;
+}
+
+/* Estado deshabilitado */
+.combo-box:disabled {
+    -fx-opacity: 0.6;
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #c0c0c0;
+    -fx-cursor: default;
+}
+
+/* ÍTEM SELECCIONADO DEL COMBOBOX (cuando está abierto) */
+.combo-box-popup .list-view .list-cell:filled:selected,
+.combo-box-popup .list-view .list-cell:filled:selected:hover {
+    -fx-background-color: rgba(0,153,81, 0.3); /* Verde suave de selección */
+    -fx-text-fill: black;
+}
+
+/* ==== TEXTFIELD ==== */
+.text-field:focused {
+    -fx-border-color: rgb(0,153,81);
+    -fx-border-width: 2px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.text-field {
+    -fx-border-color: rgba(0,153,81, 0.4);
+}
