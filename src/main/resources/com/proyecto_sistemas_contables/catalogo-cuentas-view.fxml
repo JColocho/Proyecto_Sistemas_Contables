@@ -22,10 +22,10 @@
          <children>
              <GridPane hgap="10" vgap="5.0" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
                  <columnConstraints>
-                     <ColumnConstraints percentWidth="30" /> <!-- Título -->
-                     <ColumnConstraints percentWidth="30" /> <!-- Buscador -->
-                     <ColumnConstraints percentWidth="20" /> <!-- ComboBox -->
-                     <ColumnConstraints percentWidth="20" /> <!-- Botón -->
+                     <ColumnConstraints percentWidth="30" />
+                     <ColumnConstraints percentWidth="30" />
+                     <ColumnConstraints percentWidth="20" />
+                     <ColumnConstraints percentWidth="20" />
                  </columnConstraints>
 
                  <!-- Fila única -->
