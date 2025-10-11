@@ -14,5 +14,7 @@ module com.proyecto_sistemas_contables {
     requires jbcrypt;
 
     opens com.proyecto_sistemas_contables to javafx.fxml;
+    opens com.proyecto_sistemas_contables.models to javafx.base;
+    opens com.proyecto_sistemas_contables.Conexion to javafx.base;
     exports com.proyecto_sistemas_contables;
 }

@@ -14,6 +14,8 @@ public class CatalogoCuentaModel {
     private String tipoCuenta;
     private String tipoSaldo;
     private int idEmpresa;
+    private double cargo;
+    private double abono;
 
     public CatalogoCuentaModel() {
     }
@@ -91,6 +93,22 @@ public class CatalogoCuentaModel {
 
     public void setIdEmpresa(int idEmpresa) {
         this.idEmpresa = idEmpresa;
+    }
+
+    public double getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(double cargo) {
+        this.cargo = cargo;
+    }
+
+    public double getAbono() {
+        return abono;
+    }
+
+    public void setAbono(double abono) {
+        this.abono = abono;
     }
 
     public ObservableList<String> obtenerNombreCuentas(int idEmpresa) {

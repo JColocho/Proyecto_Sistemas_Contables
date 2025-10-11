@@ -96,7 +96,7 @@
             <Font name="Inter 18pt Bold" size="13.0" />
          </font>
       </Label>
-      <Text fontSmoothingType="LCD" layoutX="585.0" layoutY="242.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Documento subido: ..." wrappingWidth="165.8831787109375">
+      <Text fx:id="txtDocSubido" fontSmoothingType="LCD" layoutX="585.0" layoutY="242.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="165.8831787109375">
          <font>
             <Font name="Inter Italic" size="12.0" />
          </font>
