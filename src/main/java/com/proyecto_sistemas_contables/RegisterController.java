@@ -224,6 +224,5 @@ public class RegisterController {
                 alert.show();
             }
         });
-
     }
 }
