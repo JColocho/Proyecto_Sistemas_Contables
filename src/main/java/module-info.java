@@ -12,7 +12,10 @@ module com.proyecto_sistemas_contables {
     requires com.almasb.fxgl.all;
     requires java.sql;
     requires jbcrypt;
+    requires javafx.graphics;
 
     opens com.proyecto_sistemas_contables to javafx.fxml;
+    opens com.proyecto_sistemas_contables.models to javafx.base;
+    opens com.proyecto_sistemas_contables.Conexion to javafx.base;
     exports com.proyecto_sistemas_contables;
 }

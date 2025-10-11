@@ -4,7 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,7 +14,7 @@
 
 <AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.PartidasController">
    <children>
-      <VBox layoutX="1.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" stylesheets="@static/css/partidas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
+      <VBox layoutX="1.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
          <children>
              <GridPane vgap="5.0">
                  <columnConstraints>
@@ -60,13 +61,14 @@
                  </AnchorPane>
 
                        <Label text="Partidas" GridPane.halignment="CENTER" />
-                 <Button mnemonicParsing="false" text="Agregar partida" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                 <Button fx:id="btnAgregarPartida" mnemonicParsing="false" onAction="#agregarPartida" text="Agregar partida" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
              </GridPane>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-              </content>
-            </ScrollPane>
+            <TableView fx:id="tbPartidas" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                <TableColumn prefWidth="75.0" />
+                <TableColumn prefWidth="75.0" />
+              </columns>
+            </TableView>
 
 
          </children>

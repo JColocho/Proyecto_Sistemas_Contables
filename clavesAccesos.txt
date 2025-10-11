@@ -1,0 +1,4 @@
+Esta claves son para solicitar nivel de acceso al momento de registrar usuario.
+ADMINISTRADO: admin
+CONTADOR: contador
+AUDITOR: auditor
