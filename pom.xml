@@ -111,7 +111,14 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <!-- Dependencia para encriptado de contraseña -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
+
+        <!-- Dependencia para uso de postgres -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -140,7 +147,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.proyecto_sistemas_contables/com.proyecto_sistemas_contables.HelloApplication
+                                com.proyecto_sistemas_contables/com.proyecto_sistemas_contables.Main
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

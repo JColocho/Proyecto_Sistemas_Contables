@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.CatalogoController">
+   <children>
+      <VBox layoutX="1.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+         <children>
+             <GridPane hgap="10" vgap="5.0" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
+                 <columnConstraints>
+                     <ColumnConstraints percentWidth="30" /> <!-- Título -->
+                     <ColumnConstraints percentWidth="30" /> <!-- Buscador -->
+                     <ColumnConstraints percentWidth="20" /> <!-- ComboBox -->
+                     <ColumnConstraints percentWidth="20" /> <!-- Botón -->
+                 </columnConstraints>
+
+                 <!-- Fila única -->
+                 <rowConstraints>
+                     <RowConstraints minHeight="40.0" vgrow="NEVER" />
+                  <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="NEVER" />
+                 </rowConstraints>
+
+                 <!-- Contenido -->
+                 <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Catálogo de cuentas" GridPane.halignment="LEFT" />
+
+                 <TextField fx:id="txtBuscarCuenta" prefHeight="25.0" prefWidth="151.0" promptText="Buscar cuenta" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets right="50.0" />
+                  </GridPane.margin></TextField>
+
+                 <ComboBox fx:id="cmbTipo" prefWidth="150.0" promptText="Tipo" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets left="50.0" />
+                  </GridPane.margin></ComboBox>
+
+                 <Button fx:id="btnAgregarCuenta" onAction="#agregarCuenta" styleClass="agregar-boton" text="Agregar cuenta" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" />
+             </GridPane>
+            <TableView fx:id="tbCuentas" prefHeight="320.0" prefWidth="472.0">
+              <columns>
+                <TableColumn fx:id="clCodigo" prefWidth="61.0" text="Código" />
+                <TableColumn fx:id="clCuenta" prefWidth="78.0" text="Cuenta" />
+                  <TableColumn fx:id="clTipoCuenta" prefWidth="120.0" text="Tipo de cuenta" />
+                  <TableColumn fx:id="clTipoSaldo" prefWidth="82.0" text="Tipo de saldo" />
+                  <TableColumn fx:id="clEditar" prefWidth="71.0" text="Editar" />
+                  <TableColumn fx:id="clEliminar" prefWidth="59.0" text="Eliminar" />
+              </columns>
+            </TableView>
+
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

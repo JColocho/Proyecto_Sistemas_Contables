@@ -6,3 +6,6 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+#conexion a DB
+../src/main/java/com/proyecto_sistemas_contables/Conexion/

@@ -11,6 +11,7 @@ module com.proyecto_sistemas_contables {
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
     requires java.sql;
+    requires jbcrypt;
 
     opens com.proyecto_sistemas_contables to javafx.fxml;
     exports com.proyecto_sistemas_contables;
