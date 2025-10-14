@@ -88,6 +88,7 @@ public class RegistroPartidaController {
     private ToggleGroup movimiento;
 
     private ObservableList<CatalogoCuentaModel> registroDetalle;
+    public static int idUsuarioSesion;
 
     // Guardará temporalmente el archivo PDF seleccionado
     private File archivoSeleccionado;
@@ -161,26 +162,52 @@ public class RegistroPartidaController {
 
             if(cmbCuentas.getSelectionModel().getSelectedItem() != null){
                 if(!txtMonto.getText().isEmpty()){
-                    if(rdbCargo.isSelected()){
-                        cuentaModel.setIdCuenta(
-                                cuentaModel.obtenerIdCuenta(cmbCuentas.getSelectionModel().getSelectedItem(), 1));
-                        cuentaModel.setCuenta(cmbCuentas.getSelectionModel().getSelectedItem());
-                        cuentaModel.setCargo(Double.parseDouble(txtMonto.getText()));
-                        cuentaModel.setAbono(0.00);
-                        registroDetalle.add(cuentaModel);
-                        cargarTabla();
-                        limpiarRegistroDetalle();
-                    } else if (rdbAbono.isSelected()) {
-                        cuentaModel.setIdCuenta(
-                                cuentaModel.obtenerIdCuenta(cmbCuentas.getSelectionModel().getSelectedItem(), 1));
-                        cuentaModel.setCuenta(cmbCuentas.getSelectionModel().getSelectedItem());
-                        cuentaModel.setAbono(Double.parseDouble(txtMonto.getText()));
-                        cuentaModel.setCargo(0.00);
-                        registroDetalle.add(cuentaModel);
-                        cargarTabla();
-                        limpiarRegistroDetalle();
+                    if (validarMonto()){
+                        if(rdbCargo.isSelected()){
+                            cuentaModel.setIdCuenta(
+                                    cuentaModel.obtenerIdCuenta(cmbCuentas.getSelectionModel().getSelectedItem(), 1));
+                            cuentaModel.setCuenta(cmbCuentas.getSelectionModel().getSelectedItem());
+                            cuentaModel.setCargo(Double.parseDouble(txtMonto.getText()));
+                            cuentaModel.setAbono(0.00);
+                            registroDetalle.add(cuentaModel);
+                            cargarTabla();
+                            limpiarRegistroDetalle();
+                        } else if (rdbAbono.isSelected()) {
+                            cuentaModel.setIdCuenta(
+                                    cuentaModel.obtenerIdCuenta(cmbCuentas.getSelectionModel().getSelectedItem(), 1));
+                            cuentaModel.setCuenta(cmbCuentas.getSelectionModel().getSelectedItem());
+                            cuentaModel.setAbono(Double.parseDouble(txtMonto.getText()));
+                            cuentaModel.setCargo(0.00);
+                            registroDetalle.add(cuentaModel);
+                            cargarTabla();
+                            limpiarRegistroDetalle();
+                        }
+                        else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Error");
+                            alert.setContentText("No se ha seleccionado el tipo de movimiento.");
+                            alert.show();
+                        }
+                    }
+                    else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setContentText("El valor del monto es invalido.");
+                        alert.show();
                     }
                 }
+                else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setContentText("No se ha ingresado el monto para la partida");
+                    alert.show();
+                }
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setContentText("No se ha seleccionado la cuenta afectada.");
+                alert.show();
             }
         });
 
@@ -201,7 +228,7 @@ public class RegistroPartidaController {
                                        PartidaModel partidaModel = new PartidaModel();
                                        partidaModel.setConcepto(txtConcepto.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase());
                                        partidaModel.setFecha(java.sql.Date.valueOf(datePartida.getValue()));
-                                       partidaModel.setIdUsuario(2);
+                                       partidaModel.setIdUsuario(idUsuarioSesion);
                                        partidaModel.setIdEmpresa(1);
                                        partidaModel.setTipoDocumento(cmbTipoDoc.getSelectionModel().getSelectedItem());
                                        partidaModel.setNumeroDocumento(txtNumeroDoc.getText());
@@ -228,9 +255,40 @@ public class RegistroPartidaController {
                                    }
                                }
                            }
+                           else {
+                               Alert alert = new Alert(Alert.AlertType.ERROR);
+                               alert.setTitle("Error");
+                               alert.setContentText("No se ha subido el documento de la partida.");
+                               alert.show();
+                           }
+                       }
+                       else {
+                           Alert alert = new Alert(Alert.AlertType.ERROR);
+                           alert.setTitle("Error");
+                           alert.setContentText("No se ha ingresado el numero de documento.");
+                           alert.show();
                        }
                    }
+                   else {
+                       Alert alert = new Alert(Alert.AlertType.ERROR);
+                       alert.setTitle("Error");
+                       alert.setContentText("No se ha seleccionado el tipo de documento a subir");
+                       alert.show();
+                   }
+
                }
+               else {
+                   Alert alert = new Alert(Alert.AlertType.ERROR);
+                   alert.setTitle("Error");
+                   alert.setContentText("No se ha ingresado el concepto de la partida.");
+                   alert.show();
+               }
+           }
+           else {
+               Alert alert = new Alert(Alert.AlertType.ERROR);
+               alert.setTitle("Error");
+               alert.setContentText("No se ha ingresado la fecha de la partida generada.");
+               alert.show();
            }
         });
 
@@ -239,9 +297,36 @@ public class RegistroPartidaController {
         });
 
     }
+    public boolean validarMonto(){
+        try{
+            double monto = Double.parseDouble(txtMonto.getText());
 
+            if (monto >= 0){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch(Exception e){
+            return false;
+        }
+    }
     public void cargarTabla(){
+        double cargo = 0.00;
+        double abono = 0.00;
+        double diferencia = 0.00;
         tblRegistroDetalle.setItems(registroDetalle);
+        for (CatalogoCuentaModel catalogoCuentaModel : registroDetalle) {
+            cargo += catalogoCuentaModel.getCargo();
+            abono += catalogoCuentaModel.getAbono();
+        }
+
+        diferencia = Math.abs(cargo - abono);
+
+        textTotalCargos.setText(String.format("%.2f", cargo));
+        textTotalAbonos.setText(String.format("%.2f", abono));
+        textDiferencia.setText(String.format("%.2f", diferencia));
     }
     public void limpiarRegistroDetalle() {
         txtMonto.setText("");
@@ -311,11 +396,11 @@ public class RegistroPartidaController {
                 this.archivoSeleccionado = archivoSeleccionado;
 
                 //Mostrar el nombre del archivo seleccionado
-                txtDocSubido.setText("📄 Documento seleccionado: " + archivoSeleccionado.getName());
+                txtDocSubido.setText("Documento seleccionado: " + archivoSeleccionado.getName());
 
                 System.out.println("Ruta del archivo seleccionado: " + archivoSeleccionado.getAbsolutePath());
             } else {
-                txtDocSubido.setText("❌ No se seleccionó ningún documento.");
+                txtDocSubido.setText("No se seleccionó ningún documento.");
             }
         });
     }
@@ -326,7 +411,7 @@ public class RegistroPartidaController {
         this.cmbCuentas.setItems(cuentaModel.obtenerNombreCuentas(1));
     }
 
-    //Crea un copia del documento subido en lo almacena en documentos_partidas
+    //Crea una copia del documento subido a documentos_partidas
     public boolean guardarCopiaPDF(String nombreDestino) {
         if (archivoSeleccionado == null) {
             System.out.println("No hay archivo seleccionado para guardar.");

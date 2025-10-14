@@ -5,87 +5,95 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.ReporteController">
-   <children>
-      <VBox alignment="TOP_CENTER" layoutX="1.0" prefHeight="500.0" prefWidth="732.0" spacing="10.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
-         <padding>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-         </padding>
-         <children>
+<AnchorPane prefHeight="680.0" prefWidth="980.0" style="-fx-background-color: #f4f6f8;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.ReporteController">
 
-             <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Generar reporte" />
-             <GridPane VBox.vgrow="NEVER" hgap="10.0" styleClass="contenedorRedondeado" vgap="3.0">
-                 <padding>
-                     <Insets bottom="10" left="10" right="10" top="10" />
-                 </padding>
-                 <columnConstraints>
-                  <ColumnConstraints minWidth="10.0" percentWidth="33.33" prefWidth="100.0" />
-                     <ColumnConstraints percentWidth="33.33" /> <!-- Título -->
-                     <ColumnConstraints maxWidth="149.0" minWidth="73.0" percentWidth="34.0" prefWidth="73.0" /> <!-- Botón -->
-                 </columnConstraints>
+    <children>
+        <VBox spacing="14" AnchorPane.bottomAnchor="18" AnchorPane.leftAnchor="18" AnchorPane.rightAnchor="18" AnchorPane.topAnchor="18">
+            <padding>
+                <Insets bottom="12" left="12" right="12" top="12" />
+            </padding>
 
-                                   <rowConstraints>
-                     <RowConstraints minHeight="40.0" vgrow="NEVER" />
-                     <RowConstraints minHeight="40.0" prefHeight="30.0" vgrow="NEVER" />
-                  <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-                  <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-                  <RowConstraints maxHeight="54.0" minHeight="1.0" prefHeight="27.0" vgrow="NEVER" />
-                  <RowConstraints maxHeight="54.0" minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
-                 </rowConstraints>
-                 <ComboBox fx:id="cmbTipo" prefHeight="41.0" prefWidth="118.0" promptText="Tipo" GridPane.halignment="LEFT" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                         <Insets />
-                     </GridPane.margin>
-               </ComboBox>
-               <Label prefHeight="17.0" prefWidth="94.0" text="Tipo de reporte" />
-               <Label prefHeight="17.0" prefWidth="94.0" text="Desde" GridPane.columnIndex="1" />
-               <Label prefHeight="17.0" prefWidth="94.0" text="Hasta" GridPane.columnIndex="2" />
-               <DatePicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
-               <DatePicker prefWidth="162.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-               <RadioButton mnemonicParsing="false" text="Mes anterior" GridPane.halignment="LEFT" GridPane.rowIndex="3">
-                  <GridPane.margin>
-                     <Insets left="30.0" />
-                  </GridPane.margin>
-               </RadioButton>
-               <RadioButton mnemonicParsing="false" text="Trimestre" GridPane.halignment="LEFT" GridPane.rowIndex="4">
-                  <GridPane.margin>
-                     <Insets left="30.0" />
-                  </GridPane.margin>
-               </RadioButton>
-               <RadioButton mnemonicParsing="false" text="Este mes" GridPane.halignment="LEFT" GridPane.rowIndex="2">
-                  <GridPane.margin>
-                     <Insets left="30.0" />
-                  </GridPane.margin>
-               </RadioButton>
-               <RadioButton mnemonicParsing="false" text="Año" GridPane.halignment="LEFT" GridPane.rowIndex="5">
-                  <GridPane.margin>
-                     <Insets left="30.0" />
-                  </GridPane.margin>
-               </RadioButton>
-                 <Button styleClass="agregar-boton" text="Generar reporte" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.rowSpan="2" />
-             </GridPane>
-            <GridPane VBox.vgrow="ALWAYS" styleClass="contenedorRedondeado">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: gray;" text="Previsualización" GridPane.columnSpan="2" GridPane.halignment="CENTER" />
-               </children>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label style="-fx-font-size: 28px;" text="📑" />
+                <VBox spacing="2">
+                    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Generador de reportes contables" />
+                    <Label style="-fx-text-fill: #666;" text="Elija tipo de reporte, periodo y genere un PDF o vista previa." />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+            </HBox>
+
+            <GridPane hgap="16" styleClass="contenedorRedondeado" vgap="10">
+                <padding>
+                    <Insets bottom="18" left="18" right="18" top="18" />
+                </padding>
+
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="22" />
+                    <ColumnConstraints percentWidth="28" />
+                    <ColumnConstraints percentWidth="22" />
+                    <ColumnConstraints percentWidth="28" />
+                </columnConstraints>
+
+                <Label text="Tipo de reporte" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <ComboBox fx:id="cmbTipoReporte" promptText="Seleccionar..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <Label text="Periodo rápido" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <ComboBox fx:id="cmbPeriodoRapido" promptText="Rápido..." GridPane.columnIndex="3" GridPane.rowIndex="0" />
+
+                <!-- Row 1 -->
+                <Label text="Desde" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <DatePicker fx:id="dateDesde" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="Hasta" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <DatePicker fx:id="dateHasta" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                <HBox spacing="8" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="btnLimpiar" styleClass="boton-neutral" text="Limpiar" />
+                </HBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="12" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="3">
+                    <Label text="Observaciones:" />
+                    <TextField fx:id="txtObservaciones" prefWidth="420" promptText="Notas para este reporte" />
+                    <Button fx:id="btnVistaPrevia" styleClass="boton-primario" text="Ver vista previa" />
+                    <Button fx:id="btnExportarPDF" styleClass="boton-secundario" text="Exportar PDF" />
+                </HBox>
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
             </GridPane>
-         </children>
-      </VBox>
-   </children>
+
+            <VBox spacing="8" styleClass="contenedorRedondeado" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 10 14 0 14;">
+                    <Label style="-fx-font-weight: bold; -fx-font-size: 15px;" text="Previsualización" />
+                    <Label fx:id="lblPreviewInfo" style="-fx-text-fill: #666;" text="" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label style="-fx-text-fill: #666;" text="Resultados:" />
+                </HBox>
+
+                <Separator />
+
+                <TableView fx:id="tblPreview" prefHeight="300" VBox.vgrow="ALWAYS">
+
+                </TableView>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 8 14 14 14;">
+                    <Label fx:id="lblRegistros" style="-fx-text-fill: #666;" text="0 registros" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </children>
 </AnchorPane>

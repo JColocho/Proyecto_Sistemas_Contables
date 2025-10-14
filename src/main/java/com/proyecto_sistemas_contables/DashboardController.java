@@ -17,4 +17,5 @@ public class DashboardController {
     @FXML
     private Label lblUtilidadPerdida;
 
+
 }
