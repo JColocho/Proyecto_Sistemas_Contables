@@ -56,6 +56,7 @@ public class LoginController {
                     Alert alerta = new Alert(Alert.AlertType.INFORMATION);
                     alerta.setContentText("Has iniciado sesión");
                     alerta.show();
+                    NavbarController.idUsuarioSesion = usuario.idUsuarioSesion(txtUsuario.getText());
                     Main.setRoot("navbar-view");
                 }
                 else {

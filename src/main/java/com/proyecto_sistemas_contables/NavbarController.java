@@ -31,12 +31,14 @@ public class NavbarController {
 
     @FXML
     private AnchorPane contentPane;
-
+    public static int idUsuarioSesion;
 
     @FXML
     private void initialize() {
         // Cargar el dashboard por defecto al iniciar
         loadView("dashboard-view.fxml");
+        ReporteController.idUsuarioEnSesion = idUsuarioSesion;
+        System.out.println(idUsuarioSesion);
     }
 
     @FXML

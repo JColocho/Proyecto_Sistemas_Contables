@@ -88,6 +88,7 @@ public class RegistroPartidaController {
     private ToggleGroup movimiento;
 
     private ObservableList<CatalogoCuentaModel> registroDetalle;
+    public static int idUsuarioSesion;
 
     // Guardará temporalmente el archivo PDF seleccionado
     private File archivoSeleccionado;
@@ -201,7 +202,7 @@ public class RegistroPartidaController {
                                        PartidaModel partidaModel = new PartidaModel();
                                        partidaModel.setConcepto(txtConcepto.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase());
                                        partidaModel.setFecha(java.sql.Date.valueOf(datePartida.getValue()));
-                                       partidaModel.setIdUsuario(2);
+                                       partidaModel.setIdUsuario(idUsuarioSesion);
                                        partidaModel.setIdEmpresa(1);
                                        partidaModel.setTipoDocumento(cmbTipoDoc.getSelectionModel().getSelectedItem());
                                        partidaModel.setNumeroDocumento(txtNumeroDoc.getText());

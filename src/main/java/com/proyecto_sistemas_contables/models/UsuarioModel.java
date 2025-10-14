@@ -150,4 +150,21 @@ public class UsuarioModel {
         }
     }
 
+    public int idUsuarioSesion(String nombreUsuario) {
+        try {
+            Connection connection = ConexionDB.connection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM tblusuarios WHERE nombreusuario='" + nombreUsuario + "'");
+
+            while (resultSet.next()) {
+                return resultSet.getInt("idusuario");
+            }
+            resultSet.close();
+            return -1;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

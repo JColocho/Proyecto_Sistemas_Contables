@@ -54,7 +54,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 0);
 }
 
-/* ----- Flecha del ComboBox ----- */
+/* Flecha del ComboBox */
 .combo-box .arrow-button {
     -fx-background-color: transparent;
 }
@@ -107,6 +107,7 @@
     -fx-border-color: #4A90E2;
     -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 0);
 }
+
 
 
 

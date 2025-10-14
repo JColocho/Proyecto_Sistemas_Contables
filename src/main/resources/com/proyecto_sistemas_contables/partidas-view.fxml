@@ -9,72 +9,67 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.PartidasController">
-   <children>
-      <VBox layoutX="1.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
-         <children>
-             <GridPane vgap="5.0">
-                 <columnConstraints>
-                     <ColumnConstraints percentWidth="40" />
-                     <ColumnConstraints percentWidth="40" />
-                     <ColumnConstraints percentWidth="20" />
-                 </columnConstraints>
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/button.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.PartidasController">
 
-                 <rowConstraints>
-                     <RowConstraints vgrow="SOMETIMES" />
-                     <RowConstraints vgrow="SOMETIMES" />
-                     <RowConstraints vgrow="SOMETIMES" />
-                     <RowConstraints vgrow="SOMETIMES" />
-                     <RowConstraints vgrow="SOMETIMES" />
-                 </rowConstraints>
+    <children>
+        <VBox prefHeight="590.0" prefWidth="920.0" spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="30.0">
 
-                 <!-- Contenedor redondeado -->
-                 <AnchorPane styleClass="contenedorRedondeado" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="3">
-                     <children>
-                         <!-- Grid interno para distribuir contenido -->
-                         <GridPane AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20">
-                             <columnConstraints>
-                                 <ColumnConstraints percentWidth="40.0" />
-                                 <ColumnConstraints percentWidth="40.0" />
-                                 <ColumnConstraints percentWidth="20.0" />
-                           <ColumnConstraints percentWidth="20.0" />
-                             </columnConstraints>
+            <children>
 
-                             <children>
-                                 <Label text="Fecha final" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-                                 <DatePicker GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                 <DatePicker GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                 <Button text="Buscar" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-                           <Label text="Filtrar por rango de fecha" />
-                           <Label text="Fecha de inicio" GridPane.rowIndex="1" />
-                             </children>
-                        <rowConstraints>
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" />
-                           <RowConstraints />
-                           <RowConstraints />
-                        </rowConstraints>
-                         </GridPane>
-                     </children>
-                 </AnchorPane>
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📘 Partidas" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="btnAgregarPartida" onAction="#agregarPartida" prefHeight="44.0" prefWidth="134.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar partida" />
+                </HBox>
 
-                       <Label text="Partidas" GridPane.halignment="CENTER" />
-                 <Button fx:id="btnAgregarPartida" mnemonicParsing="false" onAction="#agregarPartida" text="Agregar partida" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
-             </GridPane>
-            <TableView fx:id="tbPartidas" prefHeight="200.0" prefWidth="200.0">
-              <columns>
-                <TableColumn prefWidth="75.0" />
-                <TableColumn prefWidth="75.0" />
-              </columns>
-            </TableView>
+                <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12;                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);                                    -fx-padding: 20;">
+                    <children>
+                        <GridPane hgap="25" vgap="12" AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="25" AnchorPane.rightAnchor="25" AnchorPane.topAnchor="20">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="30.0" />
+                                <ColumnConstraints percentWidth="30.0" />
+                                <ColumnConstraints percentWidth="20.0" />
+                        <ColumnConstraints percentWidth="20.0" />
+                            </columnConstraints>
 
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Filtrar por rango de fecha" GridPane.columnSpan="3" />
 
-         </children>
-         <padding>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-         </padding>
-      </VBox>
-   </children>
+                            <Label style="-fx-text-fill: #495057; -fx-font-size: 13px;" text="Fecha de inicio" GridPane.rowIndex="1" />
+                            <DatePicker fx:id="dateInicial" GridPane.rowIndex="2" />
+
+                            <Label style="-fx-text-fill: #495057; -fx-font-size: 13px;" text="Fecha final" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                            <DatePicker fx:id="dateFinal" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                            <Button fx:id="btnBuscar" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+                     <Button fx:id="btnLimpiar" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+                     <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                     </rowConstraints>
+                        </GridPane>
+                    </children>
+                </AnchorPane>
+
+                <TableView fx:id="tbPartidas" prefHeight="400.0" style="-fx-background-color: white; -fx-border-radius: 12;                                   -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
+                    <columns>
+                        <TableColumn fx:id="clFecha" prefWidth="160" text="Fecha" />
+                        <TableColumn fx:id="clDetalle" prefWidth="420" text="Detalle" />
+                        <TableColumn fx:id="clUsuario" prefWidth="200" text="Usuario" />
+                        <TableColumn fx:id="clAccion" prefWidth="99.20001220703125" text="Acción" />
+                    </columns>
+                </TableView>
+            </children>
+
+            <padding>
+                <Insets bottom="20" left="20" right="20" top="20" />
+            </padding>
+        </VBox>
+    </children>
 </AnchorPane>

@@ -1,6 +1,8 @@
 package com.proyecto_sistemas_contables.models;
 
 import com.proyecto_sistemas_contables.Conexion.ConexionDB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 
@@ -12,9 +14,17 @@ public class PartidaModel {
     private String tipoDocumento;
     private String numeroDocumento;
     private int idUsuario;
-    private int idEmpresa;;
+    private int idEmpresa;
+    private String nombreUsuario;
 
     public PartidaModel() {
+    }
+
+    public PartidaModel(int idpartida, Date fecha, String concepto, String nombreusuario) {
+        this.idPartida = idpartida;
+        this.fecha = fecha;
+        this.concepto = concepto;
+        this.nombreUsuario = nombreusuario;
     }
 
     public int getIdPartida() {
@@ -81,6 +91,14 @@ public class PartidaModel {
         this.idEmpresa = idEmpresa;
     }
 
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
+
     public int agregarPartida(PartidaModel partida) {
         try{
             Connection connection = ConexionDB.connection();
@@ -110,5 +128,52 @@ public class PartidaModel {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+    public static ObservableList<PartidaModel> obtenerPartidas(Date fechaInicio, Date fechaFin) {
+        ObservableList<PartidaModel> lista = FXCollections.observableArrayList();
+        String sql;
+
+        boolean tieneRango = (fechaInicio != null && fechaFin != null);
+
+        if (tieneRango) {
+            sql = """
+                SELECT p.idpartida, p.fecha, p.concepto, u.nombreusuario
+                FROM tblpartidas p
+                INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
+                WHERE p.fecha BETWEEN ? AND ?
+                ORDER BY p.fecha DESC
+            """;
+        } else {
+            sql = """
+                SELECT p.idpartida, p.fecha, p.concepto, u.nombreusuario
+                FROM tblpartidas p
+                INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
+                ORDER BY p.fecha DESC
+                LIMIT 10
+            """;
+        }
+
+        try (Connection connection = ConexionDB.connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            if (tieneRango) {
+                statement.setDate(1, new java.sql.Date(fechaInicio.getTime()));
+                statement.setDate(2, new java.sql.Date(fechaFin.getTime()));
+            }
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                lista.add(new PartidaModel(
+                        rs.getInt("idpartida"),
+                        rs.getDate("fecha"),
+                        rs.getString("concepto"),
+                        rs.getString("nombreusuario")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 }
