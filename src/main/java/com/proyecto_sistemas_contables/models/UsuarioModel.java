@@ -166,5 +166,21 @@ public class UsuarioModel {
             throw new RuntimeException(e);
         }
     }
+    public String obtenerNombreUsuario(int idUsuario) {
+        try {
+            Connection connection = ConexionDB.connection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM tblusuarios WHERE idusuario='" + idUsuario + "'");
+
+            while (resultSet.next()) {
+                return resultSet.getString("nombreusuario");
+            }
+            resultSet.close();
+            return "";
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

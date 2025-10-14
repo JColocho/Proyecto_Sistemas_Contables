@@ -10,7 +10,7 @@ public class ReporteModel {
 
     public List<Map<String, Object>> obtenerLibroDiario(LocalDate desde, LocalDate hasta) throws SQLException {
         String sql = """
-            SELECT p.idpartida, p.fecha, p.concepto, d.idcuenta, c.cuenta, d.cargo, d.abono
+            SELECT p.fecha, p.concepto, c.cuenta, d.cargo, d.abono
             FROM tblpartidas p
             JOIN tbldetallepartida d ON p.idpartida = d.idpartida
             LEFT JOIN tblcatalogocuentas c ON d.idcuenta = c.idcuenta
@@ -32,7 +32,7 @@ public class ReporteModel {
 
     public List<Map<String, Object>> obtenerLibroMayor(LocalDate desde, LocalDate hasta) throws SQLException {
         String sql = """
-            SELECT c.idcuenta, c.cuenta, SUM(d.cargo) AS total_cargo, SUM(d.abono) AS total_abono
+            SELECT c.cuenta, SUM(d.cargo) AS total_cargo, SUM(d.abono) AS total_abono
             FROM tbldetallepartida d
             JOIN tblpartidas p ON d.idpartida = p.idpartida
             JOIN tblcatalogocuentas c ON d.idcuenta = c.idcuenta

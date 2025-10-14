@@ -52,4 +52,4 @@ El archivo clavesAccesos.txt están las claves de acceso para la creación de un
 
 ### Aclaraciones
 Por motivos de tiempo solo se hizo registro de partidas con un usuario predefinido y una empresa predefinida con su propio catálogo de cuentas, 
-permite registrar partidas y el login si está completo con su respectivo registro de usuario, CRUD de empresas y algunas vistas.
+permite registrar partidas y el login si está completo con su respectivo registro de usuario, generación de reporte de Libro Diario y Mayor.

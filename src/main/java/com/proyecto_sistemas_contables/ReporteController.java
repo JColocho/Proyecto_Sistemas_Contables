@@ -6,6 +6,7 @@ import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.proyecto_sistemas_contables.models.ReporteModel;
+import com.proyecto_sistemas_contables.models.UsuarioModel;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -172,8 +173,9 @@ public class ReporteController {
         if (destino == null) return;
 
         try {
+            UsuarioModel usuarioModel = new UsuarioModel();
             List<Map<String, Object>> datos = tblPreview.getItems();
-            generarReportePDF(tipo, 1, idUsuarioEnSesion, desde, hasta,
+            generarReportePDF(tipo, 1, usuarioModel.obtenerNombreUsuario(idUsuarioEnSesion), desde, hasta,
                     destino.getAbsolutePath(), txtObservaciones.getText(), datos);
 
             //Crear o verificar carpeta local
@@ -214,7 +216,7 @@ public class ReporteController {
         a.setContentText(msg);
         a.showAndWait();
     }
-    public static void generarReportePDF(String tipo, int idEmpresa, int idUsuario,
+    public static void generarReportePDF(String tipo, int idEmpresa, String nombreUsuario,
                                          LocalDate desde, LocalDate hasta,
                                          String ruta, String observaciones,
                                          List<Map<String, Object>> datos) throws Exception {
@@ -229,7 +231,7 @@ public class ReporteController {
                     .setTextAlignment(TextAlignment.CENTER);
             doc.add(header);
 
-            Paragraph sub = new Paragraph("Empresa ID: " + idEmpresa + " | Usuario ID: " + idUsuario
+            Paragraph sub = new Paragraph("Empresa ID: " + idEmpresa + " | Usuario: " + nombreUsuario
                     + "\nPeriodo: " + desde.format(df) + " - " + hasta.format(df))
                     .setTextAlignment(TextAlignment.CENTER)
                     .setFontSize(10);

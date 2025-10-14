@@ -38,6 +38,7 @@ public class NavbarController {
         // Cargar el dashboard por defecto al iniciar
         loadView("dashboard-view.fxml");
         ReporteController.idUsuarioEnSesion = idUsuarioSesion;
+        PartidasController.idUsuarioSesion = idUsuarioSesion;
         System.out.println(idUsuarioSesion);
     }
 
