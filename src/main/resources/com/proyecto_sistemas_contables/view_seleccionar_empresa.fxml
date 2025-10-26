@@ -50,7 +50,6 @@
                   <TableColumn fx:id="colDireccion" prefWidth="150.0" text="Dirección" />
                   <TableColumn fx:id="colTelefono" prefWidth="100.0" text="Teléfono" />
                   <TableColumn fx:id="colCorreo" prefWidth="120.0" text="Correo" />
-                  <TableColumn fx:id="colActividad" prefWidth="110.0" text="Actividad" />
                   <TableColumn fx:id="colAcciones" prefWidth="130.0" text="Acciones" />
                </columns>
                <columnResizePolicy>
@@ -68,7 +67,7 @@
       </AnchorPane>
 
                                           <!-- Formulario modal (overlay) -->
-      <AnchorPane fx:id="formulario_empresa" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" style="-fx-background-color: white; -fx-border-width: 2; -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);" visible="false" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
+      <AnchorPane fx:id="formulario_empresa" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" style="-fx-background-color: white; -fx-border-width: 2; -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
          <children>
             <GridPane hgap="10.0" vgap="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
                <columnConstraints>
@@ -84,11 +83,10 @@
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Registrar/Editar Empresa">
+                  <Label text="Registrar/Editar Empresa" GridPane.columnSpan="2">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -111,17 +109,14 @@
 
                                                                   <Label text="Teléfono" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <TextField fx:id="txt_telefono" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-
-                                                                  <Label text="Actividad económica" GridPane.rowIndex="7" />
-                  <ComboBox fx:id="cb_actividad_eco" maxWidth="Infinity" prefHeight="30.0" promptText="Seleccione la actividad" GridPane.rowIndex="8" />
       
-                                                                  <Button fx:id="btn_agregar" maxWidth="Infinity" mnemonicParsing="false" onAction="#guardarEmpresa" prefHeight="30.0" style="-fx-background-color: rgb(0,153,81); -fx-background-radius: 5px; -fx-cursor: hand;" text="Guardar" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                                                  <Button fx:id="btn_agregar" maxWidth="Infinity" mnemonicParsing="false" onAction="#guardarEmpresa" prefHeight="30.0" style="-fx-background-color: rgb(0,153,81); -fx-background-radius: 5px; -fx-cursor: hand;" text="Guardar" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
       
-                                                                              <Button fx:id="btn_cancelar" maxWidth="Infinity" mnemonicParsing="false" onAction="#cancelar" prefHeight="30.0" style="-fx-background-color: rgb(255,95,87); -fx-background-radius: 5px; -fx-cursor: hand;" text="Cancelar" textFill="WHITE" GridPane.rowIndex="9">
+                                                                              <Button fx:id="btn_cancelar" maxWidth="Infinity" mnemonicParsing="false" onAction="#cancelar" prefHeight="30.0" style="-fx-background-color: rgb(255,95,87); -fx-background-radius: 5px; -fx-cursor: hand;" text="Cancelar" textFill="WHITE" GridPane.rowIndex="8">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>

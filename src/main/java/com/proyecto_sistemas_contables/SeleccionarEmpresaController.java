@@ -1,9 +1,6 @@
 package com.proyecto_sistemas_contables;
 
-import com.proyecto_sistemas_contables.Conexion.ConexionDB;
 import com.proyecto_sistemas_contables.models.EmpresaModel;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -16,10 +13,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 public class SeleccionarEmpresaController {
 
@@ -48,9 +41,6 @@ public class SeleccionarEmpresaController {
     private TableColumn<EmpresaModel, String> colCorreo;
 
     @FXML
-    private TableColumn<EmpresaModel, String> colActividad;
-
-    @FXML
     private TableColumn<EmpresaModel, Void> colAcciones;
 
     @FXML
@@ -58,9 +48,6 @@ public class SeleccionarEmpresaController {
 
     @FXML
     private TextField txt_nombre_empresa, txt_nit, txt_nrc, txt_direccion, txt_telefono, txt_correo;
-
-    @FXML
-    private ComboBox<String> cb_actividad_eco;
 
     @FXML
     private Button btn_agregar, btn_cancelar;
@@ -79,18 +66,12 @@ public class SeleccionarEmpresaController {
     private void initialize() {
         formulario_empresa.setVisible(false);
 
-        // Inicializar ComboBox de actividad económica
-        cb_actividad_eco.getItems().addAll(
-                "Comercio", "Servicios", "Manufactura", "Construcción", "Turismo"
-        );
-
         // Inicializar ComboBox de búsqueda
         cb_buscar.setItems(FXCollections.observableArrayList(
                 "Todos",
                 "Nombre",
                 "NIT",
-                "NRC",
-                "Actividad Económica"
+                "NRC"
         ));
         cb_buscar.setValue("Todos"); // Valor por defecto
 
@@ -102,7 +83,6 @@ public class SeleccionarEmpresaController {
         colDireccion.setCellValueFactory(new PropertyValueFactory<>("direccion"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
-        colActividad.setCellValueFactory(new PropertyValueFactory<>("actividadEconomica"));
         configurarColumnaAcciones();
 
         // Cargar empresas y configurar filtro
@@ -153,9 +133,6 @@ public class SeleccionarEmpresaController {
                 case "NRC":
                     return empresa.getNrc().toLowerCase().contains(textoBusqueda);
 
-                case "Actividad Económica":
-                    return empresa.getActividadEconomica().toLowerCase().contains(textoBusqueda);
-
                 case "Todos":
                 default:
                     // Buscar en todos los campos
@@ -164,8 +141,7 @@ public class SeleccionarEmpresaController {
                             empresa.getNrc().toLowerCase().contains(textoBusqueda) ||
                             empresa.getDireccion().toLowerCase().contains(textoBusqueda) ||
                             empresa.getTelefono().toLowerCase().contains(textoBusqueda) ||
-                            empresa.getCorreo().toLowerCase().contains(textoBusqueda) ||
-                            empresa.getActividadEconomica().toLowerCase().contains(textoBusqueda);
+                            empresa.getCorreo().toLowerCase().contains(textoBusqueda);
             }
         });
     }
@@ -272,67 +248,20 @@ public class SeleccionarEmpresaController {
         String direccion = txt_direccion.getText();
         String telefono = txt_telefono.getText();
         String correo = txt_correo.getText();
-        String actividad_economica = cb_actividad_eco.getSelectionModel().getSelectedItem();
 
-        if (nombre.isEmpty() || nit.isEmpty() || nrc.isEmpty() || direccion.isEmpty() || telefono.isEmpty() || correo.isEmpty() || actividad_economica == null) {
-            mostrarAlerta("Error", "Debe completar los campos", Alert.AlertType.ERROR);
+        if (nombre.isEmpty() || nit.isEmpty() || nrc.isEmpty() || direccion.isEmpty() || telefono.isEmpty() || correo.isEmpty()) {
+            mostrarAlerta("Error", "Debe completar todos los campos", Alert.AlertType.ERROR);
             return;
         }
 
-        try (Connection conn = ConexionDB.connection()) {
+        try {
             if (empresaEditando == null) {
-                // Modo agregar
-                // Insertar correo y obtener id
-                String sqlCorreo = "INSERT INTO tblcorreos (correo) VALUES (?) RETURNING idcorreo";
-                PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
-                psCorreo.setString(1, correo);
-                ResultSet rsCorreo = psCorreo.executeQuery();
-                int idCorreo = 0;
-                if (rsCorreo.next()) {
-                    idCorreo = rsCorreo.getInt("idcorreo");
-                }
-
-                // Insertar empresa con actividad económica
-                String sqlEmpresa = """
-                        INSERT INTO tblempresas (nombre, nit, nrc, direccion, telefono, idcorreo, actividad_economica)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                        """;
-                PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
-                psEmpresa.setString(1, nombre);
-                psEmpresa.setString(2, nit);
-                psEmpresa.setString(3, nrc);
-                psEmpresa.setString(4, direccion);
-                psEmpresa.setString(5, telefono);
-                psEmpresa.setInt(6, idCorreo);
-                psEmpresa.setString(7, actividad_economica);
-                psEmpresa.executeUpdate();
-
+                // Modo agregar - llamar método estático del modelo
+                EmpresaModel.guardarNuevaEmpresa(nombre, nit, nrc, direccion, telefono, correo);
                 mostrarAlerta("Éxito", "Empresa registrada correctamente.", Alert.AlertType.INFORMATION);
             } else {
-                // Modo editar
-                // Actualizar correo
-                String sqlCorreo = "UPDATE tblcorreos SET correo = ? WHERE idcorreo = ?";
-                PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
-                psCorreo.setString(1, correo);
-                psCorreo.setInt(2, empresaEditando.getIdCorreo());
-                psCorreo.executeUpdate();
-
-                // Actualizar empresa
-                String sqlEmpresa = """
-                        UPDATE tblempresas 
-                        SET nombre = ?, nit = ?, nrc = ?, direccion = ?, telefono = ?, actividad_economica = ?
-                        WHERE idempresa = ?
-                        """;
-                PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
-                psEmpresa.setString(1, nombre);
-                psEmpresa.setString(2, nit);
-                psEmpresa.setString(3, nrc);
-                psEmpresa.setString(4, direccion);
-                psEmpresa.setString(5, telefono);
-                psEmpresa.setString(6, actividad_economica);
-                psEmpresa.setInt(7, empresaEditando.getId());
-                psEmpresa.executeUpdate();
-
+                // Modo editar - llamar método de instancia del modelo
+                empresaEditando.actualizarEmpresa(nombre, nit, nrc, direccion, telefono, correo);
                 mostrarAlerta("Éxito", "Empresa actualizada correctamente.", Alert.AlertType.INFORMATION);
             }
 
@@ -358,7 +287,6 @@ public class SeleccionarEmpresaController {
         txt_direccion.setText(empresa.getDireccion());
         txt_telefono.setText(empresa.getTelefono());
         txt_correo.setText(empresa.getCorreo());
-        cb_actividad_eco.getSelectionModel().select(empresa.getActividadEconomica());
 
         btn_agregar.setText("Actualizar");
         formulario_empresa.setVisible(true);
@@ -380,18 +308,9 @@ public class SeleccionarEmpresaController {
 
     // Eliminar empresa de la base de datos
     private void eliminarEmpresa(EmpresaModel empresa) {
-        try (Connection conn = ConexionDB.connection()) {
-            // Eliminar empresa
-            String sqlEmpresa = "DELETE FROM tblempresas WHERE idempresa = ?";
-            PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
-            psEmpresa.setInt(1, empresa.getId());
-            psEmpresa.executeUpdate();
-
-            // Eliminar correo asociado
-            String sqlCorreo = "DELETE FROM tblcorreos WHERE idcorreo = ?";
-            PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
-            psCorreo.setInt(1, empresa.getIdCorreo());
-            psCorreo.executeUpdate();
+        try {
+            // Llamar al método del modelo
+            empresa.eliminarEmpresa();
 
             // Recargar tabla
             cargarEmpresas();
@@ -405,32 +324,9 @@ public class SeleccionarEmpresaController {
 
     // Cargar empresas desde la base de datos
     private void cargarEmpresas() {
-        listaEmpresas.clear();
-        try (Connection conn = ConexionDB.connection()) {
-            String sql = """
-                    SELECT e.idempresa, e.nombre, e.nit, e.nrc, e.direccion, 
-                           e.telefono, e.idcorreo, c.correo, e.actividad_economica
-                    FROM tblempresas e
-                    LEFT JOIN tblcorreos c ON e.idcorreo = c.idcorreo
-                    ORDER BY e.idempresa
-                    """;
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                EmpresaModel empresa = new EmpresaModel(
-                        rs.getInt("idempresa"),
-                        rs.getString("nombre"),
-                        rs.getString("nit"),
-                        rs.getString("nrc"),
-                        rs.getString("direccion"),
-                        rs.getString("telefono"),
-                        rs.getInt("idcorreo"),
-                        rs.getString("correo"),
-                        rs.getString("actividad_economica")
-                );
-                listaEmpresas.add(empresa);
-            }
+        try {
+            // Llamar al método estático del modelo
+            listaEmpresas.setAll(EmpresaModel.cargarEmpresas());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -446,7 +342,6 @@ public class SeleccionarEmpresaController {
         txt_direccion.clear();
         txt_telefono.clear();
         txt_correo.clear();
-        cb_actividad_eco.getSelectionModel().clearSelection();
     }
 
     // Mostrar alertas
