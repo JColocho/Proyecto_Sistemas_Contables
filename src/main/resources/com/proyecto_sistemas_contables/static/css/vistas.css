@@ -14,28 +14,62 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);
 }
 
-
-.agregar-boton {
+/* Estilos de botones*/
+.btnVerde{
     -fx-background-color: #009951;
     -fx-font-weight: bold;
-    -fx-font-size: 15px;
-    -fx-background-radius: 8;
+    -fx-background-radius: 10;
     -fx-text-fill: #fcfcfc;
     -fx-cursor: hand;
 }
-
-.agregar-boton:hover{
+.btnVerde:hover{
     -fx-background-color: #00B85C;
     -fx-scale-x: 1.03;
     -fx-scale-y: 1.03;
 }
-.agregar-boton:pressed{
+.btnVerde:pressed{
     -fx-background-color: #007F45;
     -fx-scale-x: 0.98;
     -fx-scale-y: 0.98;
 }
 
-/* ----- Parte visible del ComboBox ----- */
+.btnAzul{
+    -fx-background-color: #1976D2;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-text-fill: #fcfcfc;
+    -fx-cursor: hand;
+}
+.btnAzul:hover{
+    -fx-background-color: #2196F3;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+.btnAzul:pressed{
+    -fx-background-color: #0D47A1;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.btnRojo{
+    -fx-background-color: #D32F2F;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-text-fill: #fcfcfc;
+    -fx-cursor: hand;
+}
+.btnRojo:hover{
+    -fx-background-color: #F44336;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+.btnRojo:pressed{
+    -fx-background-color: #B71C1C;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* ----- Estilos de parte visible del ComboBox ----- */
 .combo-box {
     -fx-background-color: white;
     -fx-background-radius: 8;
@@ -58,12 +92,11 @@
 .combo-box .arrow-button {
     -fx-background-color: transparent;
 }
-
 .combo-box .arrow {
     -fx-background-color: #1E1E1E;
 }
 
-/* ----- Lista desplegable ----- */
+/* ----- Estilo de lista desplegable del combobox----- */
 .combo-box-popup .list-view {
     -fx-background-color: white;
     -fx-background-radius: 8;
@@ -108,7 +141,69 @@
     -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 0);
 }
 
+/* Estilo del DatePicker general */
+.date-picker {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1;
+    -fx-font-size: 13px;
+    -fx-pref-height: 36px;
+    -fx-pref-width: 180px;
+}
+/* Campo de texto interno del DatePicker*/
+.date-picker > .text-field {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 6 10 6 10;
+}
 
+/*  Al enfocar el DatePicker  */
+.date-picker:focused,
+.date-picker > .text-field:focused {
+    -fx-border-color: #4A90E2;
+    -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 0);
+}
 
+/* Botón del calendario (icono)  */
+.date-picker > .arrow-button {
+    -fx-background-color: white;
+    -fx-background-radius: 0 8 8 0; /* bordes derechos redondeados */
+    -fx-border-radius: 0 8 8 0;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0 10 0 10;
+}
+.date-picker > .arrow-button:hover {
+    -fx-background-color: #f3f3f3;
+}
 
+/*  Icono del calendario */
+.date-picker > .arrow-button > .arrow {
+    -fx-background-color: #4A90E2; /* color azul del ícono */
+}
 
+/*  Calendario desplegable */
+.date-picker-popup {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 2);
+}
+/* Celdas del calendario */
+.date-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #333;
+    -fx-alignment: center;
+}
+.date-cell:hover {
+    -fx-background-color: #e6f0ff;
+}
+.date-cell:focused, .date-cell:selected {
+    -fx-background-color: #4A90E2;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}

@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.CatalogoController">
+<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.CatalogoController">
    <children>
-      <VBox layoutX="1.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
+      <VBox layoutX="1.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
          <padding>
             <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
          </padding>
@@ -47,7 +47,7 @@
                      <Insets left="50.0" />
                   </GridPane.margin></ComboBox>
 
-                 <Button fx:id="btnAgregarCuenta" onAction="#agregarCuenta" styleClass="agregar-boton" text="Agregar cuenta" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" />
+                 <Button fx:id="btnAgregarCuenta" onAction="#agregarCuenta" prefHeight="32.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar cuenta" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" />
              </GridPane>
             <TableView fx:id="tbCuentas" prefHeight="320.0" prefWidth="472.0">
               <columns>
