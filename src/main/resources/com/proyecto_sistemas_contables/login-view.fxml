@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #3C946F;" stylesheets="@static/css/button.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.LoginController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #3C946F;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.LoginController">
    <children>
       <AnchorPane layoutX="74.0" layoutY="59.0" prefHeight="532.0" prefWidth="851.0" style="-fx-background-color: #D9D9D9; -fx-background-radius: 31;">
          <children>
@@ -25,7 +25,7 @@
                   <Font name="Inter Regular" size="36.0" />
                </font>
             </Label>
-            <TextField fx:id="txtUsuario" layoutX="54.0" layoutY="151.0" prefHeight="32.0" prefWidth="266.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" />
+            <TextField fx:id="txtUsuario" layoutX="54.0" layoutY="151.0" prefHeight="32.0" prefWidth="266.0" />
             <Label layoutX="54.0" layoutY="132.0" style="-fx-font-style: Inter;" text="Nombre de usuario">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
@@ -39,7 +39,7 @@
                   <Image url="@static/img/img-inicio.png" />
                </image>
             </ImageView>
-            <PasswordField fx:id="txtClavePWD" layoutX="51.0" layoutY="240.0" prefHeight="32.0" prefWidth="266.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" />
+            <PasswordField fx:id="txtClavePWD" layoutX="51.0" layoutY="240.0" prefHeight="32.0" prefWidth="266.0" />
             <CheckBox fx:id="chkMostrarClave" layoutX="51.0" layoutY="280.0" mnemonicParsing="false" text="Mostrar contraseña">
                <font>
                   <Font name="Inter 28pt Bold" size="12.0" />
