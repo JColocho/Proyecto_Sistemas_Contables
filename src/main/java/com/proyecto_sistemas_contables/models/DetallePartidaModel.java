@@ -1,15 +1,19 @@
 package com.proyecto_sistemas_contables.models;
 
 import com.proyecto_sistemas_contables.Conexion.ConexionDB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DetallePartidaModel {
     private int idDetalle;
     private int idPartida;
     private int idCuenta;
+    private String Cuenta;
     private Double cargo;
     private Double abono;
 
@@ -56,6 +60,14 @@ public class DetallePartidaModel {
         this.abono = abono;
     }
 
+    public String getCuenta() {
+        return Cuenta;
+    }
+
+    public void setCuenta(String cuenta) {
+        Cuenta = cuenta;
+    }
+
     public void agregarDetalle(int idPartida, int idCuenta, Double cargo, Double abono) {
         try{
             Connection connection = ConexionDB.connection();
@@ -70,5 +82,30 @@ public class DetallePartidaModel {
             System.out.println(e.getMessage());
         }
 
+    }
+    public static ObservableList<DetallePartidaModel> obtenerDetallePartida(int idPartida) {
+        ObservableList<DetallePartidaModel> lista = FXCollections.observableArrayList();
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT " +
+                    "dp.iddetalle, dp.idpartida, dp.idcuenta, c.cuenta, dp.cargo, dp.abono " +
+                    "FROM tbldetallepartida dp INNER JOIN tblcatalogocuentas c ON dp.idcuenta = c.idcuenta WHERE dp.idpartida = ?");
+            statement.setInt(1, idPartida);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                DetallePartidaModel detallePartidaModel = new DetallePartidaModel();
+                detallePartidaModel.setIdDetalle(resultSet.getInt("iddetalle"));
+                detallePartidaModel.setIdPartida(resultSet.getInt("idpartida"));
+                detallePartidaModel.setIdCuenta(resultSet.getInt("idcuenta"));
+                detallePartidaModel.setCuenta(resultSet.getString("cuenta"));
+                detallePartidaModel.setCargo(resultSet.getDouble("cargo"));
+                detallePartidaModel.setAbono(resultSet.getDouble("abono"));
+                lista.add(detallePartidaModel);
+            }
+            return lista;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

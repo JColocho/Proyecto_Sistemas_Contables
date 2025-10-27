@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="680.0" prefWidth="980.0" style="-fx-background-color: #f4f6f8;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.ReporteController">
+<AnchorPane prefHeight="680.0" prefWidth="980.0" style="-fx-background-color: #f4f6f8;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.ReporteController">
 
     <children>
         <VBox spacing="14" AnchorPane.bottomAnchor="18" AnchorPane.leftAnchor="18" AnchorPane.rightAnchor="18" AnchorPane.topAnchor="18">
@@ -39,7 +39,7 @@
                 </padding>
 
                 <columnConstraints>
-                    <ColumnConstraints percentWidth="22" />
+                    <ColumnConstraints halignment="CENTER" percentWidth="22" />
                     <ColumnConstraints percentWidth="28" />
                     <ColumnConstraints percentWidth="22" />
                     <ColumnConstraints percentWidth="28" />
@@ -58,15 +58,15 @@
                 <Label text="Hasta" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                 <DatePicker fx:id="dateHasta" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                 <HBox spacing="8" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
-                    <Region HBox.hgrow="ALWAYS" />
-                    <Button fx:id="btnLimpiar" styleClass="boton-neutral" text="Limpiar" />
+                    <Region prefHeight="42.0" prefWidth="609.0" HBox.hgrow="ALWAYS" />
+                    <Button fx:id="btnLimpiar" prefHeight="31.0" prefWidth="113.0" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" />
                 </HBox>
 
                 <HBox alignment="CENTER_RIGHT" spacing="12" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="3">
                     <Label text="Observaciones:" />
                     <TextField fx:id="txtObservaciones" prefWidth="420" promptText="Notas para este reporte" />
-                    <Button fx:id="btnVistaPrevia" styleClass="boton-primario" text="Ver vista previa" />
-                    <Button fx:id="btnExportarPDF" styleClass="boton-secundario" text="Exportar PDF" />
+                    <Button fx:id="btnVistaPrevia" prefHeight="33.0" prefWidth="146.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Ver vista previa" />
+                    <Button fx:id="btnExportarPDF" prefHeight="33.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Exportar PDF" />
                 </HBox>
             <rowConstraints>
                <RowConstraints />

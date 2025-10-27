@@ -15,6 +15,7 @@ module com.proyecto_sistemas_contables {
     requires javafx.graphics;
     requires kernel;
     requires layout;
+    requires java.desktop;
 
     opens com.proyecto_sistemas_contables to javafx.fxml;
     opens com.proyecto_sistemas_contables.models to javafx.base;

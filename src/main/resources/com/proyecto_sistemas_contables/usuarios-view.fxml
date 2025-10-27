@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.UsuariosController">
+<AnchorPane prefHeight="500.0" prefWidth="732.0" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.UsuariosController">
    <children>
-      <VBox layoutX="11.0" layoutY="10.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
+      <VBox layoutX="11.0" layoutY="10.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
          <children>
             <GridPane vgap="5.0">
                <columnConstraints>
@@ -31,9 +31,9 @@
                   <RowConstraints vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <AnchorPane styleClass="contenedorRedondeado" GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="3">
+                  <AnchorPane styleClass="contenedorRedondeado" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="3">
                      <children>
-                        <GridPane AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20">
+                        <GridPane AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
                            <columnConstraints>
                               <ColumnConstraints percentWidth="40.0" />
                               <ColumnConstraints percentWidth="40.0" />
@@ -41,7 +41,7 @@
                               <ColumnConstraints percentWidth="20.0" />
                            </columnConstraints>
                            <children>
-                              <Button fx:id="btn_buscar" text="Buscar" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                              <Button fx:id="btn_buscar" prefHeight="32.0" prefWidth="100.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
@@ -49,6 +49,7 @@
                               <TextField fx:id="txt_filtrar" promptText="Buscar usuario" GridPane.rowIndex="1" />
                            </children>
                            <rowConstraints>
+                              <RowConstraints />
                               <RowConstraints />
                               <RowConstraints />
                            </rowConstraints>
@@ -60,7 +61,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <Button fx:id="btn_agregar" mnemonicParsing="false" style="-fx-background-color: rgb(0,153,81); -fx-text-fill: white;" text="Agregar usuario" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+                  <Button fx:id="btn_agregar" mnemonicParsing="false" prefHeight="31.0" prefWidth="139.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar usuario" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" />
                </children>
             </GridPane>
             <TableView fx:id="tbl_usuarios" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: rgb(250, 244, 246);">

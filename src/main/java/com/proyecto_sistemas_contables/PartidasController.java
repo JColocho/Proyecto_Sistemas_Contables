@@ -35,49 +35,55 @@ public class PartidasController {
 
     @FXML
     public void initialize() {
-        RegistroPartidaController.idUsuarioSesion = idUsuarioSesion;
+        try{
+            RegistroPartidaController.idUsuarioSesion = idUsuarioSesion;
 
-        // Ajustar los anchos en porcentaje
-        clFecha.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.15));
-        clDetalle.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.40));
-        clUsuario.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.25));
-        clAccion.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.20));
+            // Ajustar los anchos en porcentaje
+            clFecha.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.15));
+            clDetalle.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.40));
+            clUsuario.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.25));
+            clAccion.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.20));
 
 
-        clFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
-        clDetalle.setCellValueFactory(new PropertyValueFactory<>("concepto"));
-        clUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
-        clAccion.setCellFactory(param -> new TableCell<>() {
-            private final Button btn = new Button("Ver Detalle");
-            {
-                btn.setStyle("-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-weight: bold;");
-                btn.setOnAction(event -> {
-                    PartidaModel partida = getTableView().getItems().get(getIndex());
-                    // Aquí podrás colocar el evento personalizado:
-                    // mostrarDetallePartida(partida);
-                });
-            }
+            clFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+            clDetalle.setCellValueFactory(new PropertyValueFactory<>("concepto"));
+            clUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
+            clAccion.setCellFactory(param -> new TableCell<>() {
+                private final Button btn = new Button("Ver Detalle");
+                {
+                    btn.setStyle("-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-weight: bold;");
+                    btn.setOnAction(event -> {
+                        PartidaModel partida = getTableView().getItems().get(getIndex());
+                        DetallePartidaController.idPartida = partida.getIdPartida();
+                        Stage stage = (Stage) tbPartidas.getScene().getWindow();
+                        DialogoUtil.showDialog("detalle-partida-view", "Detalle", stage);
+                    });
+                }
 
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) setGraphic(null);
-                else setGraphic(btn);
-            }
-        });
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) setGraphic(null);
+                    else setGraphic(btn);
+                }
+            });
 
-        cargarPartidas(null, null);
-
-        btnBuscar.setOnAction(event -> {
-            Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
-            Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
-            cargarPartidas(inicio, fin);
-        });
-        btnLimpiar.setOnAction(event -> {
-            dateInicial.setValue(null);
-            dateFinal.setValue(null);
             cargarPartidas(null, null);
-        });
+
+            btnBuscar.setOnAction(event -> {
+                Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                cargarPartidas(inicio, fin);
+            });
+            btnLimpiar.setOnAction(event -> {
+                dateInicial.setValue(null);
+                dateFinal.setValue(null);
+                cargarPartidas(null, null);
+            });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     private void cargarPartidas(Date inicio, Date fin) {

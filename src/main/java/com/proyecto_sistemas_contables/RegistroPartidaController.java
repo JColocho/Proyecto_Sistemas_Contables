@@ -7,11 +7,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,6 +89,9 @@ public class RegistroPartidaController {
     @FXML
     private TextField txtNumeroDoc;
 
+    @FXML
+    private Hyperlink linkVerDoc;
+
     private ToggleGroup movimiento;
 
     private ObservableList<CatalogoCuentaModel> registroDetalle;
@@ -98,6 +105,19 @@ public class RegistroPartidaController {
 
     public void initialize() {
 
+        linkVerDoc.setVisible(false);
+        //Acción para ver el documento que se encuentra seleccionado
+        linkVerDoc.setOnAction(event -> {
+            try{
+                if (archivoSeleccionado != null){
+                    Desktop.getDesktop().open(archivoSeleccionado);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        //Cargando lista de tipo de documento subido
         ObservableList<String> tiposDocumento = FXCollections.observableArrayList(
                 "Factura de consumidor final",
                 "Factura de crédito fiscal",
@@ -116,6 +136,29 @@ public class RegistroPartidaController {
 
         cmbTipoDoc.setItems(tiposDocumento);
 
+        btnAgregarDoc.setOnAction(e -> {
+            //Abrir el FileChooser para seleccionar PDF
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Seleccionar documento PDF");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf")
+            );
+            // Mostrar diálogo
+            File archivoSeleccionado = fileChooser.showOpenDialog(btnAgregarDoc.getScene().getWindow());
+
+            if (archivoSeleccionado != null) {
+                //Guardar temporalmente el archivo en una variable de clase
+                this.archivoSeleccionado = archivoSeleccionado;
+
+                //Mostrar el nombre del archivo seleccionado
+                txtDocSubido.setText("Documento seleccionado: " + archivoSeleccionado.getName());
+                linkVerDoc.setVisible(true);
+                System.out.println("Ruta del archivo seleccionado: " + archivoSeleccionado.getAbsolutePath());
+            } else {
+                txtDocSubido.setText("No se seleccionó ningún documento.");
+                linkVerDoc.setVisible(false);
+            }
+        });
 
         registroDetalle = FXCollections.observableArrayList();
 
@@ -124,7 +167,6 @@ public class RegistroPartidaController {
         this.rdbAbono.setToggleGroup(movimiento);
 
         cargarCuentas();
-        cargarTipoDoc();
 
         colCuenta.setCellValueFactory(new PropertyValueFactory<>("cuenta"));
         colCargo.setCellValueFactory(new PropertyValueFactory<>("cargo"));
@@ -297,6 +339,8 @@ public class RegistroPartidaController {
         });
 
     }
+
+    //Metodo para validar si es un valor decimal y si es una cantidad válida
     public boolean validarMonto(){
         try{
             double monto = Double.parseDouble(txtMonto.getText());
@@ -312,6 +356,7 @@ public class RegistroPartidaController {
             return false;
         }
     }
+    //Metodo para cargar los datos de la partida en el TableView
     public void cargarTabla(){
         double cargo = 0.00;
         double abono = 0.00;
@@ -328,12 +373,14 @@ public class RegistroPartidaController {
         textTotalAbonos.setText(String.format("%.2f", abono));
         textDiferencia.setText(String.format("%.2f", diferencia));
     }
+    //Metodo para limpiar todos los campos del detalle de partida
     public void limpiarRegistroDetalle() {
         txtMonto.setText("");
         cmbCuentas.getSelectionModel().select(null);
         rdbCargo.setSelected(false);
         rdbAbono.setSelected(false);
     }
+    //Metodo para elimnar los datos de la partida
     public void limpiarRegistro() {
         txtMonto.setText("");
         txtConcepto.setText("");
@@ -347,6 +394,7 @@ public class RegistroPartidaController {
         registroDetalle.clear();
         cargarTabla();
     }
+    //Método para cargar el cátalogo de cuentas
     private void cargarCuentas() {
         CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
         ObservableList<String> cuentas = cuentaModel.obtenerNombreCuentas(1);
@@ -380,37 +428,7 @@ public class RegistroPartidaController {
                 this.cmbCuentas.setItems(cuentas);
             }
         });
-
-        btnAgregarDoc.setOnAction(e -> {
-            //Abrir el FileChooser para seleccionar PDF
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Seleccionar documento PDF");
-            fileChooser.getExtensionFilters().add(
-                    new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf")
-            );
-            // Mostrar diálogo
-            File archivoSeleccionado = fileChooser.showOpenDialog(btnAgregarDoc.getScene().getWindow());
-
-            if (archivoSeleccionado != null) {
-                //Guardar temporalmente el archivo en una variable de clase
-                this.archivoSeleccionado = archivoSeleccionado;
-
-                //Mostrar el nombre del archivo seleccionado
-                txtDocSubido.setText("Documento seleccionado: " + archivoSeleccionado.getName());
-
-                System.out.println("Ruta del archivo seleccionado: " + archivoSeleccionado.getAbsolutePath());
-            } else {
-                txtDocSubido.setText("No se seleccionó ningún documento.");
-            }
-        });
     }
-
-    private void cargarTipoDoc() {
-        CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
-
-        this.cmbCuentas.setItems(cuentaModel.obtenerNombreCuentas(1));
-    }
-
     //Crea una copia del documento subido a documentos_partidas
     public boolean guardarCopiaPDF(String nombreDestino) {
         if (archivoSeleccionado == null) {

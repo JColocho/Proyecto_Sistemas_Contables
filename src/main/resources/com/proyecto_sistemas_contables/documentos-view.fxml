@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.DocumentosController">
+<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.DocumentosController">
    <children>
-      <VBox alignment="TOP_CENTER" layoutX="95.0" layoutY="27.0" spacing="10.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0" VBox.vgrow="ALWAYS">
+      <VBox alignment="TOP_CENTER" layoutX="95.0" layoutY="27.0" spacing="10.0" styleClass="contenedor" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0" VBox.vgrow="ALWAYS">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Documentos" VBox.vgrow="NEVER">
                <VBox.margin>
@@ -41,7 +41,7 @@
                      <children>
                         <TextField GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Agregar clasificación" />
-                        <Button mnemonicParsing="false" styleClass="agregar-boton" text="Agregar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="78.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                         <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="3" />
                      </children>
                   </GridPane>
@@ -63,7 +63,7 @@
                      <children>
                         <TextField GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Buscar documentos" />
-                        <Button mnemonicParsing="false" styleClass="agregar-boton" text="Buscar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
+                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="74.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1" />
                         <ListView prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="3" />
                      </children>
                   </GridPane>
