@@ -129,6 +129,7 @@ public class PartidaModel {
             throw new RuntimeException(e);
         }
     }
+
     public static ObservableList<PartidaModel> obtenerPartidas(Date fechaInicio, Date fechaFin) {
         ObservableList<PartidaModel> lista = FXCollections.observableArrayList();
         String sql;
@@ -175,5 +176,31 @@ public class PartidaModel {
         }
 
         return lista;
+    }
+
+    public PartidaModel obtenerPartida(int idPartida) {
+
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblpartidas WHERE idpartida = ?");
+            statement.setInt(1, idPartida);
+            ResultSet rs = statement.executeQuery();
+            PartidaModel partida = new PartidaModel();
+            while (rs.next()) {
+
+                partida.setIdPartida(idPartida);
+                partida.setFecha(rs.getDate("fecha"));
+                partida.setAsiento(rs.getInt("asiento"));
+                partida.setConcepto(rs.getString("concepto"));
+                partida.setTipoDocumento(rs.getString("tipodocumento"));
+                partida.setNumeroDocumento(rs.getString("numerodocumento"));
+                partida.setIdUsuario(rs.getInt("idusuario"));
+                partida.setIdEmpresa(rs.getInt("idempresa"));
+            }
+
+            return partida;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -39,7 +39,6 @@ public class NavbarController {
         loadView("dashboard-view.fxml");
         ReporteController.idUsuarioEnSesion = idUsuarioSesion;
         PartidasController.idUsuarioSesion = idUsuarioSesion;
-        System.out.println(idUsuarioSesion);
     }
 
     @FXML
