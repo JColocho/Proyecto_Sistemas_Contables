@@ -142,7 +142,7 @@
             <Font name="Inter 24pt Bold" size="12.0" />
          </font>
       </Button>
-      <Hyperlink fx:id="linkVerDoc" layoutX="591.0" layoutY="273.0" text="Ver Documento">
+      <Hyperlink fx:id="linkVerDoc" layoutX="622.0" layoutY="280.0" text="Ver Documento">
          <font>
             <Font name="Inter 18pt Bold" size="12.0" />
          </font>
