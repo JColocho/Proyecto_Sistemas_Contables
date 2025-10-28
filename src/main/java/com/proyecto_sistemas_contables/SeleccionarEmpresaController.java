@@ -89,8 +89,37 @@ public class SeleccionarEmpresaController {
         cargarEmpresas();
         configurarFiltro();
 
+        // Configurar validaciones numéricas
+        configurarValidacionesNumericas();
+
         // Hacer responsive
         hacerFormularioResponsive();
+    }
+
+    // ------------------------
+    // Configurar validaciones numéricas
+    // ------------------------
+    private void configurarValidacionesNumericas() {
+        // Validación para NIT (solo números y guiones)
+        txt_nit.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("[0-9-]*")) {
+                txt_nit.setText(oldValue);
+            }
+        });
+
+        // Validación para NRC (solo números y guiones)
+        txt_nrc.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("[0-9-]*")) {
+                txt_nrc.setText(oldValue);
+            }
+        });
+
+        // Validación para Teléfono (solo números, guiones y espacios)
+        txt_telefono.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("[0-9\\-\\s]*")) {
+                txt_telefono.setText(oldValue);
+            }
+        });
     }
 
     // ------------------------

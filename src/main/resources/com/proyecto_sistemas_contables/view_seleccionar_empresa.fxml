@@ -67,7 +67,7 @@
       </AnchorPane>
 
                                           <!-- Formulario modal (overlay) -->
-      <AnchorPane fx:id="formulario_empresa" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" style="-fx-background-color: white; -fx-border-width: 2; -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
+      <AnchorPane fx:id="formulario_empresa" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="450.0" style="-fx-background-color: white; -fx-border-width: 2; -fx-background-radius: 10px; -fx-border-radius: 10px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);" visible="false" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="150.0">
          <children>
             <GridPane hgap="10.0" vgap="10.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="50.0">
                <columnConstraints>
