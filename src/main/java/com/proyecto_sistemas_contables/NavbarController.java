@@ -39,6 +39,11 @@ public class NavbarController {
         loadView("dashboard-view.fxml");
         ReporteController.idUsuarioEnSesion = idUsuarioSesion;
         PartidasController.idUsuarioSesion = idUsuarioSesion;
+
+        btnAuditoria.setVisible(false);
+        btnCatalogo.setVisible(false);
+        btnDocumentos.setVisible(false);
+        btnUsuarios.setVisible(false);
     }
 
     @FXML
