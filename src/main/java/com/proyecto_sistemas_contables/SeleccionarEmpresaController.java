@@ -5,7 +5,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -13,6 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class SeleccionarEmpresaController {
 
@@ -94,6 +100,49 @@ public class SeleccionarEmpresaController {
 
         // Hacer responsive
         hacerFormularioResponsive();
+
+        // Configurar doble clic en las filas
+        configurarDobleClicFila();
+    }
+
+    private void configurarDobleClicFila() {
+        tablaEmpresas.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                EmpresaModel empresaSeleccionada = tablaEmpresas.getSelectionModel().getSelectedItem();
+
+                if (empresaSeleccionada != null) {
+                    irAlDashboard(empresaSeleccionada);
+                }
+            }
+        });
+    }
+
+    private void irAlDashboard(EmpresaModel empresa) {
+        try {
+            // Cargar la vista del navbar (que contiene el dashboard)
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("navbar-view.fxml"));
+            Parent root = loader.load();
+
+            // Obtener el Stage actual
+            Stage stage = (Stage) tablaEmpresas.getScene().getWindow();
+
+            // Crear una nueva escena con el navbar
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Sistema Contable - " + empresa.getNombre());
+
+            // DESPUÉS de que se cargue el navbar, cargar el dashboard con la empresa
+            // Platform.runLater para asegurar que el navbar esté inicializado
+            javafx.application.Platform.runLater(() -> {
+                NavbarController.cargarDashboardConEmpresa(empresa);
+            });
+
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "No se pudo abrir el sistema: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     // ------------------------
