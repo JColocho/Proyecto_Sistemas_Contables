@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,10 +55,10 @@ public class ReporteController {
     private final ReporteModel reporteModel = new ReporteModel();
     public static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static int idUsuarioEnSesion;
+    public static int idEmpresaSesion;
 
     @FXML
     public void initialize() {
-        System.out.println("idEnviado: " + idUsuarioEnSesion);
         cmbTipoReporte.getItems().addAll("Libro Diario", "Libro Mayor");
         cmbPeriodoRapido.getItems().addAll("Personalizado", "Hoy", "Este mes", "Mes anterior", "Trimestre", "Semestral", "Anual");
         cmbTipoReporte.setValue("Libro Diario");
@@ -175,7 +174,7 @@ public class ReporteController {
         try {
             UsuarioModel usuarioModel = new UsuarioModel();
             List<Map<String, Object>> datos = tblPreview.getItems();
-            generarReportePDF(tipo, 1, usuarioModel.obtenerNombreUsuario(idUsuarioEnSesion), desde, hasta,
+            generarReportePDF(tipo, idEmpresaSesion, usuarioModel.obtenerNombreUsuario(idUsuarioEnSesion), desde, hasta,
                     destino.getAbsolutePath(), txtObservaciones.getText(), datos);
 
             //Crear o verificar carpeta local

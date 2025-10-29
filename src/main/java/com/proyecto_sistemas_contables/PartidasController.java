@@ -32,11 +32,13 @@ public class PartidasController {
     }
 
     public static int idUsuarioSesion;
+    public static int idEmpresaSesion;
 
     @FXML
     public void initialize() {
         try{
             RegistroPartidaController.idUsuarioSesion = idUsuarioSesion;
+            RegistroPartidaController.idEmpresaSesion = idEmpresaSesion;
 
             // Ajustar los anchos en porcentaje
             clFecha.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.15));

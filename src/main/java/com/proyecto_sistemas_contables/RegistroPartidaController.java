@@ -96,6 +96,7 @@ public class RegistroPartidaController {
 
     private ObservableList<CatalogoCuentaModel> registroDetalle;
     public static int idUsuarioSesion;
+    public static int idEmpresaSesion;
 
     // Guardará temporalmente el archivo PDF seleccionado
     private File archivoSeleccionado;
@@ -104,7 +105,6 @@ public class RegistroPartidaController {
     private final String RUTA_DESTINO = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas";
 
     public void initialize() {
-
         linkVerDoc.setVisible(false);
         //Acción para ver el documento que se encuentra seleccionado
         linkVerDoc.setOnAction(event -> {
@@ -264,35 +264,43 @@ public class RegistroPartidaController {
                        if (!txtNumeroDoc.getText().isEmpty()){
                            if(archivoSeleccionado.exists()){
                                if (guardarCopiaPDF(txtNumeroDoc.getText())){
-                                   if (!tblRegistroDetalle.getItems().isEmpty()){
+                                   if (textDiferencia.getText().equals("0.00")){
+                                       if (!tblRegistroDetalle.getItems().isEmpty()){
 
-                                       //Capturamos los datos para subir los datos de la partida
-                                       PartidaModel partidaModel = new PartidaModel();
-                                       partidaModel.setConcepto(txtConcepto.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase());
-                                       partidaModel.setFecha(java.sql.Date.valueOf(datePartida.getValue()));
-                                       partidaModel.setIdUsuario(idUsuarioSesion);
-                                       partidaModel.setIdEmpresa(1);
-                                       partidaModel.setTipoDocumento(cmbTipoDoc.getSelectionModel().getSelectedItem());
-                                       partidaModel.setNumeroDocumento(txtNumeroDoc.getText());
+                                           //Capturamos los datos para subir los datos de la partida
+                                           PartidaModel partidaModel = new PartidaModel();
+                                           partidaModel.setConcepto(txtConcepto.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase());
+                                           partidaModel.setFecha(java.sql.Date.valueOf(datePartida.getValue()));
+                                           partidaModel.setIdUsuario(idUsuarioSesion);
+                                           partidaModel.setIdEmpresa(idEmpresaSesion);
+                                           partidaModel.setTipoDocumento(cmbTipoDoc.getSelectionModel().getSelectedItem());
+                                           partidaModel.setNumeroDocumento(txtNumeroDoc.getText());
 
-                                       //Insertar la partida a la DB y obtener el id de la partida
-                                       partidaModel.setIdPartida(partidaModel.agregarPartida(partidaModel));
+                                           //Insertar la partida a la DB y obtener el id de la partida
+                                           partidaModel.setIdPartida(partidaModel.agregarPartida(partidaModel));
 
-                                       //Registramos los detalles de la partida
-                                       for(CatalogoCuentaModel cuentaModel : registroDetalle){
-                                           DetallePartidaModel detallePartidaModel = new DetallePartidaModel();
-                                           detallePartidaModel.agregarDetalle(
-                                                   partidaModel.getIdPartida(),
-                                                   cuentaModel.obtenerIdCuenta(cuentaModel.getCuenta(),1),
-                                                   cuentaModel.getCargo(),
-                                                   cuentaModel.getAbono());
+                                           //Registramos los detalles de la partida
+                                           for(CatalogoCuentaModel cuentaModel : registroDetalle){
+                                               DetallePartidaModel detallePartidaModel = new DetallePartidaModel();
+                                               detallePartidaModel.agregarDetalle(
+                                                       partidaModel.getIdPartida(),
+                                                       cuentaModel.obtenerIdCuenta(cuentaModel.getCuenta(),1),
+                                                       cuentaModel.getCargo(),
+                                                       cuentaModel.getAbono());
+                                           }
+
+                                           limpiarRegistro();
+
+                                           Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                           alert.setTitle("Registro Partida");
+                                           alert.setContentText("Partida registrada con exito.");
+                                           alert.show();
                                        }
-
-                                       limpiarRegistro();
-
-                                       Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                       alert.setTitle("Registro Partida");
-                                       alert.setContentText("Partida registrada con exito.");
+                                   }
+                                   else {
+                                       Alert alert = new Alert(Alert.AlertType.ERROR);
+                                       alert.setTitle("Error");
+                                       alert.setContentText("Existe una diferencia de: $" + textDiferencia.getText() + ", la partida no debe tener diferencias.");
                                        alert.show();
                                    }
                                }

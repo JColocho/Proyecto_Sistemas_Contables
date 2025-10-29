@@ -18,7 +18,7 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         //Cargar la vista inicial (login)
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1000, 650);
+        Scene scene = new Scene(fxmlLoader.load());
         //Agregamos un icono a la ventana
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/icon.png")));
         //Guardar las referencias en stage y scene principales
