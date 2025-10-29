@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane stylesheets="@static/css/navbar.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.NavbarController">
+<BorderPane stylesheets="@static/css/navbar.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.NavbarController">
     <!-- Navbar -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="30" style="-fx-background-color: #009951; -fx-padding: 10;">
@@ -20,6 +20,7 @@
             <Pane HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER_RIGHT" spacing="5">
                 <Button fx:id="btnDashboard" onAction="#cambiarVista" styleClass="nav-button" text="Dashboard" />
+            <Button fx:id="btnEmpresas" onAction="#cambiarVista" styleClass="nav-button" text="Empresas" />
                 <Button fx:id="btnUsuarios" onAction="#cambiarVista" styleClass="nav-button" text="Usuarios" />
                 <Button fx:id="btnAuditoria" onAction="#cambiarVista" styleClass="nav-button" text="Auditoría" />
                 <Button fx:id="btnCatalogo" onAction="#cambiarVista" styleClass="nav-button" text="Catálogo de cuentas" />
@@ -32,7 +33,7 @@
 
     <!-- Contenido dinámico -->
     <center>
-        <AnchorPane fx:id="contentPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <AnchorPane id="contentPane" fx:id="contentPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
     </center>
 
 </BorderPane>
