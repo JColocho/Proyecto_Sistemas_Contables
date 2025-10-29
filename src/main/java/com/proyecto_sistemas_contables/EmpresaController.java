@@ -1,6 +1,7 @@
 package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.models.EmpresaModel;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -18,9 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
-public class SeleccionarEmpresaController {
+public class EmpresaController {
 
     @FXML
     private TableView<EmpresaModel> tablaEmpresas;
@@ -64,12 +63,20 @@ public class SeleccionarEmpresaController {
     @FXML
     private ComboBox<String> cb_buscar;
 
+    @FXML
+    private AnchorPane mainPane;
+
     private ObservableList<EmpresaModel> listaEmpresas = FXCollections.observableArrayList();
     private FilteredList<EmpresaModel> listaFiltrada;
     private EmpresaModel empresaEditando = null;
-
+    public static int idUsuarioSesion;
     @FXML
     private void initialize() {
+        Platform.runLater(() -> {
+            Stage stage = (Stage) mainPane.getScene().getWindow();
+            stage.setMaximized(false);
+            stage.setMaximized(true);
+        });
         formulario_empresa.setVisible(false);
 
         // Inicializar ComboBox de búsqueda
@@ -109,7 +116,6 @@ public class SeleccionarEmpresaController {
         tablaEmpresas.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 EmpresaModel empresaSeleccionada = tablaEmpresas.getSelectionModel().getSelectedItem();
-
                 if (empresaSeleccionada != null) {
                     irAlDashboard(empresaSeleccionada);
                 }
@@ -119,10 +125,14 @@ public class SeleccionarEmpresaController {
 
     private void irAlDashboard(EmpresaModel empresa) {
         try {
+            NavbarController.idUsuarioSesion = idUsuarioSesion;
+            NavbarController.idEmpresaSesion = empresa.getId();
+
+            //Main.setRoot("navbar-view");
+
             // Cargar la vista del navbar (que contiene el dashboard)
             FXMLLoader loader = new FXMLLoader(getClass().getResource("navbar-view.fxml"));
             Parent root = loader.load();
-
             // Obtener el Stage actual
             Stage stage = (Stage) tablaEmpresas.getScene().getWindow();
 
@@ -130,12 +140,12 @@ public class SeleccionarEmpresaController {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("Sistema Contable - " + empresa.getNombre());
-
             // DESPUÉS de que se cargue el navbar, cargar el dashboard con la empresa
             // Platform.runLater para asegurar que el navbar esté inicializado
             javafx.application.Platform.runLater(() -> {
                 NavbarController.cargarDashboardConEmpresa(empresa);
             });
+
 
             stage.show();
 

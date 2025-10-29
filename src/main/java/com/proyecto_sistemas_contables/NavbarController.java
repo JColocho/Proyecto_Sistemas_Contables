@@ -1,12 +1,14 @@
 package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.models.EmpresaModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -41,19 +43,32 @@ public class NavbarController {
     private AnchorPane contentPane;
 
     @FXML
+    private BorderPane mainPane;
+
+    @FXML
     private Button btnEmpresas;
 
     public static int idUsuarioSesion;
+    public static int idEmpresaSesion;
 
     @FXML
     private void initialize() {
         // Guardar la instancia del controlador
         instance = this;
+        Platform.runLater(() -> {
+            Stage stage = (Stage) mainPane.getScene().getWindow();
+            stage.setMaximized(false);
+            stage.setMaximized(true);
+        });
+
 
         // Cargar el dashboard por defecto al iniciar
         loadView("dashboard-view.fxml");
         ReporteController.idUsuarioEnSesion = idUsuarioSesion;
+        ReporteController.idEmpresaSesion = idEmpresaSesion;
         PartidasController.idUsuarioSesion = idUsuarioSesion;
+        PartidasController.idEmpresaSesion = idEmpresaSesion;
+
 
         btnAuditoria.setVisible(false);
         btnCatalogo.setVisible(false);
@@ -105,7 +120,8 @@ public class NavbarController {
      */
     private void irAVistaEmpresas() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("view_seleccionar_empresa.fxml"));
+            EmpresaController.idUsuarioSesion = idUsuarioSesion;
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("empresa-view.fxml"));
             Parent root = loader.load();
 
             // Obtener el Stage actual

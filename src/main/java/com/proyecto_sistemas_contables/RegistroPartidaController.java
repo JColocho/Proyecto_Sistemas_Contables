@@ -96,6 +96,7 @@ public class RegistroPartidaController {
 
     private ObservableList<CatalogoCuentaModel> registroDetalle;
     public static int idUsuarioSesion;
+    public static int idEmpresaSesion;
 
     // Guardará temporalmente el archivo PDF seleccionado
     private File archivoSeleccionado;
@@ -104,7 +105,6 @@ public class RegistroPartidaController {
     private final String RUTA_DESTINO = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas";
 
     public void initialize() {
-
         linkVerDoc.setVisible(false);
         //Acción para ver el documento que se encuentra seleccionado
         linkVerDoc.setOnAction(event -> {
@@ -272,7 +272,7 @@ public class RegistroPartidaController {
                                            partidaModel.setConcepto(txtConcepto.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase());
                                            partidaModel.setFecha(java.sql.Date.valueOf(datePartida.getValue()));
                                            partidaModel.setIdUsuario(idUsuarioSesion);
-                                           partidaModel.setIdEmpresa(1);
+                                           partidaModel.setIdEmpresa(idEmpresaSesion);
                                            partidaModel.setTipoDocumento(cmbTipoDoc.getSelectionModel().getSelectedItem());
                                            partidaModel.setNumeroDocumento(txtNumeroDoc.getText());
 
