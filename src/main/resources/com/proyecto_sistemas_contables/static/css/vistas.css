@@ -69,141 +69,218 @@
     -fx-scale-y: 0.98;
 }
 
-/* ----- Estilos de parte visible del ComboBox ----- */
-.combo-box {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #ccc;
-    -fx-border-width: 1;
-    -fx-padding: 6 10 6 10;
-    -fx-font-size: 13px;
-    -fx-pref-height: 36px;   /* misma altura que el textfield */
-    -fx-pref-width: 180px;   /* ancho estándar uniforme */
+/* Fondo transparente de la tabla */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
 }
 
-/* Cuando está enfocado */
+.table-view .virtual-flow {
+    -fx-background-color: transparent;
+}
+
+/* Color del encabezado con border-radius */
+.table-view .column-header-background {
+    -fx-background-color: rgb(0,153,81);
+    -fx-background-radius: 5px;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* Cada fila con border-radius y espaciado */
+.table-row-cell {
+    -fx-background-color: rgb(200, 235, 220);
+    -fx-background-radius: 5px;
+    -fx-background-insets: 2px 0 2px 0;
+    -fx-padding: 4px 0;
+    -fx-border-width: 0;
+}
+
+/* Fila seleccionada */
+.table-row-cell:selected {
+    -fx-background-color: rgba(0,153,81, 0.4);
+    -fx-background-radius: 5px;
+}
+
+/* Eliminar líneas entre filas */
+.table-row-cell {
+    -fx-border-width: 0;
+}
+
+/* Eliminar líneas verticales entre columnas */
+.table-view .column-header,
+.table-view .table-cell {
+    -fx-border-width: 0;
+}
+
+/* Centrar texto en las celdas */
+.table-cell {
+    -fx-alignment: CENTER;
+    -fx-background-color: transparent;
+}
+
+/* Eliminar el borde azul al hacer focus */
+.table-cell:focused {
+    -fx-border-color: transparent;
+}
+
+.table-view:focused {
+    -fx-background-insets: 0;
+}
+
+/* PERSONALIZACIÓN DEL SCROLL */
+/* Fondo del scroll bar */
+.table-view .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10px;
+}
+
+.table-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-height: 10px;
+}
+
+/* Track (fondo donde se mueve el scroll) */
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 5px;
+}
+
+.table-view .scroll-bar:horizontal .track {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 5px;
+}
+
+/* Thumb (la parte que se arrastra) */
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(0,153,81, 0.5);
+    -fx-background-radius: 5px;
+}
+
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(0,153,81, 0.5);
+    -fx-background-radius: 5px;
+}
+
+/* Hover en el thumb */
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: rgba(0,153,81, 0.7);
+}
+
+.table-view .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: rgba(0,153,81, 0.7);
+}
+
+/* Presionado */
+.table-view .scroll-bar:vertical .thumb:pressed {
+    -fx-background-color: rgb(0,153,81);
+}
+
+.table-view .scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: rgb(0,153,81);
+}
+
+/* Ocultar botones de incremento/decremento */
+.table-view .scroll-bar .increment-button,
+.table-view .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+    -fx-pref-width: 0;
+}
+
+.table-view .scroll-bar .increment-arrow,
+.table-view .scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+/* Placeholder del encabezado (el área clickeable) con border-radius */
+.table-view .column-header-background .filler {
+    -fx-background-color: rgb(0,153,81);
+    -fx-background-radius: 0 5px 0 0; /* Solo esquina superior derecha */
+}
+
+/* ============================================== */
+/* ===== FORMULARIO  =====*/
+/* COMBO BOX */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: rgba(0,153,81, 0.4);
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 4px 8px;
+    -fx-font-size: 14px;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+/* Efecto hover (ComboBox cerrado) */
+.combo-box:hover {
+    -fx-background-color: rgba(0,153,81, 0.1);
+    -fx-border-color: rgb(0,153,81);
+}
+
+/* Quita el borde azul al enfocar */
 .combo-box:focused {
-    -fx-border-color: #4A90E2;
-    -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 0);
+    -fx-border-color: rgb(0,153,81);
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color: transparent;
+    -fx-effect: none;
 }
 
 /* Flecha del ComboBox */
-.combo-box .arrow-button {
-    -fx-background-color: transparent;
-}
 .combo-box .arrow {
-    -fx-background-color: #1E1E1E;
+    -fx-background-color: rgb(0,153,81);
 }
 
-/* ----- Estilo de lista desplegable del combobox----- */
+/* Fondo del popup (lista desplegable) */
 .combo-box-popup .list-view {
     -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #ccc;
-    -fx-padding: 4;
+    -fx-border-color: rgb(0,153,81);
+    -fx-border-radius: 5px;
 }
 
-/* ----- Cada ítem de la lista ----- */
-.combo-box-popup .list-cell {
-    -fx-background-color: transparent;
-    -fx-text-fill: #333;
-    -fx-padding: 6 10 6 10;
+/* Hover sobre los ítems (cuando pasás el mouse) */
+.list-cell:hover {
+    -fx-background-color: rgba(0,153,81, 0.3);
+    -fx-text-fill: black;
 }
 
-/* Hover o selección en la lista */
-.combo-box-popup .list-cell:hover {
-    -fx-background-color: #E6F0FF;
+/* Estado deshabilitado */
+.combo-box:disabled {
+    -fx-opacity: 0.6;
+    -fx-background-color: #f0f0f0;
+    -fx-border-color: #c0c0c0;
+    -fx-cursor: default;
 }
 
-.combo-box-popup .list-cell:selected {
-    -fx-background-color: #4A90E2;
-    -fx-text-fill: white;
+/* ÍTEM SELECCIONADO DEL COMBOBOX (cuando está abierto) */
+.combo-box-popup .list-view .list-cell:filled:selected,
+.combo-box-popup .list-view .list-cell:filled:selected:hover {
+    -fx-background-color: rgba(0,153,81, 0.3); /* Verde suave de selección */
+    -fx-text-fill: black;
 }
 
-/* ----- Estilo del TextField ----- */
-.text-field {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #ccc;
-    -fx-border-width: 1;
-    -fx-padding: 6 10 6 10;
-    -fx-font-size: 13px;
-    -fx-pref-height: 36px;
-    -fx-pref-width: 180px;
-}
-
-/* Cuando el TextField tiene el foco */
+/* ==== TEXTFIELD ==== */
 .text-field:focused {
-    -fx-border-color: #4A90E2;
-    -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 0);
+    -fx-border-color: rgb(0,153,81);
+    -fx-border-width: 2px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
-/* Estilo del DatePicker general */
-.date-picker {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #ccc;
-    -fx-border-width: 1;
-    -fx-font-size: 13px;
-    -fx-pref-height: 36px;
-    -fx-pref-width: 180px;
-}
-/* Campo de texto interno del DatePicker*/
-.date-picker > .text-field {
-    -fx-background-color: transparent;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-padding: 6 10 6 10;
-}
-
-/*  Al enfocar el DatePicker  */
-.date-picker:focused,
-.date-picker > .text-field:focused {
-    -fx-border-color: #4A90E2;
-    -fx-effect: dropshadow(three-pass-box, rgba(74,144,226,0.2), 4, 0, 0, 0);
-}
-
-/* Botón del calendario (icono)  */
-.date-picker > .arrow-button {
-    -fx-background-color: white;
-    -fx-background-radius: 0 8 8 0; /* bordes derechos redondeados */
-    -fx-border-radius: 0 8 8 0;
-    -fx-border-color: transparent;
-    -fx-cursor: hand;
-    -fx-padding: 0 10 0 10;
-}
-.date-picker > .arrow-button:hover {
-    -fx-background-color: #f3f3f3;
-}
-
-/*  Icono del calendario */
-.date-picker > .arrow-button > .arrow {
-    -fx-background-color: #4A90E2; /* color azul del ícono */
-}
-
-/*  Calendario desplegable */
-.date-picker-popup {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-color: #ccc;
-    -fx-border-radius: 8;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 8, 0, 0, 2);
-}
-/* Celdas del calendario */
-.date-cell {
-    -fx-background-color: white;
-    -fx-text-fill: #333;
-    -fx-alignment: center;
-}
-.date-cell:hover {
-    -fx-background-color: #e6f0ff;
-}
-.date-cell:focused, .date-cell:selected {
-    -fx-background-color: #4A90E2;
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
+.text-field {
+    -fx-border-color: rgba(0,153,81, 0.4);
 }
