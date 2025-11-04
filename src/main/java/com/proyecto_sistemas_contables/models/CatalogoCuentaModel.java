@@ -147,8 +147,43 @@ public class CatalogoCuentaModel {
         }
     }
 
-    @Override
-    public String toString() {
-        return codigoCuenta + "\t" + cuenta;
+    public ObservableList<CatalogoCuentaModel> obtenerCatalogoCuentas(int idEmpresa) {
+        try{
+            ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
+
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = " + idEmpresa);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                cuentaModel.setIdCuenta(resultSet.getInt("idCuenta"));
+                cuentaModel.setIdEmpresa(resultSet.getInt("idEmpresa"));
+                cuentaModel.setCuenta(resultSet.getString("cuenta"));
+                cuentaModel.setCodigoCuenta(resultSet.getString("codigo"));
+                cuentaModel.setTipoCuenta(resultSet.getString("tipoCuenta"));
+                cuentaModel.setTipoSaldo(resultSet.getString("tipoSaldo"));
+                cuentaModel.setSaldo(resultSet.getDouble("saldo"));
+                cuentas.add(cuentaModel);
+            }
+
+            return cuentas;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+    public void eliminarCuenta(int idCuenta, int idEmpresa) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM tblcatalogocuentas WHERE idCuenta = ? AND idempresa = ?");
+            statement.setInt(1, idCuenta);
+            statement.setInt(2, idEmpresa);
+            statement.executeUpdate();
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

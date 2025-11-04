@@ -48,6 +48,9 @@ public class NavbarController {
     @FXML
     private Button btnEmpresas;
 
+    @FXML
+    private Button btnCuentasT;
+
     public static int idUsuarioSesion;
     public static int idEmpresaSesion;
 
@@ -68,10 +71,11 @@ public class NavbarController {
         ReporteController.idEmpresaSesion = idEmpresaSesion;
         PartidasController.idUsuarioSesion = idUsuarioSesion;
         PartidasController.idEmpresaSesion = idEmpresaSesion;
+        CatalogoCuentasController.idEmpresaSesion = idEmpresaSesion;
+        EmpresaController.idUsuarioSesion = idUsuarioSesion;
 
 
         btnAuditoria.setVisible(false);
-        btnCatalogo.setVisible(false);
         btnDocumentos.setVisible(false);
         btnUsuarios.setVisible(false);
     }
@@ -86,8 +90,6 @@ public class NavbarController {
             loadView("usuarios-view.fxml");
         } else if (source == btnAuditoria) {
             loadView("auditoria-view.fxml");
-        } else if (source == btnCatalogo) {
-            loadView("catalogo-cuentas-view.fxml");
         } else if (source == btnPartidas) {
             loadView("partidas-view.fxml");
         } else if (source == btnReporte) {
@@ -96,6 +98,9 @@ public class NavbarController {
             loadView("documentos-view.fxml");
         } else if (source == btnEmpresas) {
             irAVistaEmpresas(); // Cambiar completamente la ventana
+        }
+        else if (source == btnCatalogo) {
+            loadView("catalogo-cuentas-view.fxml");
         }
     }
 

@@ -9,14 +9,14 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 
 public class EmpresaModel {
-    private final SimpleIntegerProperty id;
-    private final SimpleStringProperty nombre;
-    private final SimpleStringProperty nit;
-    private final SimpleStringProperty nrc;
-    private final SimpleStringProperty direccion;
-    private final SimpleStringProperty telefono;
-    private final SimpleIntegerProperty idCorreo;
-    private final SimpleStringProperty correo;
+    private  SimpleIntegerProperty id;
+    private  SimpleStringProperty nombre;
+    private  SimpleStringProperty nit;
+    private  SimpleStringProperty nrc;
+    private  SimpleStringProperty direccion;
+    private  SimpleStringProperty telefono;
+    private  SimpleIntegerProperty idCorreo;
+    private  SimpleStringProperty correo;
 
     public EmpresaModel(int id, String nombre, String nit, String nrc, String direccion,
                         String telefono, int idCorreo, String correo) {
@@ -28,6 +28,10 @@ public class EmpresaModel {
         this.telefono = new SimpleStringProperty(telefono);
         this.idCorreo = new SimpleIntegerProperty(idCorreo);
         this.correo = new SimpleStringProperty(correo);
+    }
+
+    public EmpresaModel() {
+
     }
 
     // Getters
@@ -169,6 +173,21 @@ public class EmpresaModel {
             PreparedStatement psCorreo = conn.prepareStatement(sqlCorreo);
             psCorreo.setInt(1, this.getIdCorreo());
             psCorreo.executeUpdate();
+        }
+    }
+    public String idBuscarEmpresa(int id) throws SQLException {
+        try (Connection conn = ConexionDB.connection()) {
+            // Busca la empresa
+            String sqlEmpresa = "SELECT * FROM tblempresas WHERE idempresa = ?";
+            PreparedStatement psEmpresa = conn.prepareStatement(sqlEmpresa);
+            psEmpresa.setInt(1, id);
+            ResultSet resultSet = psEmpresa.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getString("nombre");
+            }
+
+            return "";
         }
     }
 }

@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ public class DialogoUtil {
             stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(owner);
-
+            stage.setResizable(false);
             stage.showAndWait();
 
             // 🔹 Devuelve lo que el controlador ponga con stage.setUserData()

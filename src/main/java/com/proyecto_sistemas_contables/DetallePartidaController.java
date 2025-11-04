@@ -2,6 +2,7 @@ package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.models.CatalogoCuentaModel;
 import com.proyecto_sistemas_contables.models.DetallePartidaModel;
+import com.proyecto_sistemas_contables.models.EmpresaModel;
 import com.proyecto_sistemas_contables.models.PartidaModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -15,6 +16,7 @@ import javafx.stage.Stage;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class DetallePartidaController {
@@ -59,7 +61,7 @@ public class DetallePartidaController {
 
     public static int idPartida;
     private String documentoRuta;
-
+    public static int idEmpresaSesion;
     @FXML
     public void initialize() {
         try{
@@ -95,7 +97,7 @@ public class DetallePartidaController {
 
     }
     //Método para cargar todos los datos de la partida
-    public void cargarDetallePartida() {
+    public void cargarDetallePartida() throws SQLException {
         PartidaModel partidaModel = new PartidaModel();
         partidaModel = partidaModel.obtenerPartida(idPartida);
         txtConcepto.setText(partidaModel.getConcepto());
@@ -106,8 +108,9 @@ public class DetallePartidaController {
         //Cargamos la tabla con los datos del detalle de partida
         DetallePartidaModel detallePartidaModel = new DetallePartidaModel();
         tbDetalle.setItems(detallePartidaModel.obtenerDetallePartida(idPartida));
+        EmpresaModel empresaModel = new EmpresaModel();
         //Obtenemos la ruta del documento fuente que se subió
-        documentoRuta = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas/" + partidaModel.getNumeroDocumento() + ".pdf";
+        documentoRuta = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas/" + empresaModel.idBuscarEmpresa(idEmpresaSesion) +"/" + partidaModel.getNumeroDocumento() + ".pdf";
 
         //Cálculo de total de cargos, abonos y diferencia
         double cargo = 0.00;
