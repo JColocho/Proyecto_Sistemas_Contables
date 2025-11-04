@@ -55,8 +55,10 @@ public class PartidasController {
                 {
                     btn.setStyle("-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-weight: bold;");
                     btn.setOnAction(event -> {
+
                         PartidaModel partida = getTableView().getItems().get(getIndex());
                         DetallePartidaController.idPartida = partida.getIdPartida();
+                        DetallePartidaController.idEmpresaSesion = idEmpresaSesion;
                         Stage stage = (Stage) tbPartidas.getScene().getWindow();
                         DialogoUtil.showDialog("detalle-partida-view", "Detalle", stage);
                     });

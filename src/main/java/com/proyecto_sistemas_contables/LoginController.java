@@ -11,9 +11,6 @@ public class LoginController {
     private Button btnIniciarSesion;
 
     @FXML
-    private Hyperlink linkCrearCuenta;
-
-    @FXML
     private PasswordField txtClavePWD;
 
     @FXML
@@ -53,10 +50,10 @@ public class LoginController {
                 UsuarioModel usuario = new UsuarioModel();
                 //Validamos que las credenciales ingresadas sean correctas
                 if (usuario.inicioSesion(txtUsuario.getText(), txtClave.getText())) {
+                    EmpresaController.idUsuarioSesion = usuario.idUsuarioSesion(txtUsuario.getText());
                     Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-                    alerta.setContentText("Has iniciado sesión");
+                    alerta.setContentText("Has iniciado sesión.");
                     alerta.show();
-                    NavbarController.idUsuarioSesion = usuario.idUsuarioSesion(txtUsuario.getText());
                     Main.setRoot("empresa-view");
                 }
                 else {
@@ -70,11 +67,6 @@ public class LoginController {
                 alerta.setContentText("Campos vacios");
                 alerta.show();
             }
-        });
-
-        //Redirigimos al formulario para registrarse
-        linkCrearCuenta.setOnAction(e -> {
-            Main.setRoot("register-view");
         });
     }
 }

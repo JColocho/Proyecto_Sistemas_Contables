@@ -2,6 +2,7 @@ package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.models.CatalogoCuentaModel;
 import com.proyecto_sistemas_contables.models.DetallePartidaModel;
+import com.proyecto_sistemas_contables.models.EmpresaModel;
 import com.proyecto_sistemas_contables.models.PartidaModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,14 +13,19 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-
+import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.geometry.Pos;
+import javafx.scene.image.ImageView;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class RegistroPartidaController {
@@ -27,7 +33,7 @@ public class RegistroPartidaController {
     private Button btnAgregarDoc;
 
     @FXML
-    private Button btnEliminarPartida;
+    private Button btnCancelar;
 
     @FXML
     private Button btnGuardarDetalle;
@@ -54,7 +60,7 @@ public class RegistroPartidaController {
     private TableColumn<CatalogoCuentaModel, String> colCuenta;
 
     @FXML
-    private TableColumn<CatalogoCuentaModel, Button> colEliminar;
+    private TableColumn<CatalogoCuentaModel, Void> colEliminar;
 
     @FXML
     private DatePicker datePartida;
@@ -102,9 +108,12 @@ public class RegistroPartidaController {
     private File archivoSeleccionado;
 
     // Ruta donde se guardarán los documentos (carpeta ya creada)
-    private final String RUTA_DESTINO = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas";
+    private String RUTA_DESTINO = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas";
 
-    public void initialize() {
+    public void initialize() throws SQLException {
+
+        carpetaPDF();
+
         linkVerDoc.setVisible(false);
         //Acción para ver el documento que se encuentra seleccionado
         linkVerDoc.setOnAction(event -> {
@@ -172,30 +181,41 @@ public class RegistroPartidaController {
         colCargo.setCellValueFactory(new PropertyValueFactory<>("cargo"));
         colAbono.setCellValueFactory(new PropertyValueFactory<>("abono"));
 
-        this.colEliminar.setCellFactory(tc -> new TableCell<>(){
+        colEliminar.setCellFactory(param -> new TableCell<>() {
+            private final Button btnEliminar = new Button();
+            private final HBox pane = new HBox(5);
+
+            {
+                ImageView iconEliminar = new ImageView(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/bin.png")));
+                iconEliminar.setFitWidth(16);
+                iconEliminar.setFitHeight(16);
+
+
+                btnEliminar.setGraphic(iconEliminar);
+
+                btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
+
+                btnEliminar.setOnAction(e -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Eliminar");
+                    alert.setContentText("¿Esta seguro de eliminar el registro?");
+                    Optional<ButtonType> respuesta = alert.showAndWait();
+
+                    if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
+                        // Obtener el elemento actual (la fila seleccionada)
+                        registroDetalle.remove(getTableView().getItems().get(getIndex()));
+                        cargarTabla();
+                    }
+                });
+
+                pane.setAlignment(Pos.CENTER);
+                pane.getChildren().addAll(btnEliminar);
+            }
+
             @Override
-            protected void updateItem(Button button, boolean b) {
-                super.updateItem(button, b);
-                Button btnEliminar = new Button("Eliminar");
-                if (b){
-                    setGraphic(null);
-                }
-                else {
-                    btnEliminar.setOnAction(e -> {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Eliminar");
-                        alert.setContentText("¿Esta seguro de eliminar el registro?");
-                        Optional<ButtonType> respuesta = alert.showAndWait();
-
-                        if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
-                            // Obtener el elemento actual (la fila seleccionada)
-                            registroDetalle.remove(getTableView().getItems().get(getIndex()));
-                            cargarTabla();
-                        }
-                    });
-
-                    setGraphic(btnEliminar);
-                }
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : pane);
             }
         });
 
@@ -264,7 +284,7 @@ public class RegistroPartidaController {
                        if (!txtNumeroDoc.getText().isEmpty()){
                            if(archivoSeleccionado.exists()){
                                if (guardarCopiaPDF(txtNumeroDoc.getText())){
-                                   if (textDiferencia.getText().equals("0.00")){
+                                   if (textDiferencia.getText().equals("$0.00")){
                                        if (!tblRegistroDetalle.getItems().isEmpty()){
 
                                            //Capturamos los datos para subir los datos de la partida
@@ -300,7 +320,7 @@ public class RegistroPartidaController {
                                    else {
                                        Alert alert = new Alert(Alert.AlertType.ERROR);
                                        alert.setTitle("Error");
-                                       alert.setContentText("Existe una diferencia de: $" + textDiferencia.getText() + ", la partida no debe tener diferencias.");
+                                       alert.setContentText("Existe una diferencia de: " + textDiferencia.getText() + ", la partida no debe tener diferencias.");
                                        alert.show();
                                    }
                                }
@@ -342,8 +362,9 @@ public class RegistroPartidaController {
            }
         });
 
-        btnEliminarPartida.setOnAction(e -> {
-            limpiarRegistro();
+        btnCancelar.setOnAction(e -> {
+            Stage stage = (Stage) btnCancelar.getScene().getWindow();
+            stage.close();
         });
 
     }
@@ -377,9 +398,9 @@ public class RegistroPartidaController {
 
         diferencia = Math.abs(cargo - abono);
 
-        textTotalCargos.setText(String.format("%.2f", cargo));
-        textTotalAbonos.setText(String.format("%.2f", abono));
-        textDiferencia.setText(String.format("%.2f", diferencia));
+        textTotalCargos.setText("$" +String.format("%.2f", cargo));
+        textTotalAbonos.setText("$" +String.format("%.2f", abono));
+        textDiferencia.setText("$" + String.format("%.2f", diferencia));
     }
     //Metodo para limpiar todos los campos del detalle de partida
     public void limpiarRegistroDetalle() {
@@ -468,6 +489,22 @@ public class RegistroPartidaController {
             e.printStackTrace();
             System.out.println("Error al guardar el archivo: " + e.getMessage());
             return false;
+        }
+    }
+    public void carpetaPDF() throws SQLException {
+        EmpresaModel empresaModel = new EmpresaModel();
+        String rutaDestino = RUTA_DESTINO + "/" + empresaModel.idBuscarEmpresa(idEmpresaSesion);
+
+        File carpetaDestino = new File(rutaDestino);
+        if (!carpetaDestino.exists()) {
+            //Crea la nueva carpeta
+            boolean creado = carpetaDestino.mkdir();
+            if (creado) {
+                RUTA_DESTINO = rutaDestino;
+            }
+        }
+        else {
+            RUTA_DESTINO = rutaDestino;
         }
     }
 }
