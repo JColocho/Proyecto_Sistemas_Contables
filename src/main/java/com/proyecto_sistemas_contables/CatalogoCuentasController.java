@@ -12,6 +12,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.text.DecimalFormat;
+import java.util.Optional;
+
 public class CatalogoCuentasController {
 
     @FXML
@@ -93,6 +96,19 @@ public class CatalogoCuentasController {
                 });
 
                 btnEliminar.setOnAction(event -> {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Eliminar Cuenta");
+                    alert.setHeaderText("¿Está seguro de eliminar esta cuenta?");
+                    alert.setContentText("Esta acción no se puede revertir.");
+
+                    Optional<ButtonType> resultado = alert.showAndWait();
+
+                    if (resultado.get() == ButtonType.OK) {
+                        CatalogoCuentaModel catalogoCuentaModel = getTableView().getItems().get(getIndex());
+                        catalogoCuentaModel.eliminarCuenta(catalogoCuentaModel.getIdCuenta(), idEmpresaSesion);
+                        cargarCuentas();
+                    }
+
                 });
 
                 pane.setAlignment(Pos.CENTER);
@@ -105,8 +121,10 @@ public class CatalogoCuentasController {
                 setGraphic(empty ? null : pane);
             }
         });
+        formatearColumnaSaldo();
 
         btnAgregarCuenta.setOnAction(event -> {
+            AgregarCuentaController.idEmpresaSesion = idEmpresaSesion;
             Stage stage = (Stage) tbCuentas.getScene().getWindow();
             DialogoUtil.showDialog("agregar-cuenta-view", "Agregar partida", stage);
         });
@@ -119,6 +137,23 @@ public class CatalogoCuentasController {
         tbCuentas.getItems().clear();
         CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
         tbCuentas.setItems(cuentaModel.obtenerCatalogoCuentas(idEmpresaSesion));
+    }
+    private void formatearColumnaSaldo() {
+        clSaldo.setCellFactory(tc -> new TableCell<CatalogoCuentaModel, Double>() {
+            private final DecimalFormat formato = new DecimalFormat("$#,##0.00");
+
+            @Override
+            protected void updateItem(Double saldo, boolean empty) {
+                super.updateItem(saldo, empty);
+                setAlignment(Pos.CENTER_RIGHT);
+
+                if (empty || saldo == null) {
+                    setText(null);
+                } else {
+                    setText(formato.format(saldo));
+                }
+            }
+        });
     }
 
 }

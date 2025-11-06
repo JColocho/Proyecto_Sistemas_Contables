@@ -111,6 +111,7 @@ public class CatalogoCuentaModel {
         this.abono = abono;
     }
 
+    //Metodo para obtener el lista de nombre del catalogo de cuentas
     public ObservableList<String> obtenerNombreCuentas(int idEmpresa) {
         try{
             ObservableList<String> cuentas = FXCollections.observableArrayList();
@@ -127,6 +128,8 @@ public class CatalogoCuentaModel {
             throw new RuntimeException(e);
         }
     }
+
+    //Metodo para obtener el id de la cuenta mendiante el nombre
     public int obtenerIdCuenta(String nombreCuenta, int idEmpresa) {
         String sql = "SELECT idCuenta FROM tblcatalogocuentas WHERE cuenta = ? AND idempresa = ?";
         try (Connection connection = ConexionDB.connection();
@@ -147,6 +150,7 @@ public class CatalogoCuentaModel {
         }
     }
 
+    //Metodo para obtener todo el catalogo de cuentas de la empresa en especifico
     public ObservableList<CatalogoCuentaModel> obtenerCatalogoCuentas(int idEmpresa) {
         try{
             ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
@@ -173,6 +177,7 @@ public class CatalogoCuentaModel {
             throw new RuntimeException(e);
         }
     }
+    //Metodo para eliminar una cuenta del catalogo
     public void eliminarCuenta(int idCuenta, int idEmpresa) {
         try{
             Connection connection = ConexionDB.connection();
@@ -183,6 +188,59 @@ public class CatalogoCuentaModel {
 
 
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Metodo para validar si el cuenta ya existe
+    public boolean cuentaExiste(String cuenta, int idEmpresa) {
+        try{
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE Cuenta = ? AND idempresa = ?");
+            statement.setString(1, cuenta);
+            statement.setInt(2, idEmpresa);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Metodo para validar si el codigo de la cuenta ya existe
+    public boolean codigoExiste(String codigoCuenta, int idEmpresa) {
+        try{
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE codigo = ? AND idempresa = ?");
+            statement.setString(1, codigoCuenta);
+            statement.setInt(2, idEmpresa);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Metodo para insertar una cuenta al catalogo en la base de datos
+    public void crearCuenta(CatalogoCuentaModel cuentaModel) {
+        try{
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO tblcatalogocuentas (cuenta, codigo, tipocuenta, idempresa) VALUES (?, ?, ?, ?)");
+            statement.setString(1, cuentaModel.getCuenta());
+            statement.setString(2, cuentaModel.getCodigoCuenta());
+            statement.setString(3, cuentaModel.getTipoCuenta());
+            statement.setInt(4, cuentaModel.getIdEmpresa());
+            statement.executeUpdate();
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
