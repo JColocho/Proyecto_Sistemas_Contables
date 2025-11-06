@@ -4,6 +4,7 @@ import com.proyecto_sistemas_contables.Conexion.ConexionDB;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
 import java.sql.*;
 
 public class PartidaModel {
@@ -199,6 +200,69 @@ public class PartidaModel {
             }
 
             return partida;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public boolean numeroDocExistente(String numeroDoc, int idEmpresa) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblpartidas WHERE numerodocumento = ? AND idempresa = ?");
+            statement.setString(1, numeroDoc);
+            statement.setInt(2, idEmpresa);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void ActualizarPartida(PartidaModel partida) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statementPartida = connection.prepareStatement("UPDATE tblpartidas SET " +
+                    "fecha = ?, concepto = ?, tipodocumento = ?, numerodocumento = ?, idusuario = ? WHERE idpartida = ?");
+            statementPartida.setDate(1, partida.getFecha());
+            statementPartida.setString(2, partida.getConcepto());
+            statementPartida.setString(3, partida.getTipoDocumento());
+            statementPartida.setString(4, partida.getNumeroDocumento());
+            statementPartida.setInt(5, partida.getIdUsuario());
+            statementPartida.setInt(6, partida.getIdPartida());
+            statementPartida.executeUpdate();
+
+            PreparedStatement statementDetalle = connection.prepareStatement("DELETE FROM tbldetallepartida WHERE idpartida = ?");
+            statementDetalle.setInt(1, partida.getIdPartida());
+            statementDetalle.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void EliminarPartida(int idPartida, int idEmpresa) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statementFile = connection.prepareStatement("SELECT * FROM tblpartidas WHERE idpartida = ? AND idempresa = ?");
+            statementFile.setInt(1, idPartida);
+            statementFile.setInt(2, idEmpresa);
+            ResultSet rs = statementFile.executeQuery();
+
+            if (rs.next()) {
+                EmpresaModel empresaModel = new EmpresaModel();
+                String documentoRuta = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas/" + empresaModel.idBuscarEmpresa(idEmpresa) +"/" + rs.getString("numerodocumento") + ".pdf";
+                File actualFile = new File(documentoRuta);
+                actualFile.delete();
+            }
+
+
+            PreparedStatement statementDetalle = connection.prepareStatement("DELETE FROM tbldetallepartida WHERE idpartida = ?");
+            statementDetalle.setInt(1, idPartida);
+            statementDetalle.executeUpdate();
+
+            PreparedStatement statementPartida = connection.prepareStatement("DELETE FROM tblpartidas WHERE idpartida = ?");
+            statementPartida.setInt(1, idPartida);
+            statementPartida.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

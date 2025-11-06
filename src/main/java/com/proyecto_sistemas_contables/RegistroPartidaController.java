@@ -103,6 +103,7 @@ public class RegistroPartidaController {
     private ObservableList<CatalogoCuentaModel> registroDetalle;
     public static int idUsuarioSesion;
     public static int idEmpresaSesion;
+    public static int idPartida;
 
     // Guardará temporalmente el archivo PDF seleccionado
     private File archivoSeleccionado;
@@ -282,55 +283,70 @@ public class RegistroPartidaController {
                if(!txtConcepto.getText().isEmpty()){
                    if (cmbTipoDoc.getSelectionModel().getSelectedItem() != null){
                        if (!txtNumeroDoc.getText().isEmpty()){
-                           if(archivoSeleccionado.exists()){
-                               if (guardarCopiaPDF(txtNumeroDoc.getText())){
-                                   if (textDiferencia.getText().equals("$0.00")){
-                                       if (!tblRegistroDetalle.getItems().isEmpty()){
+                           PartidaModel validarDoc = new PartidaModel();
+                           if (!validarDoc.numeroDocExistente(txtNumeroDoc.getText(), idEmpresaSesion)){
+                               if(archivoSeleccionado.exists()){
+                                   if (guardarCopiaPDF(txtNumeroDoc.getText())){
+                                       if (textDiferencia.getText().equals("$0.00")){
+                                           if (!tblRegistroDetalle.getItems().isEmpty()){
 
-                                           //Capturamos los datos para subir los datos de la partida
-                                           PartidaModel partidaModel = new PartidaModel();
-                                           partidaModel.setConcepto(txtConcepto.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase());
-                                           partidaModel.setFecha(java.sql.Date.valueOf(datePartida.getValue()));
-                                           partidaModel.setIdUsuario(idUsuarioSesion);
-                                           partidaModel.setIdEmpresa(idEmpresaSesion);
-                                           partidaModel.setTipoDocumento(cmbTipoDoc.getSelectionModel().getSelectedItem());
-                                           partidaModel.setNumeroDocumento(txtNumeroDoc.getText());
+                                               //Capturamos los datos para subir los datos de la partida
+                                               PartidaModel partidaModel = new PartidaModel();
+                                               partidaModel.setConcepto(txtConcepto.getText().trim().replace("   ", " ").replace("  ", " ").toUpperCase());
+                                               partidaModel.setFecha(java.sql.Date.valueOf(datePartida.getValue()));
+                                               partidaModel.setIdUsuario(idUsuarioSesion);
+                                               partidaModel.setIdEmpresa(idEmpresaSesion);
+                                               partidaModel.setTipoDocumento(cmbTipoDoc.getSelectionModel().getSelectedItem());
+                                               partidaModel.setNumeroDocumento(txtNumeroDoc.getText());
 
-                                           //Insertar la partida a la DB y obtener el id de la partida
-                                           partidaModel.setIdPartida(partidaModel.agregarPartida(partidaModel));
+                                               //Insertar la partida a la DB y obtener el id de la partida
+                                               partidaModel.setIdPartida(partidaModel.agregarPartida(partidaModel));
 
-                                           //Registramos los detalles de la partida
-                                           for(CatalogoCuentaModel cuentaModel : registroDetalle){
-                                               DetallePartidaModel detallePartidaModel = new DetallePartidaModel();
-                                               detallePartidaModel.agregarDetalle(
-                                                       partidaModel.getIdPartida(),
-                                                       cuentaModel.obtenerIdCuenta(cuentaModel.getCuenta(),1),
-                                                       cuentaModel.getCargo(),
-                                                       cuentaModel.getAbono());
+                                               //Registramos los detalles de la partida
+                                               for(CatalogoCuentaModel cuentaModel : registroDetalle){
+                                                   DetallePartidaModel detallePartidaModel = new DetallePartidaModel();
+                                                   detallePartidaModel.agregarDetalle(
+                                                           partidaModel.getIdPartida(),
+                                                           cuentaModel.obtenerIdCuenta(cuentaModel.getCuenta(),idEmpresaSesion),
+                                                           cuentaModel.getCargo(),
+                                                           cuentaModel.getAbono());
+                                               }
+
+                                               limpiarRegistro();
+
+                                               Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                               alert.setTitle("Registro Partida");
+                                               alert.setContentText("Partida registrada con exito.");
+                                               alert.show();
+                                           } else {
+                                               Alert alert = new Alert(Alert.AlertType.ERROR);
+                                               alert.setTitle("Error");
+                                               alert.setContentText("No hay detalles de las cuentas.");
+                                               alert.show();
                                            }
-
-                                           limpiarRegistro();
-
-                                           Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                           alert.setTitle("Registro Partida");
-                                           alert.setContentText("Partida registrada con exito.");
+                                       }
+                                       else {
+                                           Alert alert = new Alert(Alert.AlertType.ERROR);
+                                           alert.setTitle("Error");
+                                           alert.setContentText("Existe una diferencia de: " + textDiferencia.getText() + ", la partida no debe tener diferencias.");
                                            alert.show();
                                        }
                                    }
-                                   else {
-                                       Alert alert = new Alert(Alert.AlertType.ERROR);
-                                       alert.setTitle("Error");
-                                       alert.setContentText("Existe una diferencia de: " + textDiferencia.getText() + ", la partida no debe tener diferencias.");
-                                       alert.show();
-                                   }
+                               }
+                               else {
+                                   Alert alert = new Alert(Alert.AlertType.ERROR);
+                                   alert.setTitle("Error");
+                                   alert.setContentText("No se ha subido el documento de la partida.");
+                                   alert.show();
                                }
                            }
                            else {
                                Alert alert = new Alert(Alert.AlertType.ERROR);
                                alert.setTitle("Error");
-                               alert.setContentText("No se ha subido el documento de la partida.");
+                               alert.setContentText("No numero de documento ya existe, ingrese otro numero de documento.");
                                alert.show();
                            }
+
                        }
                        else {
                            Alert alert = new Alert(Alert.AlertType.ERROR);
