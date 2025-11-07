@@ -100,9 +100,13 @@ public class PartidaModel {
         this.nombreUsuario = nombreUsuario;
     }
 
+    //Metodo para registrar una partida a la base de datos y retorne el id de la partida insertada
     public int agregarPartida(PartidaModel partida) {
         try{
+            //Hacemos la conexión con la base de datos
             Connection connection = ConexionDB.connection();
+
+            //Hacemos la inserción de la nueva partida en la base de datos
             PreparedStatement statement = connection.prepareStatement("INSERT INTO tblpartidas " +
                     "(fecha, concepto, tipodocumento, numerodocumento, idusuario, idempresa) " +
                     "VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
@@ -118,6 +122,7 @@ public class PartidaModel {
             if (filasAfectadas > 0) {
                 try (ResultSet rs = statement.getGeneratedKeys()) {
                     if (rs.next()) {
+                        //Retornamos el id de la partida insertada
                         return rs.getInt(1);
                     }
                 }
@@ -131,6 +136,7 @@ public class PartidaModel {
         }
     }
 
+    //Metodo para obtener las partidas registradas por un rango de fecha
     public static ObservableList<PartidaModel> obtenerPartidas(Date fechaInicio, Date fechaFin) {
         ObservableList<PartidaModel> lista = FXCollections.observableArrayList();
         String sql;
@@ -151,7 +157,7 @@ public class PartidaModel {
                 FROM tblpartidas p
                 INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
                 ORDER BY p.fecha DESC
-                LIMIT 10
+                LIMIT 30
             """;
         }
 
@@ -178,7 +184,7 @@ public class PartidaModel {
 
         return lista;
     }
-
+    //Metodo para obtener los datos de una partida en especifico
     public PartidaModel obtenerPartida(int idPartida) {
 
         try {
@@ -204,6 +210,7 @@ public class PartidaModel {
             throw new RuntimeException(e);
         }
     }
+    //Metodo para validar si el numero de documento ya existe en la base de datos
     public boolean numeroDocExistente(String numeroDoc, int idEmpresa) {
         try {
             Connection connection = ConexionDB.connection();
@@ -220,9 +227,14 @@ public class PartidaModel {
             throw new RuntimeException(e);
         }
     }
+
+    //Metodo para actualizar una partida
     public void ActualizarPartida(PartidaModel partida) {
         try{
+            //Hacemos la conexión con la base de datos
             Connection connection = ConexionDB.connection();
+
+            //Actualizamos los datos de la partida
             PreparedStatement statementPartida = connection.prepareStatement("UPDATE tblpartidas SET " +
                     "fecha = ?, concepto = ?, tipodocumento = ?, numerodocumento = ?, idusuario = ? WHERE idpartida = ?");
             statementPartida.setDate(1, partida.getFecha());
@@ -233,6 +245,7 @@ public class PartidaModel {
             statementPartida.setInt(6, partida.getIdPartida());
             statementPartida.executeUpdate();
 
+            //Eliminamos los detalles antiguos de la partida que se esta actualizando
             PreparedStatement statementDetalle = connection.prepareStatement("DELETE FROM tbldetallepartida WHERE idpartida = ?");
             statementDetalle.setInt(1, partida.getIdPartida());
             statementDetalle.executeUpdate();
@@ -240,26 +253,32 @@ public class PartidaModel {
             throw new RuntimeException(e);
         }
     }
+    //Metodo para eliminar una partida de la base de datos
     public void EliminarPartida(int idPartida, int idEmpresa) {
         try{
+            //Hacemos la conexión la base de datos
             Connection connection = ConexionDB.connection();
+
+            //Consultamos el numero de documento registrado para la partida
             PreparedStatement statementFile = connection.prepareStatement("SELECT * FROM tblpartidas WHERE idpartida = ? AND idempresa = ?");
             statementFile.setInt(1, idPartida);
             statementFile.setInt(2, idEmpresa);
             ResultSet rs = statementFile.executeQuery();
 
             if (rs.next()) {
+                //Eliminamos el documento almacenado localmente relacionado a la partida
                 EmpresaModel empresaModel = new EmpresaModel();
                 String documentoRuta = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas/" + empresaModel.idBuscarEmpresa(idEmpresa) +"/" + rs.getString("numerodocumento") + ".pdf";
                 File actualFile = new File(documentoRuta);
                 actualFile.delete();
             }
 
-
+            //Eliminamos todos los detalles de la partida
             PreparedStatement statementDetalle = connection.prepareStatement("DELETE FROM tbldetallepartida WHERE idpartida = ?");
             statementDetalle.setInt(1, idPartida);
             statementDetalle.executeUpdate();
 
+            //Eliminamos la partida de la base de datos
             PreparedStatement statementPartida = connection.prepareStatement("DELETE FROM tblpartidas WHERE idpartida = ?");
             statementPartida.setInt(1, idPartida);
             statementPartida.executeUpdate();

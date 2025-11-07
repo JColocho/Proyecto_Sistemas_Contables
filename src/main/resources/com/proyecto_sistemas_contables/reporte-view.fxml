@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.ScrollPane?>
 <AnchorPane prefHeight="680.0" prefWidth="980.0" style="-fx-background-color: #f4f6f8;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.ReporteController">
 
     <children>
@@ -85,10 +86,11 @@
                 </HBox>
 
                 <Separator />
-
-                <TableView fx:id="tblPreview" prefHeight="300" VBox.vgrow="ALWAYS">
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                <TableView fx:id="tblPreview" prefHeight="300" VBox.vgrow="ALWAYS" >
 
                 </TableView>
+                </ScrollPane>
 
                 <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 8 14 14 14;">
                     <Label fx:id="lblRegistros" style="-fx-text-fill: #666;" text="0 registros" />

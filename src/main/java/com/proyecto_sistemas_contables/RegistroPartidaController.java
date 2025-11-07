@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 public class RegistroPartidaController {
@@ -181,7 +182,6 @@ public class RegistroPartidaController {
         colCuenta.setCellValueFactory(new PropertyValueFactory<>("cuenta"));
         colCargo.setCellValueFactory(new PropertyValueFactory<>("cargo"));
         colAbono.setCellValueFactory(new PropertyValueFactory<>("abono"));
-
         colEliminar.setCellFactory(param -> new TableCell<>() {
             private final Button btnEliminar = new Button();
             private final HBox pane = new HBox(5);
@@ -219,6 +219,8 @@ public class RegistroPartidaController {
                 setGraphic(empty ? null : pane);
             }
         });
+
+        formatearColumnaCargoAbono();
 
         btnGuardarDetalle.setOnAction(e -> {
             CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
@@ -522,5 +524,38 @@ public class RegistroPartidaController {
         else {
             RUTA_DESTINO = rutaDestino;
         }
+    }
+    private void formatearColumnaCargoAbono() {
+        colCargo.setCellFactory(tc -> new TableCell<CatalogoCuentaModel, Double>() {
+            private final DecimalFormat formato = new DecimalFormat("$#,##0.00");
+
+            @Override
+            protected void updateItem(Double saldo, boolean empty) {
+                super.updateItem(saldo, empty);
+                setAlignment(Pos.CENTER_RIGHT);
+
+                if (empty || saldo == null) {
+                    setText(null);
+                } else {
+                    setText(formato.format(saldo));
+                }
+            }
+        });
+
+        colAbono.setCellFactory(tc -> new TableCell<CatalogoCuentaModel, Double>() {
+            private final DecimalFormat formato = new DecimalFormat("$#,##0.00");
+
+            @Override
+            protected void updateItem(Double saldo, boolean empty) {
+                super.updateItem(saldo, empty);
+                setAlignment(Pos.CENTER_RIGHT);
+
+                if (empty || saldo == null) {
+                    setText(null);
+                } else {
+                    setText(formato.format(saldo));
+                }
+            }
+        });
     }
 }

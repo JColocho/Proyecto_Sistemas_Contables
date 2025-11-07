@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 public class EditarPartidaController {
@@ -220,6 +221,8 @@ public class EditarPartidaController {
                 setGraphic(empty ? null : pane);
             }
         });
+
+        formatearColumnaCargoAbono();
 
         btnGuardarDetalle.setOnAction(e -> {
             CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
@@ -427,20 +430,6 @@ public class EditarPartidaController {
         rdbCargo.setSelected(false);
         rdbAbono.setSelected(false);
     }
-    //Metodo para elimnar los datos de la partida
-    public void limpiarRegistro() {
-        txtMonto.setText("");
-        txtConcepto.setText("");
-        txtNumeroDoc.setText("");
-        txtDocSubido.setText("");
-        datePartida.setValue(null);
-        cmbCuentas.getSelectionModel().select(null);
-        cmbTipoDoc.getSelectionModel().select(null);
-        rdbCargo.setSelected(false);
-        rdbAbono.setSelected(false);
-        registroDetalle.clear();
-        cargarTabla();
-    }
     //Método para cargar el cátalogo de cuentas
     private void cargarCuentas() {
         CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
@@ -559,5 +548,38 @@ public class EditarPartidaController {
             System.out.println("Error al guardar el archivo: " + e.getMessage());
             return false;
         }
+    }
+    private void formatearColumnaCargoAbono() {
+        colCargo.setCellFactory(tc -> new TableCell<CatalogoCuentaModel, Double>() {
+            private final DecimalFormat formato = new DecimalFormat("$#,##0.00");
+
+            @Override
+            protected void updateItem(Double saldo, boolean empty) {
+                super.updateItem(saldo, empty);
+                setAlignment(Pos.CENTER_RIGHT);
+
+                if (empty || saldo == null) {
+                    setText(null);
+                } else {
+                    setText(formato.format(saldo));
+                }
+            }
+        });
+
+        colAbono.setCellFactory(tc -> new TableCell<CatalogoCuentaModel, Double>() {
+            private final DecimalFormat formato = new DecimalFormat("$#,##0.00");
+
+            @Override
+            protected void updateItem(Double saldo, boolean empty) {
+                super.updateItem(saldo, empty);
+                setAlignment(Pos.CENTER_RIGHT);
+
+                if (empty || saldo == null) {
+                    setText(null);
+                } else {
+                    setText(formato.format(saldo));
+                }
+            }
+        });
     }
 }
