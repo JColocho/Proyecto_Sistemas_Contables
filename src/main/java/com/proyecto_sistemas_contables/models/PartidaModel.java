@@ -157,7 +157,7 @@ public class PartidaModel {
                 FROM tblpartidas p
                 INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
                 ORDER BY p.fecha DESC
-                LIMIT 10
+                LIMIT 30
             """;
         }
 
