@@ -93,6 +93,10 @@ public class CatalogoCuentasController {
                 btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
 
                 btnEditar.setOnAction(event -> {
+                    EditarCuentaController.datosCuentaActual = tbCuentas.getItems().get(getIndex());
+                    EditarCuentaController.idEmpresaSesion = idEmpresaSesion;
+                    Stage stage = (Stage) tbCuentas.getScene().getWindow();
+                    DialogoUtil.showDialog("editar-cuenta-view", "Editar cuenta", stage);
                 });
 
                 btnEliminar.setOnAction(event -> {
@@ -126,7 +130,7 @@ public class CatalogoCuentasController {
         btnAgregarCuenta.setOnAction(event -> {
             AgregarCuentaController.idEmpresaSesion = idEmpresaSesion;
             Stage stage = (Stage) tbCuentas.getScene().getWindow();
-            DialogoUtil.showDialog("agregar-cuenta-view", "Agregar partida", stage);
+            DialogoUtil.showDialog("agregar-cuenta-view", "Agregar cuenta", stage);
         });
 
 

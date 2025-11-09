@@ -114,15 +114,22 @@ public class CatalogoCuentaModel {
     //Metodo para obtener el lista de nombre del catalogo de cuentas
     public ObservableList<String> obtenerNombreCuentas(int idEmpresa) {
         try{
+            //Colección con todas la cuentas
             ObservableList<String> cuentas = FXCollections.observableArrayList();
 
+            //Conexión con la base de datos
             Connection connection = ConexionDB.connection();
             Statement statement = connection.createStatement();
+
+            //Consulta en la base de datos
             ResultSet resultSet = statement.executeQuery("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = " + idEmpresa);
+
+            //Obtener los datos encontrados en la base de datos
             while (resultSet.next()) {
                 cuentas.add(resultSet.getString("cuenta"));
             }
 
+            //Retornar la colección
             return cuentas;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -131,18 +138,25 @@ public class CatalogoCuentaModel {
 
     //Metodo para obtener el id de la cuenta mendiante el nombre
     public int obtenerIdCuenta(String nombreCuenta, int idEmpresa) {
+        //Consulta para la base de datos para encontrar el id de la cuenta
         String sql = "SELECT idCuenta FROM tblcatalogocuentas WHERE cuenta = ? AND idempresa = ?";
+
+        //Conexión con la base de datos
         try (Connection connection = ConexionDB.connection();
+             //Preparar la consulta para la base de datos
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, nombreCuenta);
             statement.setInt(2, idEmpresa);
 
+            //Ejecutar la consulta
             ResultSet resultSet = statement.executeQuery();
+            //Obtener el resultado de la consulta
             if (resultSet.next()) {
+                //retornar el resultado
                 return resultSet.getInt("idCuenta");
             }
-            return -1; // No se encontró la cuenta
+            return -1;
 
         } catch (SQLException e) {
             System.out.println("Error al obtener ID de cuenta: " + e.getMessage());
@@ -241,6 +255,26 @@ public class CatalogoCuentaModel {
             statement.executeUpdate();
         }
         catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Metodo para actualizar una cuenta del cátalogo
+    public void editarCuenta(int idCuenta, CatalogoCuentaModel cuentaModel) {
+        try{
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement("UPDATE tblcatalogocuentas SET " +
+                    "cuenta = ?, codigo = ?, tipocuenta = ? WHERE idCuenta = ?");
+
+            statement.setString(1, cuentaModel.getCuenta());
+            statement.setString(2, cuentaModel.getCodigoCuenta());
+            statement.setString(3, cuentaModel.getTipoCuenta());
+            statement.setInt(4, idCuenta);
+
+            statement.executeUpdate();
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
