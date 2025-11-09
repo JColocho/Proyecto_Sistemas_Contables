@@ -1,23 +1,272 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500.0" prefWidth="732.0" style="-fx-background-color: D9D9D9;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.AuditoriaController">
+<AnchorPane prefHeight="720.0" prefWidth="1000.0" style="-fx-background-color: #f4f6f8;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.AuditoriaController">
+
    <children>
-      <VBox layoutX="1.0" prefHeight="500.0" prefWidth="732.0" styleClass="contenedor" stylesheets="@static/css/vistas.css" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
-         <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Label text="Auditoria" />
-               </children>
-            </HBox>
-         </children>
+      <VBox spacing="14" AnchorPane.bottomAnchor="18" AnchorPane.leftAnchor="18" AnchorPane.rightAnchor="18" AnchorPane.topAnchor="18">
          <padding>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-         </padding></VBox>
+            <Insets bottom="12" left="12" right="12" top="12" />
+         </padding>
+
+         <!-- HEADER -->
+         <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label style="-fx-font-size: 28px;" text="🔍" />
+            <VBox spacing="2">
+               <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Auditoría de Partidas Contables" />
+               <Label style="-fx-text-fill: #666;" text="Revise y apruebe las partidas contables registradas en el sistema." />
+            </VBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnActualizar" style="-fx-font-size: 14;" styleClass="btnAzul" text="🔄 Actualizar" />
+         </HBox>
+
+         <!-- FILTROS Y ESTADÍSTICAS -->
+         <GridPane hgap="16" styleClass="contenedorRedondeado" vgap="10">
+            <padding>
+               <Insets bottom="18" left="18" right="18" top="18" />
+            </padding>
+
+            <columnConstraints>
+               <ColumnConstraints halignment="CENTER" percentWidth="15" />
+               <ColumnConstraints percentWidth="20" />
+               <ColumnConstraints percentWidth="15" />
+               <ColumnConstraints percentWidth="20" />
+               <ColumnConstraints percentWidth="15" />
+               <ColumnConstraints percentWidth="15" />
+            </columnConstraints>
+
+            <!-- Filtros de fecha -->
+            <Label text="Desde" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <DatePicker fx:id="dpFechaInicio" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+            <Label text="Hasta" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+            <DatePicker fx:id="dpFechaFin" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+
+            <Button fx:id="btnBuscar" prefHeight="33.0" prefWidth="100.0" style="-fx-font-size: 14;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+            <Button fx:id="btnLimpiarFiltros" prefHeight="33.0" prefWidth="100.0" style="-fx-font-size: 14;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+
+            <!-- Separador -->
+            <Separator GridPane.columnIndex="0" GridPane.columnSpan="6" GridPane.rowIndex="1" />
+
+            <!-- Estadísticas -->
+            <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Estadísticas:" GridPane.columnIndex="0" GridPane.columnSpan="6" GridPane.rowIndex="2" />
+
+            <!-- CONTENEDOR CENTRADO PARA ESTADÍSTICAS -->
+            <HBox alignment="CENTER" spacing="8" GridPane.columnIndex="0" GridPane.columnSpan="6" GridPane.rowIndex="3">
+
+               <VBox alignment="CENTER" spacing="4" style="-fx-background-color: #e3f2fd; -fx-padding: 10; -fx-background-radius: 8;">
+                  <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="Total" />
+                  <Label fx:id="lblTotalPartidas" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1976d2;" text="0" />
+               </VBox>
+
+               <VBox alignment="CENTER" spacing="4" style="-fx-background-color: #fff3cd; -fx-padding: 10; -fx-background-radius: 8;">
+                  <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="Pendientes" />
+                  <Label fx:id="lblPendientes" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #856404;" text="0" />
+               </VBox>
+
+               <VBox alignment="CENTER" spacing="4" style="-fx-background-color: #d4edda; -fx-padding: 10; -fx-background-radius: 8;">
+                  <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="Aprobadas" />
+                  <Label fx:id="lblAprobadas" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #155724;" text="0" />
+               </VBox>
+
+               <VBox alignment="CENTER" spacing="4" style="-fx-background-color: #f8d7da; -fx-padding: 10; -fx-background-radius: 8;">
+                  <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="Con Observaciones" />
+                  <Label fx:id="lblConObservaciones" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #721c24;" text="0" />
+               </VBox>
+
+               <VBox alignment="CENTER" spacing="4" style="-fx-background-color: #f5c6cb; -fx-padding: 10; -fx-background-radius: 8;">
+                  <Label style="-fx-font-size: 11px; -fx-text-fill: #666;" text="Rechazadas" />
+                  <Label fx:id="lblRechazadas" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #721c24;" text="0" />
+               </VBox>
+            </HBox>
+
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
+         </GridPane>
+
+         <!-- CONTENEDOR PRINCIPAL CON SPLIT PANE -->
+         <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+
+            <!-- PANEL IZQUIERDO: LISTA DE PARTIDAS -->
+            <ScrollPane fitToWidth="true">
+               <VBox spacing="8" styleClass="contenedorRedondeado">
+                  <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 10 14 0 14;">
+                     <Label style="-fx-font-weight: bold; -fx-font-size: 15px;" text="📋 Partidas" />
+                     <Region HBox.hgrow="ALWAYS" />
+                  </HBox>
+
+                  <Separator />
+
+                  <TableView fx:id="tblPartidas" prefHeight="400">
+                     <columns>
+                        <TableColumn fx:id="colIdPartida" prefWidth="50" text="ID" />
+                        <TableColumn fx:id="colFecha" prefWidth="90" text="Fecha" />
+                        <TableColumn fx:id="colConcepto" prefWidth="150" text="Concepto" />
+                        <TableColumn fx:id="colContador" prefWidth="90" text="Auditor" />
+                        <TableColumn fx:id="colEstado" prefWidth="100" text="Estado" />
+                        <TableColumn fx:id="colTipoHallazgo" prefWidth="100" text="Hallazgo" />
+                     </columns>
+                  </TableView>
+               </VBox>
+            </ScrollPane>
+
+            <!-- PANEL DERECHO: DETALLES Y AUDITORÍA -->
+            <ScrollPane fitToWidth="true">
+               <VBox spacing="10">
+
+                  <!-- DETALLES DE LA PARTIDA -->
+                  <VBox spacing="8" styleClass="contenedorRedondeado">
+                     <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 10 14 0 14;">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 15px;" text="📄 Detalles de Partida" />
+                     </HBox>
+                     <Separator />
+
+                     <GridPane hgap="10" vgap="8" style="-fx-padding: 0 14 10 14;">
+                        <columnConstraints>
+                           <ColumnConstraints percentWidth="30" />
+                           <ColumnConstraints percentWidth="70" />
+                        </columnConstraints>
+
+                        <Label style="-fx-font-weight: bold;" text="ID Partida:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label fx:id="lblIdPartida" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                        <Label style="-fx-font-weight: bold;" text="Fecha:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="lblFechaPartida" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <Label style="-fx-font-weight: bold;" text="Concepto:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="lblConceptoPartida" text="-" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                        <Label style="-fx-font-weight: bold;" text="Tipo Doc.:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label fx:id="lblTipoDocumento" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                        <Label style="-fx-font-weight: bold;" text="Núm. Doc.:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <Label fx:id="lblNumeroDocumento" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                        <rowConstraints>
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                        </rowConstraints>
+                     </GridPane>
+
+                     <!-- Tabla de detalles (Cargos y Abonos) -->
+                     <Label style="-fx-font-weight: bold; -fx-padding: 0 14 0 14;" text="Movimientos:" />
+                     <TableView fx:id="tblDetalles" prefHeight="150" style="-fx-padding: 0 14 10 14;">
+                        <columns>
+                           <TableColumn fx:id="colCuenta" prefWidth="200" text="Cuenta" />
+                           <TableColumn fx:id="colCargo" prefWidth="100" text="Cargo" />
+                           <TableColumn fx:id="colAbono" prefWidth="100" text="Abono" />
+                        </columns>
+                     </TableView>
+                  </VBox>
+
+                  <!-- PANEL AUDITORÍA EXISTENTE -->
+                  <VBox fx:id="panelAuditoriaExistente" spacing="8" styleClass="contenedorRedondeado">
+                     <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 10 14 0 14;">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 15px;" text="✅ Auditoría Registrada" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnEditarAuditoria" style="-fx-font-size: 12;" styleClass="btnAzul" text="Editar" />
+                     </HBox>
+                     <Separator />
+
+                     <GridPane hgap="10" vgap="8" style="-fx-padding: 0 14 10 14;">
+                        <columnConstraints>
+                           <ColumnConstraints percentWidth="35" />
+                           <ColumnConstraints percentWidth="65" />
+                        </columnConstraints>
+
+                        <Label style="-fx-font-weight: bold;" text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label fx:id="lblEstadoActual" text="-" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                        <Label style="-fx-font-weight: bold;" text="Tipo Hallazgo:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="lblTipoHallazgoActual" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <Label style="-fx-font-weight: bold;" text="Fecha Auditoría:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="lblFechaAuditoria" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                        <Label style="-fx-font-weight: bold;" text="Auditor:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label fx:id="lblAuditor" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                        <Label style="-fx-font-weight: bold;" text="Observación:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <TextArea fx:id="txtObservacionActual" editable="false" prefHeight="80" wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+
+                        <rowConstraints>
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                        </rowConstraints>
+                     </GridPane>
+                  </VBox>
+
+                  <!-- PANEL NUEVA AUDITORÍA / EDICIÓN -->
+                  <VBox fx:id="panelNuevaAuditoria" spacing="8" styleClass="contenedorRedondeado">
+                     <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 10 14 0 14;">
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 15px;" text="📝 Registrar Auditoría" />
+                     </HBox>
+                     <Separator />
+
+                     <GridPane hgap="10" vgap="12" style="-fx-padding: 0 14 10 14;">
+                        <columnConstraints>
+                           <ColumnConstraints percentWidth="35" />
+                           <ColumnConstraints percentWidth="65" />
+                        </columnConstraints>
+
+                        <Label style="-fx-font-weight: bold;" text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cmbEstado" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                        <Label style="-fx-font-weight: bold;" text="Tipo Hallazgo:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cmbTipoHallazgo" prefWidth="200" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <Label style="-fx-font-weight: bold;" text="Observación:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <TextArea fx:id="txtObservacion" prefHeight="100" promptText="Escriba sus observaciones aquí..." wrapText="true" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                           <Button fx:id="btnCancelar" prefHeight="35.0" prefWidth="100.0" style="-fx-font-size: 14;" styleClass="btnRojo" text="Cancelar" />
+                           <Button fx:id="btnGuardarAuditoria" prefHeight="35.0" prefWidth="150.0" style="-fx-font-size: 14;" styleClass="btnVerde" text="Guardar Auditoría" />
+                        </HBox>
+
+                        <rowConstraints>
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                           <RowConstraints />
+                        </rowConstraints>
+                     </GridPane>
+                  </VBox>
+
+               </VBox>
+            </ScrollPane>
+
+         </SplitPane>
+
+      </VBox>
    </children>
 </AnchorPane>

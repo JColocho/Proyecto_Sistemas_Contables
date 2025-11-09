@@ -1,5 +1,6 @@
 package com.proyecto_sistemas_contables;
 
+import com.proyecto_sistemas_contables.models.AccesoModel;
 import com.proyecto_sistemas_contables.models.EmpresaModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -64,9 +65,10 @@ public class NavbarController {
             stage.setMaximized(true);
         });
 
-
         // Cargar el dashboard por defecto al iniciar
         loadView("dashboard-view.fxml");
+
+        // Inicializar IDs de sesión para otros controladores
         ReporteController.idUsuarioEnSesion = idUsuarioSesion;
         ReporteController.idEmpresaSesion = idEmpresaSesion;
         PartidasController.idUsuarioSesion = idUsuarioSesion;
@@ -74,10 +76,65 @@ public class NavbarController {
         CatalogoCuentasController.idEmpresaSesion = idEmpresaSesion;
         EmpresaController.idUsuarioSesion = idUsuarioSesion;
 
+        // CONFIGURAR PERMISOS SEGÚN EL ROL
+        configurarPermisosPorRol();
+    }
 
-        btnAuditoria.setVisible(false);
-        btnDocumentos.setVisible(false);
+    /**
+     * Configura la visibilidad y habilitación de botones según el rol del usuario
+     */
+    private void configurarPermisosPorRol() {
+        int nivelAcceso = AccesoModel.obtenerNivelAccesoUsuario(idUsuarioSesion);
+
+        // Por defecto, ocultar todos los botones restringidos
         btnUsuarios.setVisible(false);
+        btnDocumentos.setVisible(false);
+        btnAuditoria.setVisible(false);
+
+        switch (nivelAcceso) {
+            case AccesoModel.ROL_ADMINISTRADOR:
+                // El administrador ve TODO
+                btnUsuarios.setVisible(true);
+                btnDocumentos.setVisible(true);
+                btnAuditoria.setVisible(true);
+                btnEmpresas.setVisible(true);
+                btnCatalogo.setVisible(true);
+                btnPartidas.setVisible(true);
+                btnReporte.setVisible(true);
+                btnDashboard.setVisible(true);
+                break;
+
+            case AccesoModel.ROL_CONTADOR:
+                // El contador NO ve: Usuarios, Documentos, Auditoría
+                btnUsuarios.setVisible(false);
+                btnDocumentos.setVisible(false);
+                btnAuditoria.setVisible(false);
+                // Sí ve: Empresas, Catálogo, Partidas, Reportes, Dashboard
+                btnEmpresas.setVisible(true);
+                btnCatalogo.setVisible(true);
+                btnPartidas.setVisible(true);
+                btnReporte.setVisible(true);
+                btnDashboard.setVisible(true);
+                break;
+
+            case AccesoModel.ROL_AUDITOR:
+                // El auditor solo ve: Partidas (solo lectura), Reportes, Auditoría
+                btnUsuarios.setVisible(false);
+                btnDocumentos.setVisible(false);
+                btnEmpresas.setVisible(false);
+                btnCatalogo.setVisible(false);
+                // Sí ve: Auditoría, Reportes, Dashboard
+                btnAuditoria.setVisible(true);
+                btnPartidas.setVisible(true); // Solo lectura (se controla en el controlador)
+                btnReporte.setVisible(true);
+                btnDashboard.setVisible(true);
+                break;
+
+            default:
+                // Sin permisos - solo dashboard
+                btnDashboard.setVisible(true);
+                break;
+        }
     }
 
     @FXML
@@ -87,20 +144,31 @@ public class NavbarController {
         if (source == btnDashboard) {
             loadView("dashboard-view.fxml");
         } else if (source == btnUsuarios) {
-            loadView("usuarios-view.fxml");
+            // Verificar permiso antes de cargar
+            if (AccesoModel.puedeGestionarUsuarios(idUsuarioSesion)) {
+                loadView("usuarios-view.fxml");
+            }
         } else if (source == btnAuditoria) {
-            loadView("auditoria-view.fxml");
+            // Verificar permiso antes de cargar
+            if (AccesoModel.puedeGestionarAuditorias(idUsuarioSesion)) {
+                loadView("auditoria-view.fxml");
+            }
         } else if (source == btnPartidas) {
             loadView("partidas-view.fxml");
         } else if (source == btnReporte) {
             loadView("reporte-view.fxml");
         } else if (source == btnDocumentos) {
-            loadView("documentos-view.fxml");
+            // Verificar permiso antes de cargar
+            if (AccesoModel.puedeGestionarDocumentos(idUsuarioSesion)) {
+                loadView("documentos-view.fxml");
+            }
         } else if (source == btnEmpresas) {
-            irAVistaEmpresas(); // Cambiar completamente la ventana
-        }
-        else if (source == btnCatalogo) {
-            loadView("catalogo-cuentas-view.fxml");
+            irAVistaEmpresas();
+        } else if (source == btnCatalogo) {
+            // Verificar permiso antes de cargar
+            if (AccesoModel.puedeGestionarCatalogo(idUsuarioSesion)) {
+                loadView("catalogo-cuentas-view.fxml");
+            }
         }
     }
 
@@ -108,6 +176,13 @@ public class NavbarController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlName));
             AnchorPane view = loader.load();
+
+            // INICIALIZAR CONTROLADORES SEGÚN LA VISTA
+            if (fxmlName.equals("auditoria-view.fxml")) {
+                AuditoriaController controller = loader.getController();
+                controller.inicializarDatos(idUsuarioSesion, idEmpresaSesion);
+            }
+
             contentPane.getChildren().setAll(view);
 
             // Anclar la vista a todos los bordes del contenedor

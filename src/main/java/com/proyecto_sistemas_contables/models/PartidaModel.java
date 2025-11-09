@@ -108,14 +108,15 @@ public class PartidaModel {
 
             //Hacemos la inserción de la nueva partida en la base de datos
             PreparedStatement statement = connection.prepareStatement("INSERT INTO tblpartidas " +
-                    "(fecha, concepto, tipodocumento, numerodocumento, idusuario, idempresa) " +
-                    "VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            statement.setDate(1, partida.getFecha());
-            statement.setString(2, partida.getConcepto());
-            statement.setString(3, partida.getTipoDocumento());
-            statement.setString(4, partida.getNumeroDocumento());
-            statement.setInt(5, partida.getIdUsuario());
-            statement.setInt(6, partida.getIdEmpresa());
+                    "(asiento, fecha, concepto, tipodocumento, numerodocumento, idusuario, idempresa) " +
+                    "VALUES (?, ?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            statement.setInt(1, partida.getAsiento());
+            statement.setDate(2, partida.getFecha());
+            statement.setString(3, partida.getConcepto());
+            statement.setString(4, partida.getTipoDocumento());
+            statement.setString(5, partida.getNumeroDocumento());
+            statement.setInt(6, partida.getIdUsuario());
+            statement.setInt(7, partida.getIdEmpresa());
 
             int filasAfectadas = statement.executeUpdate();
 

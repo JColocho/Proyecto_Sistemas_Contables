@@ -287,7 +287,7 @@ public class RegistroPartidaController {
                        if (!txtNumeroDoc.getText().isEmpty()){
                            PartidaModel validarDoc = new PartidaModel();
                            if (!validarDoc.numeroDocExistente(txtNumeroDoc.getText(), idEmpresaSesion)){
-                               if(archivoSeleccionado.exists()){
+                               if(archivoSeleccionado != null && archivoSeleccionado.exists()){
                                    if (guardarCopiaPDF(txtNumeroDoc.getText())){
                                        if (textDiferencia.getText().equals("$0.00")){
                                            if (!tblRegistroDetalle.getItems().isEmpty()){
