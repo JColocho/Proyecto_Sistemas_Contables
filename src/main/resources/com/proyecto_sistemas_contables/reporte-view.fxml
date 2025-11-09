@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -16,7 +17,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.ScrollPane?>
 <AnchorPane prefHeight="680.0" prefWidth="980.0" style="-fx-background-color: #f4f6f8;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.ReporteController">
 
     <children>
@@ -66,7 +66,7 @@
                 <HBox alignment="CENTER_RIGHT" spacing="12" GridPane.columnIndex="0" GridPane.columnSpan="4" GridPane.rowIndex="3">
                     <Label text="Observaciones:" />
                     <TextField fx:id="txtObservaciones" prefWidth="420" promptText="Notas para este reporte" />
-                    <Button fx:id="btnVistaPrevia" prefHeight="33.0" prefWidth="146.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Ver vista previa" />
+                    <Button fx:id="btnGuardar" prefHeight="33.0" prefWidth="146.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Guardar" />
                     <Button fx:id="btnExportarPDF" prefHeight="33.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Exportar PDF" />
                 </HBox>
             <rowConstraints>
@@ -86,8 +86,8 @@
                 </HBox>
 
                 <Separator />
-                <ScrollPane fitToWidth="true" fitToHeight="true">
-                <TableView fx:id="tblPreview" prefHeight="300" VBox.vgrow="ALWAYS" >
+                <ScrollPane fitToHeight="true" fitToWidth="true">
+                <TableView fx:id="tblPreview" prefHeight="300" VBox.vgrow="ALWAYS">
 
                 </TableView>
                 </ScrollPane>

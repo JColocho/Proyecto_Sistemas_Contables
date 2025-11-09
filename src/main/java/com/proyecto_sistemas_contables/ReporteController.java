@@ -47,8 +47,6 @@ public class ReporteController {
 
     @FXML private Button btnLimpiar;
 
-    @FXML private Button btnVistaPrevia;
-
     @FXML private Button btnExportarPDF;
 
     @FXML private TextField txtObservaciones;
@@ -58,6 +56,8 @@ public class ReporteController {
     @FXML private Label lblRegistros;
 
     @FXML private Label lblPreviewInfo;
+
+    @FXML private Button btnGuardar;
 
     /** Modelo para interactuar con la base de datos de reportes */
     private final ReporteModel reporteModel = new ReporteModel();
@@ -74,15 +74,6 @@ public class ReporteController {
     /** ID de la empresa activa en la sesión */
     public static int idEmpresaSesion;
 
-    /**
-     * Método de inicialización de JavaFX.
-     * Se ejecuta automáticamente al cargar la vista FXML.
-     *
-     * Configura:
-     * - Opciones de los ComboBox
-     * - Valores por defecto
-     * - Event handlers para los botones
-     */
     @FXML
     public void initialize() {
         // Agregar opciones de tipos de reporte
@@ -96,8 +87,7 @@ public class ReporteController {
         );
 
         // Agregar opciones de periodos rápidos
-        cmbPeriodoRapido.getItems().addAll(
-                "Personalizado", "Hoy", "Este mes", "Mes anterior",
+        cmbPeriodoRapido.getItems().addAll("Hoy", "Este mes", "Mes anterior",
                 "Trimestre", "Semestral", "Anual"
         );
 
@@ -107,12 +97,40 @@ public class ReporteController {
 
         // Aplicar el periodo "Este mes" por defecto
         manejarPeriodoRapido("Este mes");
+        Platform.runLater(this::generarPrevisualizacion);
+
+        cmbTipoReporte.setOnAction((event) -> {
+            Platform.runLater(this::generarPrevisualizacion);
+        });
+        dateHasta.setOnAction((event) -> {
+            if (dateHasta.getValue().isAfter(dateDesde.getValue()) || dateHasta.getValue() == dateDesde.getValue()) {
+                Platform.runLater(this::generarPrevisualizacion);
+            }
+            else {
+                dateDesde.setValue(dateHasta.getValue());
+            }
+
+        });
+        dateDesde.setOnAction((event) -> {
+            if (dateDesde.getValue().isBefore(dateHasta.getValue()) || dateDesde.getValue() == dateHasta.getValue()) {
+                Platform.runLater(this::generarPrevisualizacion);
+            }
+            else {
+                dateDesde.setValue(dateHasta.getValue());
+            }
+        });
 
         // Configurar event handlers
-        cmbPeriodoRapido.setOnAction(e -> manejarPeriodoRapido(cmbPeriodoRapido.getValue()));
-        btnLimpiar.setOnAction(e -> limpiarFiltros());
-        btnVistaPrevia.setOnAction(e -> Platform.runLater(this::generarPrevisualizacion));
+        cmbPeriodoRapido.setOnAction(e -> {
+            manejarPeriodoRapido(cmbPeriodoRapido.getValue());
+            Platform.runLater(this::generarPrevisualizacion);
+        });
         btnExportarPDF.setOnAction(e -> Platform.runLater(this::exportarPDF));
+
+        btnLimpiar.setOnAction(e -> {
+            txtObservaciones.clear();
+        });
+        btnGuardar.setOnAction(e -> Platform.runLater(this::guardarPDF));
     }
 
     /**
@@ -153,27 +171,7 @@ public class ReporteController {
                 dateDesde.setValue(hoy.withDayOfYear(1)); // 1 de enero del año actual
                 dateHasta.setValue(hoy);
             }
-            default -> {
-                // Personalizado: limpiar fechas para que el usuario las seleccione
-                dateDesde.setValue(null);
-                dateHasta.setValue(null);
-            }
         }
-    }
-
-    /**
-     * Limpia todos los filtros y la vista previa.
-     */
-    private void limpiarFiltros() {
-        cmbTipoReporte.setValue("Libro Diario");
-        cmbPeriodoRapido.setValue("Personalizado");
-        dateDesde.setValue(null);
-        dateHasta.setValue(null);
-        txtObservaciones.clear();
-        tblPreview.getColumns().clear();
-        tblPreview.getItems().clear();
-        lblRegistros.setText("0 registros");
-        lblPreviewInfo.setText("");
     }
 
     /**
@@ -315,6 +313,90 @@ public class ReporteController {
     /**
      * Exporta el reporte a un archivo PDF.
      */
+    private void guardarPDF() {
+        String tipo = cmbTipoReporte.getValue();
+        LocalDate desde = dateDesde.getValue();
+        LocalDate hasta = dateHasta.getValue();
+
+        // Validación especial para Balance General
+        if (tipo.equals("Balance General")) {
+            if (hasta == null) {
+                avisar("Periodo inválido", "Debe seleccionar la fecha de corte.");
+                return;
+            }
+            // Para Balance General, establecer desde = hasta si no está definido
+            if (desde == null) desde = hasta;
+        } else {
+            if (desde == null || hasta == null) {
+                avisar("Periodo inválido", "Debe seleccionar fechas válidas.");
+                return;
+            }
+        }
+
+        // Validar rango de fechas
+        if (desde.isAfter(hasta)) {
+            avisar("Periodo inválido", "La fecha 'Desde' no puede ser mayor que la fecha 'Hasta'.");
+            return;
+        }
+
+        try {
+            // Obtener datos necesarios
+            UsuarioModel usuarioModel = new UsuarioModel();
+            List<Map<String, Object>> datos = tblPreview.getItems();
+            Map<String, String> infoEmpresa = reporteModel.obtenerInfoEmpresa(idEmpresaSesion);
+
+            // Crear carpeta local para la empresa si no existe
+            EmpresaModel empresaModel = new EmpresaModel();
+            Path carpetaLocal = Paths.get(
+                    "src/main/resources/com/proyecto_sistemas_contables/reportes_generados/"
+                            + empresaModel.idBuscarEmpresa(idEmpresaSesion)
+            );
+
+            if (!Files.exists(carpetaLocal)) {
+                Files.createDirectories(carpetaLocal);
+            }
+
+            // Crear el nombre del archivo PDF
+            String nombreArchivo = tipo.replace(" ", "_") + "_" + desde.format(df) + "_" + hasta.format(df) + ".pdf";
+            Path destinoPDF = carpetaLocal.resolve(nombreArchivo);
+
+            // Generar directamente el PDF en la carpeta destino
+            generarReportePDF(
+                    tipo,
+                    infoEmpresa,
+                    usuarioModel.obtenerNombreUsuario(idUsuarioEnSesion),
+                    desde,
+                    hasta,
+                    destinoPDF.toString(),
+                    txtObservaciones.getText(),
+                    datos
+            );
+
+            // Registrar el reporte en la base de datos
+            reporteModel.registrarReporteGenerado(
+                    idUsuarioEnSesion,
+                    tipo,
+                    desde,
+                    hasta,
+                    destinoPDF.toString(),
+                    txtObservaciones.getText(),
+                    idEmpresaSesion
+            );
+
+            // Mostrar mensaje de éxito
+            avisar("Éxito", "Reporte generado exitosamente en:\n" + destinoPDF.toAbsolutePath());
+
+
+        } catch (Exception ex) {
+            avisar("Error PDF", "Ocurrió un error al generar el reporte:\n" + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Exporta el reporte a un archivo PDF.
+     */
     private void exportarPDF() {
         String tipo = cmbTipoReporte.getValue();
         LocalDate desde = dateDesde.getValue();
@@ -379,7 +461,7 @@ public class ReporteController {
             // Registrar el reporte en la base de datos
             reporteModel.registrarReporteGenerado(
                     idUsuarioEnSesion, tipo, desde, hasta,
-                    destinoCopia.toAbsolutePath().toString(),
+                    destinoCopia.toString(),
                     txtObservaciones.getText(),
                     idEmpresaSesion
             );
