@@ -28,6 +28,7 @@ public class EditarCuentaController {
     public static int idEmpresaSesion;
 
     public void initialize() {
+        //Cargar los tipos de cuentas para la cuenta
         cmbTipoCuenta.getItems().addAll(
                 "ACTIVO CORRIENTE",
                 "ACTIVO NO CORRIENTE",
@@ -39,15 +40,18 @@ public class EditarCuentaController {
                 "COSTOS"
         );
 
+        //Mostrar los datos actuales de la cuenta
         txtCodigo.setText(datosCuentaActual.getCodigoCuenta());
         txtCuenta.setText(datosCuentaActual.getCuenta());
         cmbTipoCuenta.setValue(datosCuentaActual.getTipoCuenta());
 
         btnEditarCuenta.setOnAction(event -> {
+            //Capturar los datos ingresados del usuario
             String codigo = txtCodigo.getText().trim().replace(" ", "").toUpperCase();
             String cuenta = txtCuenta.getText().trim().replace("  ", " ").toUpperCase();
             String tipoCuenta = cmbTipoCuenta.getSelectionModel().getSelectedItem().toString();
 
+            //Validar si hay campos vacíos o datos ya existentes en la base de datos
             CatalogoCuentaModel catalogoCuenta = new CatalogoCuentaModel();
             if(!codigo.isEmpty()){
                 if(!cuenta.isEmpty()){
@@ -55,6 +59,7 @@ public class EditarCuentaController {
                         if(!catalogoCuenta.codigoExiste(codigo, idEmpresaSesion) || codigo.equals(datosCuentaActual.getCodigoCuenta())) {
                             if (!catalogoCuenta.cuentaExiste(cuenta, idEmpresaSesion) || cuenta.equals(datosCuentaActual.getCuenta())) {
 
+                                //Confirmación de actualización de los datos de la cuenta
                                 Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
                                 alertConfirm.setTitle("Confirmacion");
                                 alertConfirm.setHeaderText(null);
@@ -62,6 +67,7 @@ public class EditarCuentaController {
                                 Optional<ButtonType> result = alertConfirm.showAndWait();
 
                                 if (result.get() == ButtonType.OK) {
+                                    //Actualizar los datos de la cuenta
                                     CatalogoCuentaModel catalogoCuentaModel = new CatalogoCuentaModel();
                                     catalogoCuentaModel.setCuenta(cuenta);
                                     catalogoCuentaModel.setCodigoCuenta(codigo);
@@ -69,6 +75,7 @@ public class EditarCuentaController {
 
                                     catalogoCuentaModel.editarCuenta(datosCuentaActual.getIdCuenta(), catalogoCuentaModel);
 
+                                    //Mensaje de confirmación
                                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                     alert.setTitle("Cuenta Editada");
                                     alert.setHeaderText(null);
@@ -120,6 +127,7 @@ public class EditarCuentaController {
                 alert.show();
             }
         });
+
         btnCancelar.setOnAction(event -> {
             Stage stage = (Stage) btnCancelar.getScene().getWindow();
             stage.close();

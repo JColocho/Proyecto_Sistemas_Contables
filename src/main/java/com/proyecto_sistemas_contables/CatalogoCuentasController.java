@@ -36,7 +36,7 @@ public class CatalogoCuentasController {
     private TableColumn<CatalogoCuentaModel, Void> clAccion;
 
     @FXML
-    private ComboBox<CatalogoCuentaModel> cmbTipoCuenta;
+    private ComboBox<String> cmbTipoCuenta;
 
     @FXML
     private AnchorPane mainPane;
@@ -50,9 +50,53 @@ public class CatalogoCuentasController {
     @FXML
     private Button btnAgregarCuenta;
 
+    @FXML
+    private Button btnLimpiar;
+
+    @FXML
+    private Button btnRefrescar;
+
     public static int idEmpresaSesion;
 
     public void initialize() {
+        //Cargar lista de tipo de cuentas a filtrar
+        cmbTipoCuenta.getItems().addAll(
+                "TODOS",
+                "ACTIVO CORRIENTE",
+                "ACTIVO NO CORRIENTE",
+                "PASIVO CORRIENTE",
+                "PASIVO NO CORRIENTE",
+                "CAPITAL",
+                "INGRESOS O VENTAS",
+                "GASTOS",
+                "COSTOS"
+        );
+
+        //Por defecto este seleccionado la primera opción
+        cmbTipoCuenta.getSelectionModel().selectFirst();
+
+        //Acción para filtrar según el tipo que ingrese se seleccione
+        cmbTipoCuenta.setOnAction(event -> {
+            if(cmbTipoCuenta.getSelectionModel().getSelectedIndex() == 0) {
+                cargarCuentas();
+            }
+            else{
+                CatalogoCuentaModel catalogoCuentaModel = new CatalogoCuentaModel();
+                tbCuentas.getItems().clear();
+                tbCuentas.setItems(catalogoCuentaModel.obtenerCatalogoCuentasPorTipo(
+                        cmbTipoCuenta.getSelectionModel().getSelectedItem(), idEmpresaSesion
+                ));
+            }
+        });
+
+        //Filtrar según la similitud del texto
+        txtBuscarCuenta.setOnKeyReleased(event -> {
+            cmbTipoCuenta.getSelectionModel().selectFirst();
+            CatalogoCuentaModel catalogoCuentaModel = new CatalogoCuentaModel();
+            tbCuentas.getItems().clear();
+            tbCuentas.setItems(catalogoCuentaModel.obtenerCatalogoCuentasSimilitud(txtBuscarCuenta.getText(), idEmpresaSesion));
+        });
+
         //Asignado el tamaño que tomará cada columna
         clCodigo.prefWidthProperty().bind(tbCuentas.widthProperty().multiply(0.15));
         clCuenta.prefWidthProperty().bind(tbCuentas.widthProperty().multiply(0.30));
@@ -60,9 +104,6 @@ public class CatalogoCuentasController {
         clTipoSaldo.prefWidthProperty().bind(tbCuentas.widthProperty().multiply(0.15));
         clSaldo.prefWidthProperty().bind(tbCuentas.widthProperty().multiply(0.15));
         clAccion.prefWidthProperty().bind(tbCuentas.widthProperty().multiply(0.10));
-
-        //Cargando la tabla con los datos de las cuentas
-        cargarCuentas();
 
         //Configuración de las columnas para llamar los datos
         clCodigo.setCellValueFactory(new PropertyValueFactory<>("codigoCuenta"));
@@ -133,7 +174,19 @@ public class CatalogoCuentasController {
             DialogoUtil.showDialog("agregar-cuenta-view", "Agregar cuenta", stage);
         });
 
+        btnLimpiar.setOnAction(event -> {
+           txtBuscarCuenta.clear();
+           cmbTipoCuenta.getSelectionModel().selectFirst();
+           cargarCuentas();
+        });
 
+        btnRefrescar.setOnAction(event -> {
+            txtBuscarCuenta.clear();
+            cmbTipoCuenta.getSelectionModel().selectFirst();
+            cargarCuentas();
+        });
+
+        cargarCuentas();
     }
 
     //método para cargar la tabla con todos los datos de las cuentas

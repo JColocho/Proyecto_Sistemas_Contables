@@ -15,42 +15,50 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.CatalogoCuentasController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.CatalogoCuentasController">
 
     <children>
         <VBox spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="30.0">
-         <HBox alignment="CENTER_LEFT" spacing="20">
-            <children>
-               <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📘 Catálogo De Cuentas" />
-               <Region HBox.hgrow="ALWAYS" />
-               <Button fx:id="btnAgregarCuenta" prefHeight="45.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar cuenta" />
-            </children>
-         </HBox>
-            <AnchorPane style="-fx-background-color: white;                                 -fx-background-radius: 12;                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);                                 -fx-padding: 20;">
+            <HBox alignment="CENTER_LEFT" spacing="20">
                 <children>
-                    <GridPane hgap="25" layoutX="130.4" layoutY="68.8" prefHeight="117.0" prefWidth="661.0" vgap="12" AnchorPane.bottomAnchor="28.60000000000001" AnchorPane.leftAnchor="110.0" AnchorPane.rightAnchor="109.0" AnchorPane.topAnchor="49.0">
+                    <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📘 Catálogo De Cuentas" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="btnAgregarCuenta" prefHeight="45.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar cuenta" />
+                </children>
+            </HBox>
+
+            <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3); -fx-padding: 20;">
+                <children>
+                    <GridPane hgap="25" vgap="12" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="42.0" />
-                            <ColumnConstraints percentWidth="18.0" />
-                     <ColumnConstraints minWidth="10.0" percentWidth="64.0" prefWidth="100.0" />
+                            <ColumnConstraints percentWidth="35.0" hgrow="SOMETIMES" />
+                            <ColumnConstraints percentWidth="35.0" hgrow="SOMETIMES" />
+                            <ColumnConstraints percentWidth="15.0" hgrow="SOMETIMES" />
+                            <ColumnConstraints percentWidth="15.0" hgrow="SOMETIMES" />
                         </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints />
+                            <RowConstraints />
+                        </rowConstraints>
 
                         <!-- Buscar cuenta -->
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Buscar cuenta:" />
-                        <TextField fx:id="txtBuscarCuenta" prefHeight="35.0" prefWidth="226.0" style="-fx-font-size: 14px;" GridPane.rowIndex="1" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Buscar cuenta:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtBuscarCuenta" prefHeight="35.0" style="-fx-font-size: 14px;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
                         <!-- Filtrar tipo cuenta -->
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Filtrar por tipo de cuenta:" GridPane.columnIndex="2" />
-                        <ComboBox fx:id="cmbTipoCuenta" prefHeight="39.0" prefWidth="203.0" style="-fx-font-size: 14px;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <rowConstraints>
-                     <RowConstraints />
-                     <RowConstraints />
-                  </rowConstraints>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Filtrar por tipo de cuenta:" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <ComboBox fx:id="cmbTipoCuenta" prefHeight="39.0" maxWidth="Infinity" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <!-- Botón Refrescar -->
+                        <Button fx:id="btnRefrescar" mnemonicParsing="false" prefHeight="39.0" maxWidth="Infinity" styleClass="btnAzul" text="Refrescar" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+
+                        <!-- Botón Limpiar -->
+                        <Button fx:id="btnLimpiar" mnemonicParsing="false" prefHeight="39.0" maxWidth="Infinity" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                     </GridPane>
                 </children>
             </AnchorPane>
-            <TableView fx:id="tbCuentas" prefHeight="400.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
 
+            <TableView fx:id="tbCuentas" prefHeight="400.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
                 <columns>
                     <TableColumn fx:id="clCodigo" text="Código" />
                     <TableColumn fx:id="clCuenta" text="Cuenta" />
@@ -60,6 +68,7 @@
                     <TableColumn fx:id="clAccion" text="Acción" />
                 </columns>
             </TableView>
+
             <padding>
                 <Insets bottom="20" left="20" right="20" top="20" />
             </padding>

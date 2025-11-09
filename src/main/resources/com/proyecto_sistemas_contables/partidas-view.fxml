@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.PartidasController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.PartidasController">
 
     <children>
         <VBox prefHeight="590.0" prefWidth="920.0" spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="30.0">
@@ -27,37 +27,37 @@
                     <Button fx:id="btnAgregarPartida" onAction="#agregarPartida" prefHeight="45.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar partida" />
                 </HBox>
 
-                <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12;                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);                                    -fx-padding: 20;">
+                <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3); -fx-padding: 20;">
                     <children>
-                        <GridPane hgap="25" vgap="12" AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="25" AnchorPane.rightAnchor="25" AnchorPane.topAnchor="20">
+                        <GridPane hgap="25" vgap="12" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <columnConstraints>
-                                <ColumnConstraints percentWidth="30.0" />
-                                <ColumnConstraints percentWidth="30.0" />
-                                <ColumnConstraints percentWidth="20.0" />
-                        <ColumnConstraints percentWidth="20.0" />
+                                <ColumnConstraints percentWidth="30.0" hgrow="SOMETIMES" />
+                                <ColumnConstraints percentWidth="30.0" hgrow="SOMETIMES" />
+                                <ColumnConstraints percentWidth="20.0" hgrow="SOMETIMES" />
+                                <ColumnConstraints percentWidth="20.0" hgrow="SOMETIMES" />
                             </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints />
+                                <RowConstraints />
+                                <RowConstraints />
+                            </rowConstraints>
 
-                            <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Filtrar por rango de fecha" GridPane.columnSpan="3" />
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Filtrar por rango de fecha" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="4" />
 
-                            <Label style="-fx-text-fill: #495057; -fx-font-size: 13px;" text="Fecha de inicio" GridPane.rowIndex="1" />
-                            <DatePicker fx:id="dateInicial" GridPane.rowIndex="2" />
+                            <Label style="-fx-text-fill: #495057; -fx-font-size: 13px;" text="Fecha de inicio" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <DatePicker fx:id="dateInicial" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="2" />
 
                             <Label style="-fx-text-fill: #495057; -fx-font-size: 13px;" text="Fecha final" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <DatePicker fx:id="dateFinal" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                            <DatePicker fx:id="dateFinal" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                            <Button fx:id="btnBuscar" prefHeight="43.0" prefWidth="93.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-                     <Button fx:id="btnLimpiar" prefHeight="43.0" prefWidth="93.0" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-                     <rowConstraints>
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                        <RowConstraints />
-                     </rowConstraints>
+                            <Button fx:id="btnBuscar" prefHeight="43.0" maxWidth="Infinity" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+
+                            <Button fx:id="btnLimpiar" prefHeight="43.0" maxWidth="Infinity" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                         </GridPane>
                     </children>
                 </AnchorPane>
 
-                <TableView fx:id="tbPartidas" prefHeight="400.0" style="-fx-background-color: white; -fx-border-radius: 12;                                   -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
+                <TableView fx:id="tbPartidas" prefHeight="400.0" style="-fx-background-color: white; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
                     <columns>
                         <TableColumn fx:id="clFecha" prefWidth="160" text="Fecha" />
                         <TableColumn fx:id="clDetalle" prefWidth="420" text="Detalle" />

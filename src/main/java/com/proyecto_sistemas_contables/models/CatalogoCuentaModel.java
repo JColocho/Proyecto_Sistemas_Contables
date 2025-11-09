@@ -191,6 +191,37 @@ public class CatalogoCuentaModel {
             throw new RuntimeException(e);
         }
     }
+
+    //Metodo para obtener todo el catalogo de cuentas según el tipo de la cuenta
+    public ObservableList<CatalogoCuentaModel> obtenerCatalogoCuentasPorTipo(String tipoCuenta, int idEmpresa) {
+        try{
+            ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
+
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = ? AND tipoCuenta = ?");
+            statement.setInt(1, idEmpresa);
+            statement.setString(2, tipoCuenta);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                cuentaModel.setIdCuenta(resultSet.getInt("idCuenta"));
+                cuentaModel.setIdEmpresa(resultSet.getInt("idEmpresa"));
+                cuentaModel.setCuenta(resultSet.getString("cuenta"));
+                cuentaModel.setCodigoCuenta(resultSet.getString("codigo"));
+                cuentaModel.setTipoCuenta(resultSet.getString("tipoCuenta"));
+                cuentaModel.setTipoSaldo(resultSet.getString("tipoSaldo"));
+                cuentaModel.setSaldo(resultSet.getDouble("saldo"));
+                cuentas.add(cuentaModel);
+            }
+
+            return cuentas;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
     //Metodo para eliminar una cuenta del catalogo
     public void eliminarCuenta(int idCuenta, int idEmpresa) {
         try{
@@ -275,6 +306,36 @@ public class CatalogoCuentaModel {
             statement.executeUpdate();
 
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Metodo para buscar cuenta según similutud del nombre de cuenta
+    public ObservableList<CatalogoCuentaModel> obtenerCatalogoCuentasSimilitud(String nombreCuenta, int idEmpresa) {
+        try{
+            ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = '" + idEmpresa + "' AND cuenta ILIKE '%" + nombreCuenta + "%'");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                cuentaModel.setIdCuenta(resultSet.getInt("idCuenta"));
+                cuentaModel.setIdEmpresa(resultSet.getInt("idEmpresa"));
+                cuentaModel.setCuenta(resultSet.getString("cuenta"));
+                cuentaModel.setCodigoCuenta(resultSet.getString("codigo"));
+                cuentaModel.setTipoCuenta(resultSet.getString("tipoCuenta"));
+                cuentaModel.setTipoSaldo(resultSet.getString("tipoSaldo"));
+                cuentaModel.setSaldo(resultSet.getDouble("saldo"));
+
+                cuentas.add(cuentaModel);
+            }
+
+            return cuentas;
+
+        }
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
