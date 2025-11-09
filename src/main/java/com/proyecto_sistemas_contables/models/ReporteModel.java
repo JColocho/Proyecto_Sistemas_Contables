@@ -241,31 +241,36 @@ public class ReporteModel {
         return resultado;
     }
 
-    //BALANCE GENERAL
     public List<Map<String, Object>> obtenerBalanceGeneral(LocalDate fecha, int idEmpresa) throws SQLException {
         String sql = """
+        SELECT 
+            c.tipocuenta,
+            c.codigo,
+            c.cuenta,
+            c.saldo + COALESCE(movimientos.total_cargo, 0) - COALESCE(movimientos.total_abono, 0) AS saldo_actual
+        FROM tblcatalogocuentas c
+        LEFT JOIN (
             SELECT 
-                c.tipocuenta,
-                c.codigo,
-                c.cuenta,
-                c.saldo + COALESCE(SUM(dp.cargo), 0) - COALESCE(SUM(dp.abono), 0) AS saldo_actual
-            FROM tblcatalogocuentas c
-            LEFT JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
-            LEFT JOIN tblpartidas p ON dp.idpartida = p.idpartida
-                AND p.fecha <= ?
-            WHERE c.idempresa = ?
-            AND c.tipocuenta IN ('ACTIVO CORRIENTE', 'ACTIVO NO CORRIENTE', 'PASIVO CORRIENTE', 'PASIVO NO CORRIENTE', 'CAPITAL')
-            GROUP BY c.idcuenta, c.codigo, c.cuenta, c.tipocuenta, c.saldo
-            ORDER BY 
-                CASE c.tipocuenta
-                    WHEN 'ACTIVO CORRIENTE' THEN 1
-                    WHEN 'ACTIVO NO CORRIENTE' THEN 2
-                    WHEN 'PASIVO CORRIENTE' THEN 3
-                    WHEN 'PASIVO NO CORRIENTE' THEN 4
-                    WHEN 'CAPITAL' THEN 5
-                END,
-                c.codigo
-        """;
+                dp.idcuenta,
+                SUM(dp.cargo) AS total_cargo,
+                SUM(dp.abono) AS total_abono
+            FROM tbldetallepartida dp
+            INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
+            WHERE p.fecha <= ? AND p.idempresa = ?
+            GROUP BY dp.idcuenta
+        ) AS movimientos ON c.idcuenta = movimientos.idcuenta
+        WHERE c.idempresa = ?
+        AND c.tipocuenta IN ('ACTIVO CORRIENTE', 'ACTIVO NO CORRIENTE', 'PASIVO CORRIENTE', 'PASIVO NO CORRIENTE', 'CAPITAL')
+        ORDER BY 
+            CASE c.tipocuenta
+                WHEN 'ACTIVO CORRIENTE' THEN 1
+                WHEN 'ACTIVO NO CORRIENTE' THEN 2
+                WHEN 'PASIVO CORRIENTE' THEN 3
+                WHEN 'PASIVO NO CORRIENTE' THEN 4
+                WHEN 'CAPITAL' THEN 5
+            END,
+            c.codigo
+    """;
 
         List<Map<String, Object>> resultado = new ArrayList<>();
         double totalActivo = 0, totalPasivo = 0, totalCapital = 0;
@@ -278,6 +283,7 @@ public class ReporteModel {
 
             ps.setDate(1, Date.valueOf(fecha));
             ps.setInt(2, idEmpresa);
+            ps.setInt(3, idEmpresa);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -307,27 +313,29 @@ public class ReporteModel {
                         tipoActual = tipo;
                     }
 
-                    // Agregar cuenta
-                    Map<String, Object> fila = new LinkedHashMap<>();
-                    fila.put("Concepto", "  " + rs.getString("codigo") + " - " + rs.getString("cuenta"));
-                    fila.put("Monto", Math.abs(saldo));
-                    resultado.add(fila);
+                    // Agregar cuenta (solo si tiene saldo diferente de cero)
+                    if (Math.abs(saldo) >= 0.01) { // Tolerancia para decimales
+                        Map<String, Object> fila = new LinkedHashMap<>();
+                        fila.put("Concepto", "  " + rs.getString("codigo") + " - " + rs.getString("cuenta"));
+                        fila.put("Monto", Math.abs(saldo));
+                        resultado.add(fila);
 
-                    // Acumular en subtotales y totales
-                    if (tipo.equals("ACTIVO CORRIENTE")) {
-                        subtotalActCorriente += Math.abs(saldo);
-                        totalActivo += Math.abs(saldo);
-                    } else if (tipo.equals("ACTIVO NO CORRIENTE")) {
-                        subtotalActNoCorriente += Math.abs(saldo);
-                        totalActivo += Math.abs(saldo);
-                    } else if (tipo.equals("PASIVO CORRIENTE")) {
-                        subtotalPasCorriente += Math.abs(saldo);
-                        totalPasivo += Math.abs(saldo);
-                    } else if (tipo.equals("PASIVO NO CORRIENTE")) {
-                        subtotalPasNoCorriente += Math.abs(saldo);
-                        totalPasivo += Math.abs(saldo);
-                    } else if (tipo.equals("CAPITAL")) {
-                        totalCapital += Math.abs(saldo);
+                        // Acumular en subtotales y totales
+                        if (tipo.equals("ACTIVO CORRIENTE")) {
+                            subtotalActCorriente += Math.abs(saldo);
+                            totalActivo += Math.abs(saldo);
+                        } else if (tipo.equals("ACTIVO NO CORRIENTE")) {
+                            subtotalActNoCorriente += Math.abs(saldo);
+                            totalActivo += Math.abs(saldo);
+                        } else if (tipo.equals("PASIVO CORRIENTE")) {
+                            subtotalPasCorriente += Math.abs(saldo);
+                            totalPasivo += Math.abs(saldo);
+                        } else if (tipo.equals("PASIVO NO CORRIENTE")) {
+                            subtotalPasNoCorriente += Math.abs(saldo);
+                            totalPasivo += Math.abs(saldo);
+                        } else if (tipo.equals("CAPITAL")) {
+                            totalCapital += Math.abs(saldo);
+                        }
                     }
                 }
             }
@@ -440,7 +448,6 @@ public class ReporteModel {
         AND p.idempresa = ?
         AND c_efectivo.idempresa = ?
         AND c_efectivo.tipocuenta = 'ACTIVO CORRIENTE'
-        AND (UPPER(c_efectivo.cuenta) LIKE '%CAJA%' OR UPPER(c_efectivo.cuenta) LIKE '%BANCO%')
         GROUP BY c_otra.tipocuenta
     """;
 
