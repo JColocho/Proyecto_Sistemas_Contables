@@ -32,7 +32,7 @@ public class PartidasController {
     @FXML private Button btnLimpiar;
 
     @FXML
-    void agregarPartida(ActionEvent event) {
+    public void agregarPartida(ActionEvent event) {
         Stage stage = (Stage) tbPartidas.getScene().getWindow();
         DialogoUtil.showDialog("registro-partida-view", "Agregar partida", stage);
     }

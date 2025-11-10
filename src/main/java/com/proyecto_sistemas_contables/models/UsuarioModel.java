@@ -1,6 +1,8 @@
 package com.proyecto_sistemas_contables.models;
 
 import com.proyecto_sistemas_contables.Conexion.ConexionDB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 
@@ -13,6 +15,9 @@ public class UsuarioModel {
     private int idCorreo;
     private int idAcceso;
 
+    private String correo;
+    private String nivelAcceso;
+
     public UsuarioModel() {
     }
 
@@ -23,6 +28,15 @@ public class UsuarioModel {
         this.clave = clave;
         this.idCorreo = idCorreo;
         this.idAcceso = idAcceso;
+    }
+
+    public UsuarioModel(int idUsuario, String nombreUsuario, String nombre, String apellido, String correo, String nivelAcceso) {
+        this.idUsuario = idUsuario;
+        this.nombreUsuario = nombreUsuario;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.correo = correo;
+        this.nivelAcceso = nivelAcceso;
     }
 
     public int getIdUsuario() {
@@ -80,6 +94,12 @@ public class UsuarioModel {
     public void setIdAcceso(int idAcceso) {
         this.idAcceso = idAcceso;
     }
+
+    public String getCorreo(){return correo;}
+    public void setCorreo(String correo){this.correo = correo;}
+
+    public String getNivelAcceso() { return nivelAcceso; }
+    public void setNivelAcceso(String nivelAcceso) { this.nivelAcceso = nivelAcceso; }
 
     //Metodo para crear usuario
     public void crearUsuario(String nombreUsuario, String nombre, String apellido, String clave, int idCorreo, int idAcceso) {
@@ -166,6 +186,7 @@ public class UsuarioModel {
             throw new RuntimeException(e);
         }
     }
+
     public String obtenerNombreUsuario(int idUsuario) {
         try {
             Connection connection = ConexionDB.connection();
@@ -182,5 +203,43 @@ public class UsuarioModel {
             throw new RuntimeException(e);
         }
     }
+
+
+    // Método para obtener usuarios (excluye el de la sesión actual)
+    public static ObservableList<UsuarioModel> obtenerUsuarios(int idUsuarioSesion) {
+        ObservableList<UsuarioModel> lista = FXCollections.observableArrayList();
+        String sql = """
+        SELECT u.idusuario, u.nombreusuario, u.nombre, u.apellido,
+               c.correo, a.nivelacceso
+        FROM tblusuarios u
+        INNER JOIN tblcorreos c ON u.idcorreo = c.idcorreo
+        INNER JOIN tblaccesos a ON u.idacceso = a.idacceso
+        WHERE u.idusuario <> ?
+        ORDER BY u.idusuario ASC
+    """;
+
+        try (Connection connection = ConexionDB.connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, idUsuarioSesion); // Excluir usuario actual
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                lista.add(new UsuarioModel(
+                        rs.getInt("idusuario"),
+                        rs.getString("nombreusuario"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("correo"),
+                        rs.getString("nivelacceso")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+
 
 }
