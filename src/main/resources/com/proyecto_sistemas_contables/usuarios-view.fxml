@@ -22,7 +22,7 @@
                <children>
                   <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📘 Usuarios" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btnAgregar" prefHeight="45.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar usuario" />
+                  <Button fx:id="btnAgregar" onAction="#agregarUsuario" prefHeight="45.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar usuario" />
                </children>
             </HBox>
             <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12;                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);                                    -fx-padding: 20;">
@@ -56,6 +56,7 @@
                   <TableColumn fx:id="clNombre" prefWidth="107.99996948242188" text="Nombre" />
                   <TableColumn fx:id="clApellido" prefWidth="123.2000732421875" text="Apellido" />
                   <TableColumn fx:id="clCorreo" prefWidth="118.4000244140625" text="Correo" />
+                  <TableColumn fx:id="clActivo" prefWidth="116.79998779296875" text="Estado" />
                   <TableColumn fx:id="clAcceso" prefWidth="116.79998779296875" text="Acceso" />
                   <TableColumn fx:id="clAccion" prefWidth="116.79998779296875" text="Acción" />
                </columns>

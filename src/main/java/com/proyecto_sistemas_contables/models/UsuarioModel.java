@@ -17,6 +17,8 @@ public class UsuarioModel {
 
     private String correo;
     private String nivelAcceso;
+    private Boolean activo;
+
 
     public UsuarioModel() {
     }
@@ -30,12 +32,13 @@ public class UsuarioModel {
         this.idAcceso = idAcceso;
     }
 
-    public UsuarioModel(int idUsuario, String nombreUsuario, String nombre, String apellido, String correo, String nivelAcceso) {
+    public UsuarioModel(int idUsuario, String nombreUsuario, String nombre, String apellido, String correo,Boolean activo, String nivelAcceso) {
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
         this.nombre = nombre;
         this.apellido = apellido;
         this.correo = correo;
+        this.activo = activo;
         this.nivelAcceso = nivelAcceso;
     }
 
@@ -101,7 +104,10 @@ public class UsuarioModel {
     public String getNivelAcceso() { return nivelAcceso; }
     public void setNivelAcceso(String nivelAcceso) { this.nivelAcceso = nivelAcceso; }
 
-    //Metodo para crear usuario
+    public Boolean getActivo() { return activo; }
+    public void setActivo(Boolean activo) { this.activo = activo; }
+
+    //Metodo para crear usuario (por defecto activo es true, no hace falta colocarlo)
     public void crearUsuario(String nombreUsuario, String nombre, String apellido, String clave, int idCorreo, int idAcceso) {
         try {
             Connection connection = ConexionDB.connection();
@@ -114,7 +120,7 @@ public class UsuarioModel {
             statement.setInt(5, idAcceso);
             clave = Encripter.encrypt(clave);
             statement.setString(6, clave);
-            System.out.println(statement.executeUpdate());
+            System.out.println(statement.executeUpdate()); //todo aqui se muestra un 1 en consola
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
@@ -209,8 +215,8 @@ public class UsuarioModel {
     public static ObservableList<UsuarioModel> obtenerUsuarios(int idUsuarioSesion) {
         ObservableList<UsuarioModel> lista = FXCollections.observableArrayList();
         String sql = """
-        SELECT u.idusuario, u.nombreusuario, u.nombre, u.apellido,
-               c.correo, a.nivelacceso
+        SELECT u.idusuario, u.nombreusuario, u.nombre, u.apellido,\s
+               c.correo, u.activo, a.nivelacceso
         FROM tblusuarios u
         INNER JOIN tblcorreos c ON u.idcorreo = c.idcorreo
         INNER JOIN tblaccesos a ON u.idacceso = a.idacceso
@@ -231,6 +237,7 @@ public class UsuarioModel {
                         rs.getString("nombre"),
                         rs.getString("apellido"),
                         rs.getString("correo"),
+                        rs.getBoolean("activo"),
                         rs.getString("nivelacceso")
                 ));
             }
@@ -240,6 +247,7 @@ public class UsuarioModel {
 
         return lista;
     }
+
 
 
 }
