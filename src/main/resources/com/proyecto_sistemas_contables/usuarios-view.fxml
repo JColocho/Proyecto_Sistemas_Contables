@@ -33,8 +33,7 @@
                         <ColumnConstraints percentWidth="25.0" />
                         <ColumnConstraints percentWidth="25.0" />
                         <ColumnConstraints percentWidth="25.0" />
-                        <ColumnConstraints halignment="CENTER" percentWidth="20.0" />
-                        <ColumnConstraints halignment="CENTER" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
+                        <ColumnConstraints halignment="CENTER" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints />
@@ -47,8 +46,7 @@
                      </rowConstraints>
                      <children>
                         <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Gestión de usuarios" GridPane.columnSpan="3" />
-                        <Button fx:id="btnBuscar" prefHeight="43.0" prefWidth="93.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="3" GridPane.rowIndex="3" GridPane.rowSpan="3" />
-                        <Button fx:id="btnLimpiar" prefHeight="43.0" prefWidth="93.0" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="4" GridPane.rowIndex="3" GridPane.rowSpan="3" />
+                        <Button fx:id="btnLimpiar" onAction="#limpiarFiltros" prefHeight="43.0" prefWidth="93.0" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="3" GridPane.rowSpan="3" />
                         <TextField fx:id="txtNombre" prefHeight="27.0" prefWidth="178.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <Label text="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2" />
                         <TextField fx:id="txtUsuario" prefHeight="27.0" prefWidth="178.0" GridPane.rowIndex="3" />

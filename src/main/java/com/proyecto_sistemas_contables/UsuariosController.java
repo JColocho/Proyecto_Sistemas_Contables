@@ -4,6 +4,7 @@ import com.proyecto_sistemas_contables.Conexion.ConexionDB;
 import com.proyecto_sistemas_contables.models.UsuarioModel;
 import com.proyecto_sistemas_contables.util.DialogoUtil;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -19,8 +20,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UsuariosController {
+    @FXML private TextField txtCorreo;
+    @FXML private TextField txtUsuario;
+    @FXML private TextField txtNombre;
+    @FXML private TextField txtApellido;
 
-    @FXML private TextField txtFiltrar;
+    @FXML private ComboBox<String> cmbEstado;
 
     @FXML private Button btnAgregar;
     @FXML private Button btnBuscar;
@@ -35,10 +40,14 @@ public class UsuariosController {
     @FXML private TableColumn<UsuarioModel, Void> clAccion;
 
     @FXML private TableView<UsuarioModel> tbUsuarios;
+    private FilteredList<UsuarioModel> filteredUsuarios;    // filtros de la tabla usuarios
 
     @FXML
     public void initialize() {
         System.out.println("id Usuario Actual: " + EmpresaController.idUsuarioSesion);
+
+        cmbEstado.getItems().addAll("Todos", "Activo", "Inactivo");
+        cmbEstado.getSelectionModel().select("Todos");  // valor por defecto
 
 
         clId.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
@@ -134,6 +143,8 @@ public class UsuariosController {
 
 
         cargarUsuarios();
+        agregarFiltros();
+
     }
 
     @FXML
@@ -144,6 +155,60 @@ public class UsuariosController {
     }
     private void cargarUsuarios() {
         ObservableList<UsuarioModel> usuarios = UsuarioModel.obtenerUsuarios(EmpresaController.idUsuarioSesion);
-        tbUsuarios.setItems(usuarios);
+        filteredUsuarios = new FilteredList<>(usuarios, p -> true);
+        tbUsuarios.setItems(filteredUsuarios);
+    }
+
+    private void agregarFiltros() {
+        txtUsuario.textProperty().addListener((obs, oldValue, newValue) -> filtrar());
+        txtNombre.textProperty().addListener((obs, oldValue, newValue) -> filtrar());
+        txtApellido.textProperty().addListener((obs, oldValue, newValue) -> filtrar());
+        txtCorreo.textProperty().addListener((obs, oldValue, newValue) -> filtrar());
+
+        cmbEstado.valueProperty().addListener((obs, oldVal, newVal) -> filtrar());
+    }
+
+
+    private void filtrar() {
+        if (filteredUsuarios == null) return;
+
+        filteredUsuarios.setPredicate(usuario -> {
+
+            // Campos de texto
+            String usuarioTxt = txtUsuario.getText().toLowerCase().trim();
+            String nombreTxt = txtNombre.getText().toLowerCase().trim();
+            String apellidoTxt = txtApellido.getText().toLowerCase().trim();
+            String correoTxt = txtCorreo.getText().toLowerCase().trim();
+
+            // Estado desde el combo
+            String estado = cmbEstado.getValue() == null ? "" : cmbEstado.getValue().toString();
+
+            // Filtros
+            boolean coincideUsuario = usuario.getNombreUsuario().toLowerCase().contains(usuarioTxt);
+            boolean coincideNombre = usuario.getNombre().toLowerCase().contains(nombreTxt);
+            boolean coincideApellido = usuario.getApellido().toLowerCase().contains(apellidoTxt);
+            boolean coincideCorreo = usuario.getCorreo().toLowerCase().contains(correoTxt);
+
+            boolean coincideEstado = true;
+
+            if (estado.equals("Activo")) {
+                coincideEstado = usuario.isActivo();
+            } else if (estado.equals("Inactivo")) {
+                coincideEstado = !usuario.isActivo();
+            } // Si es "Todos", coincideEstado queda true
+
+            return coincideUsuario && coincideNombre && coincideApellido && coincideCorreo && coincideEstado;
+        });
+    }
+
+    @FXML
+    private void limpiarFiltros() {
+        txtCorreo.clear();
+        txtUsuario.clear();
+        txtNombre.clear();
+        txtApellido.clear();
+        cmbEstado.getSelectionModel().select("Todos");
+
+        cargarUsuarios();
     }
 }

@@ -104,7 +104,7 @@ public class UsuarioModel {
     public String getNivelAcceso() { return nivelAcceso; }
     public void setNivelAcceso(String nivelAcceso) { this.nivelAcceso = nivelAcceso; }
 
-    public Boolean getActivo() { return activo; }
+    public Boolean isActivo() { return activo; }
     public void setActivo(Boolean activo) { this.activo = activo; }
 
     //Metodo para crear usuario (por defecto activo es true, no hace falta colocarlo)
