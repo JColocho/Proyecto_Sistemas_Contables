@@ -192,7 +192,7 @@
 
 /* Celdas */
 .table-cell {
-    -fx-alignment: LEFT;
+    -fx-alignment: CENTER;
     -fx-background-color: transparent;
     -fx-padding: 8px 12px;
     -fx-font-size: 13px;

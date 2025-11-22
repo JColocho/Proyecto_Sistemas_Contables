@@ -14,58 +14,62 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.PartidasController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.PartidasController">
 
     <children>
-        <VBox prefHeight="590.0" prefWidth="920.0" spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="30.0">
+        <VBox spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="30.0">
 
-            <children>
-
-                <HBox alignment="CENTER_LEFT" spacing="20">
+            <!-- Encabezado -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <children>
                     <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📘 Partidas" />
                     <Region HBox.hgrow="ALWAYS" />
-                    <Button fx:id="btnAgregarPartida" onAction="#agregarPartida" prefHeight="45.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar partida" />
-                </HBox>
+                    <Button fx:id="btnActualizar" mnemonicParsing="false" prefHeight="45.0" prefWidth="140.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Actualizar" />
+                    <Button fx:id="btnAgregarPartida" prefHeight="45.0" prefWidth="150.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar partida" />
+                </children>
+            </HBox>
 
-                <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3); -fx-padding: 20;">
-                    <children>
-                        <GridPane hgap="25" vgap="12" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <columnConstraints>
-                                <ColumnConstraints percentWidth="30.0" hgrow="SOMETIMES" />
-                                <ColumnConstraints percentWidth="30.0" hgrow="SOMETIMES" />
-                                <ColumnConstraints percentWidth="20.0" hgrow="SOMETIMES" />
-                                <ColumnConstraints percentWidth="20.0" hgrow="SOMETIMES" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints />
-                                <RowConstraints />
-                                <RowConstraints />
-                            </rowConstraints>
+            <!-- Panel de filtros -->
+            <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3); -fx-padding: 20;">
+                <children>
+                    <GridPane hgap="25" vgap="12" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="30.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="30.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints />
+                            <RowConstraints />
+                        </rowConstraints>
 
-                            <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Filtrar por rango de fecha" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="4" />
+                        <!-- Fecha de inicio -->
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Fecha de inicio:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <DatePicker fx:id="dateInicial" maxWidth="Infinity" prefHeight="39.0" promptText="dd/mm/aaaa" style="-fx-font-size: 14px;" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
-                            <Label style="-fx-text-fill: #495057; -fx-font-size: 13px;" text="Fecha de inicio" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                            <DatePicker fx:id="dateInicial" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <!-- Fecha final -->
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Fecha final:" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <DatePicker fx:id="dateFinal" maxWidth="Infinity" prefHeight="39.0" promptText="dd/mm/aaaa" style="-fx-font-size: 14px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                            <Label style="-fx-text-fill: #495057; -fx-font-size: 13px;" text="Fecha final" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                            <DatePicker fx:id="dateFinal" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <!-- Botón Buscar -->
+                        <Button fx:id="btnBuscar" maxWidth="Infinity" mnemonicParsing="false" prefHeight="39.0" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 
-                            <Button fx:id="btnBuscar" prefHeight="43.0" maxWidth="Infinity" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <!-- Botón Limpiar -->
+                        <Button fx:id="btnLimpiar" maxWidth="Infinity" mnemonicParsing="false" prefHeight="39.0" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                    </GridPane>
+                </children>
+            </AnchorPane>
 
-                            <Button fx:id="btnLimpiar" prefHeight="43.0" maxWidth="Infinity" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                        </GridPane>
-                    </children>
-                </AnchorPane>
-
-                <TableView fx:id="tbPartidas" prefHeight="400.0" style="-fx-background-color: white; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
-                    <columns>
-                        <TableColumn fx:id="clFecha" prefWidth="160" text="Fecha" />
-                        <TableColumn fx:id="clDetalle" prefWidth="420" text="Detalle" />
-                        <TableColumn fx:id="clUsuario" prefWidth="200" text="Usuario" />
-                        <TableColumn fx:id="clAccion" prefWidth="99.20001220703125" text="Acción" />
-                    </columns>
-                </TableView>
-            </children>
+            <!-- Tabla de partidas -->
+            <TableView fx:id="tbPartidas" prefHeight="400.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
+                <columns>
+                    <TableColumn fx:id="clFecha" text="Fecha" />
+                    <TableColumn fx:id="clDetalle" text="Detalle" />
+                    <TableColumn fx:id="clUsuario" text="Usuario" />
+                    <TableColumn fx:id="clAccion" text="Acción" />
+                </columns>
+            </TableView>
 
             <padding>
                 <Insets bottom="20" left="20" right="20" top="20" />
