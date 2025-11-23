@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -52,6 +53,9 @@ public class NavbarController {
     @FXML
     private Button btnCuentasT;
 
+    @FXML
+    private Button btnCerrarSesion;
+
     public static int idUsuarioSesion;
     public static int idEmpresaSesion;
 
@@ -60,9 +64,15 @@ public class NavbarController {
         // Guardar la instancia del controlador
         instance = this;
         Platform.runLater(() -> {
-            Stage stage = (Stage) mainPane.getScene().getWindow();
-            stage.setMaximized(false);
-            stage.setMaximized(true);
+            try {
+                if (mainPane.getScene() != null && mainPane.getScene().getWindow() != null) {
+                    Stage stage = (Stage) mainPane.getScene().getWindow();
+                    stage.setMaximized(false);
+                    stage.setMaximized(true);
+                }
+            } catch (Exception e) {
+                System.out.println("No se pudo maximizar la ventana: " + e.getMessage());
+            }
         });
 
         // Cargar el dashboard por defecto al iniciar
@@ -78,6 +88,44 @@ public class NavbarController {
 
         // CONFIGURAR PERMISOS SEGÚN EL ROL
         configurarPermisosPorRol();
+    }
+
+    /**
+     * Cerrar sesión y volver al login
+     */
+    @FXML
+    private void cerrarSesion() {
+        try {
+            // Limpiar datos de sesión
+            LoginController.rolUsuarioSesion = null;
+            EmpresaController.idUsuarioSesion = 0;
+            idUsuarioSesion = 0;
+            idEmpresaSesion = 0;
+
+            // Obtener el Stage actual y cerrarlo
+            Stage stageActual = (Stage) btnCerrarSesion.getScene().getWindow();
+            stageActual.close();
+
+            // Crear un nuevo Stage para el login
+            Stage loginStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("login-view.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            loginStage.setScene(scene);
+            loginStage.setTitle("Sistema Contable - Login");
+            loginStage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("No se pudo cerrar sesión: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     /**
@@ -118,12 +166,12 @@ public class NavbarController {
                 break;
 
             case AccesoModel.ROL_AUDITOR:
-                // El auditor solo ve: Partidas (solo lectura), Reportes, Auditoría
+                // El auditor solo ve: Partidas (solo lectura), Reportes, Auditoría, Empresas
                 btnUsuarios.setVisible(false);
                 btnDocumentos.setVisible(false);
-                btnEmpresas.setVisible(false);
                 btnCatalogo.setVisible(false);
-                // Sí ve: Auditoría, Reportes, Dashboard
+                // Sí ve: Auditoría, Reportes, Dashboard, Empresas (solo lectura)
+                btnEmpresas.setVisible(true);
                 btnAuditoria.setVisible(true);
                 btnPartidas.setVisible(true); // Solo lectura (se controla en el controlador)
                 btnReporte.setVisible(true);

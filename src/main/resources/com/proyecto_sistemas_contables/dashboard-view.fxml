@@ -170,4 +170,15 @@
          </padding>
       </VBox>
    </children>
+    <!-- Sección de usuario y cerrar sesión -->
+    <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: white; -fx-padding: 10; -fx-background-radius: 5;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+        <children>
+            <VBox spacing="2.0">
+                <children>
+                    <Label fx:id="lblNombreUsuario" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Usuario" />
+                    <Label fx:id="lblRolUsuario" style="-fx-font-size: 12px; -fx-text-fill: gray;" text="Rol" />
+                </children>
+            </VBox>
+        </children>
+    </HBox>
 </AnchorPane>
