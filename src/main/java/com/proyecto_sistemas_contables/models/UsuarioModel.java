@@ -280,4 +280,176 @@ public class UsuarioModel {
     }
 
 
+    // Método para obtener un usuario por su ID
+    public static UsuarioModel obtenerUsuarioPorId(int idUsuario) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT u.*, a.nivelacceso, c.correo FROM tblusuarios u " +
+                            "INNER JOIN tblaccesos a ON u.idacceso = a.idacceso " +
+                            "INNER JOIN tblcorreos c ON u.idcorreo = c.idcorreo " +
+                            "WHERE u.idusuario = ?"
+            );
+            statement.setInt(1, idUsuario);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                UsuarioModel usuario = new UsuarioModel();
+                usuario.setIdUsuario(rs.getInt("idusuario"));
+                usuario.setNombreUsuario(rs.getString("nombreusuario"));
+                usuario.setNombre(rs.getString("nombre"));
+                usuario.setApellido(rs.getString("apellido"));
+                usuario.setCorreo(rs.getString("correo"));
+                usuario.setIdCorreo(rs.getInt("idcorreo"));
+                usuario.setIdAcceso(rs.getInt("idacceso"));
+                usuario.setNivelAcceso(rs.getString("nivelacceso"));
+                usuario.setActivo(rs.getBoolean("activo"));
+                return usuario;
+            }
+
+            return null;
+        } catch (SQLException e) {
+            System.out.println("Error al obtener usuario: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Método para verificar si un nombre de usuario ya existe
+    public static boolean nombreUsuarioExiste(String nombreUsuario) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT COUNT(*) as total FROM tblusuarios WHERE nombreusuario = ?"
+            );
+            statement.setString(1, nombreUsuario);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("total") > 0;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.out.println("Error al verificar nombre de usuario: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Método para verificar si un correo ya existe
+    public static boolean correoExiste(String correo) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT COUNT(*) as total FROM tblcorreos WHERE correo = ?"
+            );
+            statement.setString(1, correo);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("total") > 0;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.out.println("Error al verificar correo: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Método para actualizar usuario
+    public static boolean actualizarUsuario(UsuarioModel usuario, boolean cambiarClave) {
+        try {
+            Connection connection = ConexionDB.connection();
+
+            // Primero actualizamos el correo en tblcorreos
+            PreparedStatement stmtCorreo = connection.prepareStatement(
+                    "UPDATE tblcorreos SET correo = ? WHERE idcorreo = ?"
+            );
+            stmtCorreo.setString(1, usuario.getCorreo());
+            stmtCorreo.setInt(2, usuario.getIdCorreo());
+            stmtCorreo.executeUpdate();
+
+            // Ahora actualizamos el usuario
+            String sql;
+            PreparedStatement statement;
+
+            if (cambiarClave) {
+                // Encriptar la nueva contraseña
+                String claveEncriptada = Encripter.encrypt(usuario.getClave());
+
+                // Actualizar incluyendo la contraseña
+                sql = "UPDATE tblusuarios SET nombre = ?, apellido = ?, nombreusuario = ?, " +
+                        "clave = ?, idacceso = ? WHERE idusuario = ?";
+                statement = connection.prepareStatement(sql);
+                statement.setString(1, usuario.getNombre());
+                statement.setString(2, usuario.getApellido());
+                statement.setString(3, usuario.getNombreUsuario());
+                statement.setString(4, claveEncriptada);
+                statement.setInt(5, usuario.getIdAcceso());
+                statement.setInt(6, usuario.getIdUsuario());
+            } else {
+                // Actualizar sin cambiar la contraseña
+                sql = "UPDATE tblusuarios SET nombre = ?, apellido = ?, nombreusuario = ?, " +
+                        "idacceso = ? WHERE idusuario = ?";
+                statement = connection.prepareStatement(sql);
+                statement.setString(1, usuario.getNombre());
+                statement.setString(2, usuario.getApellido());
+                statement.setString(3, usuario.getNombreUsuario());
+                statement.setInt(4, usuario.getIdAcceso());
+                statement.setInt(5, usuario.getIdUsuario());
+            }
+
+            int filasAfectadas = statement.executeUpdate();
+            return filasAfectadas > 0;
+
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar usuario: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    // Método para verificar si un correo ya existe excluyendo un usuario específico
+    public static boolean correoExisteExcluyendoUsuario(String correo, int idUsuarioExcluir) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT COUNT(*) as total FROM tblcorreos c " +
+                            "INNER JOIN tblusuarios u ON c.idcorreo = u.idcorreo " +
+                            "WHERE c.correo = ? AND u.idusuario <> ?"
+            );
+            statement.setString(1, correo);
+            statement.setInt(2, idUsuarioExcluir);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("total") > 0;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.out.println("Error al verificar correo: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    // Método para verificar si un nombre de usuario ya existe excluyendo un usuario específico
+    public static boolean nombreUsuarioExisteExcluyendoUsuario(String nombreUsuario, int idUsuarioExcluir) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT COUNT(*) as total FROM tblusuarios WHERE nombreusuario = ? AND idusuario <> ?"
+            );
+            statement.setString(1, nombreUsuario);
+            statement.setInt(2, idUsuarioExcluir);
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("total") > 0;
+            }
+            return false;
+        } catch (SQLException e) {
+            System.out.println("Error al verificar nombre de usuario: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
 }

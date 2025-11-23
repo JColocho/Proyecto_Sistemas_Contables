@@ -96,11 +96,17 @@ public class UsuariosController {
                 """);
 
                 btnEditar.setOnAction(event -> {
+                    UsuarioModel usuario = getTableView().getItems().get(getIndex());
+
+                    // Pasar los datos necesarios al controlador de edición
+                    EditarUsuarioController.idUsuarioEditar = usuario.getIdUsuario();
+                    EditarUsuarioController.idUsuarioSesion = EmpresaController.idUsuarioSesion;
+
                     Stage stage = (Stage) tbUsuarios.getScene().getWindow();
-                    DialogoUtil.showDialog("editar-usuario-view", "Agregar usuario", stage);
+                    DialogoUtil.showDialog("editar-usuario-view", "Editar usuario", stage);
+
+                    // Recargar la tabla después de cerrar el diálogo
                     cargarUsuarios();
-
-
                 });
 
 
