@@ -75,9 +75,9 @@ public class NavbarController {
         EmpresaController.idUsuarioSesion = idUsuarioSesion;
 
 
-        btnAuditoria.setVisible(false);
-        btnDocumentos.setVisible(false);
-        btnUsuarios.setVisible(false);
+//        btnAuditoria.setVisible(false);
+//        btnDocumentos.setVisible(false);
+//        btnUsuarios.setVisible(false);
     }
 
     @FXML

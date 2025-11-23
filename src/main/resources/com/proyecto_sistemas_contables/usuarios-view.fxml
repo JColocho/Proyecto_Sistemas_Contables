@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -9,75 +10,79 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="500.0" prefWidth="732.0" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.UsuariosController">
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom right, #f4f6f9, #e9ecef);" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.UsuariosController">
    <children>
-      <VBox layoutX="11.0" layoutY="10.0" prefHeight="500.0" prefWidth="732.0" spacing="20.0" styleClass="contenedor" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="30.0">
+      <VBox prefHeight="590.0" prefWidth="920.0" spacing="25.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="30.0">
          <children>
-            <GridPane vgap="5.0">
-               <columnConstraints>
-                  <ColumnConstraints percentWidth="34.0" />
-                  <ColumnConstraints percentWidth="41.0" />
-                  <ColumnConstraints percentWidth="25.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-                  <RowConstraints vgrow="SOMETIMES" />
-               </rowConstraints>
+            <HBox alignment="CENTER_LEFT" spacing="20">
                <children>
-                  <AnchorPane styleClass="contenedorRedondeado" GridPane.columnSpan="3" GridPane.rowIndex="1" GridPane.rowSpan="3">
-                     <children>
-                        <GridPane AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-                           <columnConstraints>
-                              <ColumnConstraints percentWidth="40.0" />
-                              <ColumnConstraints percentWidth="40.0" />
-                              <ColumnConstraints percentWidth="20.0" />
-                              <ColumnConstraints percentWidth="20.0" />
-                           </columnConstraints>
-                           <children>
-                              <Button fx:id="btn_buscar" prefHeight="32.0" prefWidth="100.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Buscar" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.rowSpan="2">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Button>
-                              <TextField fx:id="txt_filtrar" promptText="Buscar usuario" GridPane.rowIndex="1" />
-                           </children>
-                           <rowConstraints>
-                              <RowConstraints />
-                              <RowConstraints />
-                              <RowConstraints />
-                           </rowConstraints>
-                        </GridPane>
-                     </children>
-                  </AnchorPane>
-                  <Label text="Gestión de usuarios" GridPane.halignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="btn_agregar" mnemonicParsing="false" prefHeight="31.0" prefWidth="139.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar usuario" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="RIGHT" />
+                  <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📘 Usuarios" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnAgregar" onAction="#agregarUsuario" prefHeight="45.0" prefWidth="138.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar usuario" />
                </children>
-            </GridPane>
-            <TableView fx:id="tbl_usuarios" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: rgb(250, 244, 246);">
-              <columns>
-                <TableColumn prefWidth="75.0" text="ID" />
-                <TableColumn prefWidth="173.60002899169922" text="Nombre de Usuario" />
-                  <TableColumn prefWidth="152.0" text="Nivel de acceso" />
-                  <TableColumn prefWidth="136.79995727539062" text="Acciones" />
-              </columns>
+            </HBox>
+            <AnchorPane style="-fx-background-color: white; -fx-background-radius: 12;                                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);                                    -fx-padding: 20;">
+               <children>
+                  <GridPane hgap="20.0" vgap="8.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="10.0">
+                     <columnConstraints>
+                        <ColumnConstraints percentWidth="25.0" />
+                        <ColumnConstraints percentWidth="25.0" />
+                        <ColumnConstraints percentWidth="25.0" />
+                        <ColumnConstraints halignment="CENTER" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" />
+                        <RowConstraints />
+                     </rowConstraints>
+                     <children>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #495057; -fx-font-size: 16px;" text="Gestión de usuarios" GridPane.columnSpan="3" />
+                        <Button fx:id="btnLimpiar" onAction="#limpiarFiltros" prefHeight="43.0" prefWidth="93.0" style="-fx-font-size: 15;" styleClass="btnRojo" text="Limpiar" GridPane.columnIndex="3" GridPane.rowIndex="3" GridPane.rowSpan="3" />
+                        <TextField fx:id="txtNombre" prefHeight="27.0" prefWidth="178.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label text="Nombre" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+                        <TextField fx:id="txtUsuario" prefHeight="27.0" prefWidth="178.0" GridPane.rowIndex="3" />
+                        <Label text="Usuario" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtApellido" prefHeight="27.0" prefWidth="178.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label text="Apellido" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtCorreo" prefHeight="27.0" prefWidth="178.0" GridPane.rowIndex="5" />
+                        <Label text="Correo" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="cmbEstado" prefHeight="39.0" prefWidth="143.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="Estado" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+                           <GridPane.margin>
+                              <Insets />
+                           </GridPane.margin>
+                        </Label>
+                     </children>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+            <TableView fx:id="tbUsuarios" prefHeight="269.0" prefWidth="880.0" style="-fx-background-color: white; -fx-border-radius: 12;                                   -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="clId" prefWidth="160" text="ID" />
+                  <TableColumn fx:id="clUsuario" prefWidth="85.59996032714844" text="Usuario" />
+                  <TableColumn fx:id="clNombre" prefWidth="107.99996948242188" text="Nombre" />
+                  <TableColumn fx:id="clApellido" prefWidth="123.2000732421875" text="Apellido" />
+                  <TableColumn fx:id="clCorreo" prefWidth="118.4000244140625" text="Correo" />
+                  <TableColumn fx:id="clActivo" prefWidth="116.79998779296875" text="Estado" />
+                  <TableColumn fx:id="clAcceso" prefWidth="116.79998779296875" text="Acceso" />
+                  <TableColumn fx:id="clAccion" prefWidth="116.79998779296875" text="Acción" />
+               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
          </children>
          <padding>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            <Insets bottom="20" left="20" right="20" top="20" />
          </padding>
       </VBox>
    </children>
