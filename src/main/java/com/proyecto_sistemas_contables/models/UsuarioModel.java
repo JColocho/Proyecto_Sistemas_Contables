@@ -126,6 +126,7 @@ public class UsuarioModel {
             throw new RuntimeException(e);
         }
     }
+
     //Metodo para validar el inicio de sesión
     public boolean inicioSesion(String nombreUsuario, String clave) {
         try{
@@ -211,7 +212,7 @@ public class UsuarioModel {
     }
 
 
-    // Método para obtener usuarios (excluye el de la sesión actual)
+    // método para obtener usuarios (excluye el de la sesión actual)
     public static ObservableList<UsuarioModel> obtenerUsuarios(int idUsuarioSesion) {
         ObservableList<UsuarioModel> lista = FXCollections.observableArrayList();
         String sql = """
@@ -248,6 +249,35 @@ public class UsuarioModel {
         return lista;
     }
 
+    // metodo para desactivar usuario
+    public static void desactivarUsuario(int idUsuario) {
+        String sql = "UPDATE tblusuarios SET activo = false WHERE idusuario = ?";
+
+        try (Connection conn = ConexionDB.connection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idUsuario);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // metodo para activar usuario
+    public static void activarUsuario(int idUsuario) {
+        String sql = "UPDATE tblusuarios SET activo = true WHERE idusuario = ?";
+
+        try (Connection conn = ConexionDB.connection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idUsuario);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

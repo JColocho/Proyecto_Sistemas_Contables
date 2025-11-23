@@ -72,7 +72,6 @@
             </CheckBox>
             <TextField fx:id="txtClave" layoutX="54.0" layoutY="275.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" visible="false" />
             <TextField fx:id="txtConfirmClave" layoutX="515.0" layoutY="275.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" visible="false" />
-            <TextField fx:id="txtClaveAcceso" layoutX="515.0" layoutY="363.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" visible="false" />
             <Button fx:id="btnCancelar" layoutX="446.0" layoutY="432.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="119.0" style="-fx-font-size: 13;" styleClass="btnRojo" text="Cancelar">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />

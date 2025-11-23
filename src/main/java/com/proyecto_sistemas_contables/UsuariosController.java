@@ -1,6 +1,5 @@
 package com.proyecto_sistemas_contables;
 
-import com.proyecto_sistemas_contables.Conexion.ConexionDB;
 import com.proyecto_sistemas_contables.models.UsuarioModel;
 import com.proyecto_sistemas_contables.util.DialogoUtil;
 import javafx.collections.ObservableList;
@@ -14,10 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 public class UsuariosController {
     @FXML private TextField txtCorreo;
@@ -82,69 +77,102 @@ public class UsuariosController {
         clAcceso.setCellValueFactory(new PropertyValueFactory<>("nivelAcceso"));
 
         clAccion.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEditar = new Button();
-            private final Button btnEliminar = new Button();
+
+            private final Button btnEditar = new Button();  // abre ventana para editar usuario
+            private final Button btnEstado = new Button();  // cambia estado activo e inactivo
             private final HBox pane = new HBox(5);
 
             {
-                // Iconos
-                ImageView iconEditar = new ImageView(new Image(getClass().getResourceAsStream(
-                        "/com/proyecto_sistemas_contables/static/img/write.png")));
+                ImageView iconEditar = new ImageView(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/write.png")));
                 iconEditar.setFitWidth(16);
                 iconEditar.setFitHeight(16);
 
-                ImageView iconEliminar = new ImageView(new Image(getClass().getResourceAsStream(
-                        "/com/proyecto_sistemas_contables/static/img/bin.png")));
-                iconEliminar.setFitWidth(16);
-                iconEliminar.setFitHeight(16);
-
-                // Asignar iconos a los botones
                 btnEditar.setGraphic(iconEditar);
-                btnEliminar.setGraphic(iconEliminar);
 
-                // Estilos
-                btnEditar.setStyle("-fx-background-color: rgb(210, 240, 240); -fx-text-fill: white; -fx-cursor: hand;");
-                btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
+                btnEditar.setStyle("""
+                -fx-background-color: rgb(210, 240, 240);
+                -fx-text-fill: white;
+                -fx-cursor: hand;
+                """);
 
-                // Acción de editar usuario
                 btnEditar.setOnAction(event -> {
-                    UsuarioModel usuario = getTableView().getItems().get(getIndex());
-                    System.out.println("Editar usuario: " + usuario.getNombreUsuario());
-                    // Abre ventana de edicion de usuario
-                    // DialogoUtil.showDialog("editar-usuario-view", "Editar usuario", (Stage) tbUsuarios.getScene().getWindow());
+                    Stage stage = (Stage) tbUsuarios.getScene().getWindow();
+                    DialogoUtil.showDialog("editar-usuario-view", "Agregar usuario", stage);
+                    cargarUsuarios();
+
+
                 });
 
-                // Acción de eliminar usuario
-                btnEliminar.setOnAction(event -> {
-                    UsuarioModel usuario = getTableView().getItems().get(getIndex());
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Eliminar usuario");
-                    alert.setHeaderText("¿Está seguro de eliminar al usuario " + usuario.getNombreUsuario() + "?");
-                    alert.setContentText("Esta acción no se puede revertir.");
 
-                    alert.showAndWait().ifPresent(res -> {
-                        if (res == ButtonType.OK) {
-                            //logica para desactivar usuario
-                            System.out.println("usuario "+ usuario.getNombreUsuario() + " eliminado"    );
-                        }
-                    });
-                });
+                // Configuración base del botón activar/desactivar
+                btnEstado.setPrefWidth(80);
+                btnEstado.setPrefHeight(30);
+                btnEstado.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-cursor: hand;");
 
                 pane.setAlignment(Pos.CENTER);
-                pane.getChildren().addAll(btnEditar, btnEliminar);
+                pane.getChildren().addAll(btnEditar, btnEstado);
             }
+
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : pane);
+
+                if (empty) {
+                    setGraphic(null);
+                    return;
+                }
+
+                UsuarioModel usuario = getTableView().getItems().get(getIndex());
+
+                if (usuario.isActivo()) {
+                    btnEstado.setText("Desactivar");
+                    btnEstado.setStyle("""
+                    -fx-background-color: #f44336;
+                    -fx-text-fill: white;
+                    -fx-font-weight: bold;
+                    -fx-cursor: hand;
+                    """);
+
+                    btnEstado.setOnAction(e -> {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Desactivar usuario");
+                        alert.setHeaderText("¿Desea desactivar al usuario " + usuario.getNombreUsuario() + "?");
+                        alert.setContentText("Podrá volverlo a activar más adelante.");
+
+                        alert.showAndWait().ifPresent(res -> {
+                            if (res == ButtonType.OK) {
+                                UsuarioModel.desactivarUsuario(usuario.getIdUsuario());
+                                usuario.setActivo(false);
+                                tbUsuarios.refresh();
+                                filtrar();
+                            }
+                        });
+                    });
+
+                } else {
+                    btnEstado.setText("Activar");
+                    btnEstado.setStyle("""
+                    -fx-background-color: #4CAF50;
+                    -fx-text-fill: white;
+                    -fx-font-weight: bold;
+                    -fx-cursor: hand;
+                    """);
+
+                    btnEstado.setOnAction(e -> {
+                        UsuarioModel.activarUsuario(usuario.getIdUsuario());
+                        usuario.setActivo(true);
+                        tbUsuarios.refresh();
+                        filtrar();
+                    });
+                }
+
+                setGraphic(pane);
             }
         });
 
-
         cargarUsuarios();
         agregarFiltros();
-
     }
 
     @FXML
@@ -153,6 +181,7 @@ public class UsuariosController {
         DialogoUtil.showDialog("registrar-usuario-view", "Agregar usuario", stage);
         cargarUsuarios();
     }
+
     private void cargarUsuarios() {
         ObservableList<UsuarioModel> usuarios = UsuarioModel.obtenerUsuarios(EmpresaController.idUsuarioSesion);
         filteredUsuarios = new FilteredList<>(usuarios, p -> true);
