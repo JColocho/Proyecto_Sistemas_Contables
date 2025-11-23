@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class RegistroPartidaController {
@@ -113,7 +114,7 @@ public class RegistroPartidaController {
     private String RUTA_DESTINO = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas";
 
     public void initialize() throws SQLException {
-
+        datePartida.setValue(LocalDate.now());
         carpetaPDF();
 
         linkVerDoc.setVisible(false);
@@ -444,7 +445,7 @@ public class RegistroPartidaController {
     //Método para cargar el cátalogo de cuentas
     private void cargarCuentas() {
         CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
-        ObservableList<String> cuentas = cuentaModel.obtenerNombreCuentas(1);
+        ObservableList<String> cuentas = cuentaModel.obtenerNombreCuentas(idEmpresaSesion);
 
         this.cmbCuentas.setItems(cuentas);
 

@@ -5,6 +5,7 @@ import com.proyecto_sistemas_contables.models.PartidaModel;
 import com.proyecto_sistemas_contables.util.DialogoUtil;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -28,14 +29,9 @@ public class PartidasController {
     @FXML private DatePicker dateInicial;
     @FXML private DatePicker dateFinal;
     @FXML private Button btnBuscar;
+    @FXML private Button btnActualizar;
     @FXML private Button btnAgregarPartida;
     @FXML private Button btnLimpiar;
-
-    @FXML
-    public void agregarPartida(ActionEvent event) {
-        Stage stage = (Stage) tbPartidas.getScene().getWindow();
-        DialogoUtil.showDialog("registro-partida-view", "Agregar partida", stage);
-    }
 
     public static int idUsuarioSesion;
     public static int idEmpresaSesion;
@@ -129,6 +125,10 @@ public class PartidasController {
 
             cargarPartidas(null, null);
 
+            btnAgregarPartida.setOnAction(event -> {
+                Stage stage = (Stage) tbPartidas.getScene().getWindow();
+                DialogoUtil.showDialog("registro-partida-view", "Agregar partida", stage);
+            });
             btnBuscar.setOnAction(event -> {
                 Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
                 Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
@@ -139,6 +139,11 @@ public class PartidasController {
                 dateFinal.setValue(null);
                 cargarPartidas(null, null);
             });
+            btnActualizar.setOnAction(event -> {
+                Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                cargarPartidas(inicio, fin);
+            });
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
@@ -146,7 +151,7 @@ public class PartidasController {
     }
 
     private void cargarPartidas(Date inicio, Date fin) {
-        ObservableList<PartidaModel> partidas = PartidaModel.obtenerPartidas(inicio, fin);
+        ObservableList<PartidaModel> partidas = PartidaModel.obtenerPartidas(inicio, fin, idEmpresaSesion);
         tbPartidas.setItems(partidas);
     }
 

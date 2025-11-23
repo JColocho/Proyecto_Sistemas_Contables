@@ -81,7 +81,7 @@
             <Font name="Inter 18pt Bold" size="15.0" />
          </font>
       </Label>
-      <TextField fx:id="txtTipoDoc" layoutX="306.0" layoutY="219.0" prefHeight="26.0" prefWidth="190.0" style="-fx-background-color: #ffffff;" />
+      <TextField fx:id="txtTipoDoc" layoutX="306.0" layoutY="219.0" prefHeight="34.0" prefWidth="280.0" style="-fx-background-color: #ffffff;" />
       <Button fx:id="btnCerrar" layoutX="470.0" layoutY="544.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="116.0" style="-fx-font-size: 13;" styleClass="btnRojo" text="Cerrar">
          <font>
             <Font name="Inter 24pt Bold" size="23.0" />

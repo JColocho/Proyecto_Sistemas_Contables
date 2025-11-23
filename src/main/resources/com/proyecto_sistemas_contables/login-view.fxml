@@ -10,40 +10,85 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #3C946F;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.LoginController">
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.StackPane?>
+<AnchorPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #3C946F;" stylesheets="@static/css/vistas.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.LoginController">
    <children>
-      <AnchorPane layoutX="74.0" layoutY="59.0" prefHeight="532.0" prefWidth="851.0" style="-fx-background-color: #D9D9D9; -fx-background-radius: 31;">
+      <AnchorPane style="-fx-background-color: #D9D9D9; -fx-background-radius: 31;" AnchorPane.topAnchor="59.0" AnchorPane.bottomAnchor="59.0" AnchorPane.leftAnchor="74.0" AnchorPane.rightAnchor="75.0">
          <children>
-            <Button fx:id="btnIniciarSesion" layoutX="99.0" layoutY="357.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="170.0" style="-fx-font-size: 20;" styleClass="btnVerde" text="Iniciar Sesión" textAlignment="CENTER" textFill="#fcfcfc">
-               <font>
-                  <Font name="Inter 28pt Bold" size="16.0" />
-               </font></Button>
-            <Label layoutX="54.0" layoutY="50.0" style="-fx-font-style: Inter; -fx-font-weight: bold; -fx-font-size: 36;" text="Inicio de sesión">
-               <font>
-                  <Font name="Inter Regular" size="36.0" />
-               </font>
-            </Label>
-            <TextField fx:id="txtUsuario" layoutX="54.0" layoutY="151.0" prefHeight="32.0" prefWidth="266.0" />
-            <Label layoutX="54.0" layoutY="132.0" style="-fx-font-style: Inter;" text="Nombre de usuario">
-               <font>
-                  <Font name="Inter 24pt Bold" size="12.0" />
-               </font></Label>
-            <Label layoutX="54.0" layoutY="221.0" style="-fx-font-style: Inter;" text="Contraseña">
-               <font>
-                  <Font name="Inter 24pt Bold" size="12.0" />
-               </font></Label>
-            <ImageView fitHeight="361.0" fitWidth="359.0" layoutX="426.0" layoutY="76.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@static/img/img-inicio.png" />
-               </image>
-            </ImageView>
-            <PasswordField fx:id="txtClavePWD" layoutX="51.0" layoutY="240.0" prefHeight="32.0" prefWidth="266.0" />
-            <CheckBox fx:id="chkMostrarClave" layoutX="51.0" layoutY="280.0" mnemonicParsing="false" text="Mostrar contraseña">
-               <font>
-                  <Font name="Inter 28pt Bold" size="12.0" />
-               </font>
-            </CheckBox>
-            <TextField fx:id="txtClave" layoutX="51.0" layoutY="240.0" prefHeight="32.0" prefWidth="266.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" visible="false" />
+            <HBox spacing="40" alignment="CENTER" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+               <padding>
+                  <Insets top="50" bottom="50" left="50" right="50" />
+               </padding>
+
+               <!-- Panel izquierdo - Formulario -->
+               <VBox spacing="15" HBox.hgrow="SOMETIMES" maxWidth="400" minWidth="300">
+                  <Label style="-fx-font-style: Inter; -fx-font-weight: bold; -fx-font-size: 36;" text="Inicio de sesión">
+                     <font>
+                        <Font name="Inter Regular" size="36.0" />
+                     </font>
+                  </Label>
+
+                  <VBox spacing="5" VBox.vgrow="SOMETIMES">
+                     <padding>
+                        <Insets top="30" />
+                     </padding>
+
+                     <Label style="-fx-font-style: Inter;" text="Nombre de usuario">
+                        <font>
+                           <Font name="Inter 24pt Bold" size="12.0" />
+                        </font>
+                     </Label>
+                     <TextField fx:id="txtUsuario" prefHeight="32.0" maxWidth="Infinity" />
+
+                     <VBox spacing="5">
+                        <padding>
+                           <Insets top="15" />
+                        </padding>
+
+                        <Label style="-fx-font-style: Inter;" text="Contraseña">
+                           <font>
+                              <Font name="Inter 24pt Bold" size="12.0" />
+                           </font>
+                        </Label>
+
+                        <StackPane>
+                           <PasswordField fx:id="txtClavePWD" prefHeight="32.0" maxWidth="Infinity" />
+                           <TextField fx:id="txtClave" prefHeight="32.0" maxWidth="Infinity" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" visible="false" />
+                        </StackPane>
+
+                        <CheckBox fx:id="chkMostrarClave" mnemonicParsing="false" text="Mostrar contraseña">
+                           <padding>
+                              <Insets top="8" />
+                           </padding>
+                           <font>
+                              <Font name="Inter 28pt Bold" size="12.0" />
+                           </font>
+                        </CheckBox>
+                     </VBox>
+                  </VBox>
+
+                  <Button fx:id="btnIniciarSesion" mnemonicParsing="false" prefHeight="44.0" maxWidth="200" style="-fx-font-size: 20;" styleClass="btnVerde" text="Iniciar Sesión" textAlignment="CENTER" textFill="#fcfcfc">
+                     <VBox.margin>
+                        <Insets top="20" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="Inter 28pt Bold" size="16.0" />
+                     </font>
+                  </Button>
+               </VBox>
+
+               <!-- Panel derecho - Imagen -->
+               <VBox alignment="CENTER" HBox.hgrow="SOMETIMES" minWidth="350">
+                  <ImageView fitHeight="361.0" fitWidth="359.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@static/img/img-inicio.png" />
+                     </image>
+                  </ImageView>
+               </VBox>
+            </HBox>
          </children>
       </AnchorPane>
    </children>

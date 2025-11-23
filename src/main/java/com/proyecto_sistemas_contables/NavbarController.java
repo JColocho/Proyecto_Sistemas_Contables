@@ -102,6 +102,9 @@ public class NavbarController {
         else if (source == btnCatalogo) {
             loadView("catalogo-cuentas-view.fxml");
         }
+        else if (source == btnCuentasT) {
+            loadView("cuentas-t-view.fxml");
+        }
     }
 
     private void loadView(String fxmlName) {

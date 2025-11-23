@@ -137,7 +137,7 @@ public class PartidaModel {
     }
 
     //Metodo para obtener las partidas registradas por un rango de fecha
-    public static ObservableList<PartidaModel> obtenerPartidas(Date fechaInicio, Date fechaFin) {
+    public static ObservableList<PartidaModel> obtenerPartidas(Date fechaInicio, Date fechaFin, int idEmpresa) {
         ObservableList<PartidaModel> lista = FXCollections.observableArrayList();
         String sql;
 
@@ -148,7 +148,7 @@ public class PartidaModel {
                 SELECT p.idpartida, p.fecha, p.concepto, u.nombreusuario
                 FROM tblpartidas p
                 INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
-                WHERE p.fecha BETWEEN ? AND ?
+                WHERE p.fecha BETWEEN ? AND ? AND p.idempresa = ?";"
                 ORDER BY p.fecha DESC
             """;
         } else {
@@ -156,6 +156,7 @@ public class PartidaModel {
                 SELECT p.idpartida, p.fecha, p.concepto, u.nombreusuario
                 FROM tblpartidas p
                 INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
+                WHERE p.idempresa = ?
                 ORDER BY p.fecha DESC
                 LIMIT 30
             """;
@@ -167,6 +168,10 @@ public class PartidaModel {
             if (tieneRango) {
                 statement.setDate(1, new java.sql.Date(fechaInicio.getTime()));
                 statement.setDate(2, new java.sql.Date(fechaFin.getTime()));
+                statement.setInt(3, idEmpresa);
+            }
+            else {
+                statement.setInt(1, idEmpresa);
             }
 
             ResultSet rs = statement.executeQuery();

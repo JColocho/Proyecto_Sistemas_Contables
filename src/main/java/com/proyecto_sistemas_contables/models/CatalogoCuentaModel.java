@@ -114,15 +114,22 @@ public class CatalogoCuentaModel {
     //Metodo para obtener el lista de nombre del catalogo de cuentas
     public ObservableList<String> obtenerNombreCuentas(int idEmpresa) {
         try{
+            //Colección con todas la cuentas
             ObservableList<String> cuentas = FXCollections.observableArrayList();
 
+            //Conexión con la base de datos
             Connection connection = ConexionDB.connection();
             Statement statement = connection.createStatement();
+
+            //Consulta en la base de datos
             ResultSet resultSet = statement.executeQuery("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = " + idEmpresa);
+
+            //Obtener los datos encontrados en la base de datos
             while (resultSet.next()) {
                 cuentas.add(resultSet.getString("cuenta"));
             }
 
+            //Retornar la colección
             return cuentas;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -131,18 +138,25 @@ public class CatalogoCuentaModel {
 
     //Metodo para obtener el id de la cuenta mendiante el nombre
     public int obtenerIdCuenta(String nombreCuenta, int idEmpresa) {
+        //Consulta para la base de datos para encontrar el id de la cuenta
         String sql = "SELECT idCuenta FROM tblcatalogocuentas WHERE cuenta = ? AND idempresa = ?";
+
+        //Conexión con la base de datos
         try (Connection connection = ConexionDB.connection();
+             //Preparar la consulta para la base de datos
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, nombreCuenta);
             statement.setInt(2, idEmpresa);
 
+            //Ejecutar la consulta
             ResultSet resultSet = statement.executeQuery();
+            //Obtener el resultado de la consulta
             if (resultSet.next()) {
+                //retornar el resultado
                 return resultSet.getInt("idCuenta");
             }
-            return -1; // No se encontró la cuenta
+            return -1;
 
         } catch (SQLException e) {
             System.out.println("Error al obtener ID de cuenta: " + e.getMessage());
@@ -177,6 +191,37 @@ public class CatalogoCuentaModel {
             throw new RuntimeException(e);
         }
     }
+
+    //Metodo para obtener todo el catalogo de cuentas según el tipo de la cuenta
+    public ObservableList<CatalogoCuentaModel> obtenerCatalogoCuentasPorTipo(String tipoCuenta, int idEmpresa) {
+        try{
+            ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
+
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = ? AND tipoCuenta = ?");
+            statement.setInt(1, idEmpresa);
+            statement.setString(2, tipoCuenta);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                cuentaModel.setIdCuenta(resultSet.getInt("idCuenta"));
+                cuentaModel.setIdEmpresa(resultSet.getInt("idEmpresa"));
+                cuentaModel.setCuenta(resultSet.getString("cuenta"));
+                cuentaModel.setCodigoCuenta(resultSet.getString("codigo"));
+                cuentaModel.setTipoCuenta(resultSet.getString("tipoCuenta"));
+                cuentaModel.setTipoSaldo(resultSet.getString("tipoSaldo"));
+                cuentaModel.setSaldo(resultSet.getDouble("saldo"));
+                cuentas.add(cuentaModel);
+            }
+
+            return cuentas;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
     //Metodo para eliminar una cuenta del catalogo
     public void eliminarCuenta(int idCuenta, int idEmpresa) {
         try{
@@ -239,6 +284,56 @@ public class CatalogoCuentaModel {
             statement.setString(3, cuentaModel.getTipoCuenta());
             statement.setInt(4, cuentaModel.getIdEmpresa());
             statement.executeUpdate();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Metodo para actualizar una cuenta del cátalogo
+    public void editarCuenta(int idCuenta, CatalogoCuentaModel cuentaModel) {
+        try{
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement("UPDATE tblcatalogocuentas SET " +
+                    "cuenta = ?, codigo = ?, tipocuenta = ? WHERE idCuenta = ?");
+
+            statement.setString(1, cuentaModel.getCuenta());
+            statement.setString(2, cuentaModel.getCodigoCuenta());
+            statement.setString(3, cuentaModel.getTipoCuenta());
+            statement.setInt(4, idCuenta);
+
+            statement.executeUpdate();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Metodo para buscar cuenta según similutud del nombre de cuenta
+    public ObservableList<CatalogoCuentaModel> obtenerCatalogoCuentasSimilitud(String nombreCuenta, int idEmpresa) {
+        try{
+            ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = '" + idEmpresa + "' AND cuenta ILIKE '%" + nombreCuenta + "%'");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                cuentaModel.setIdCuenta(resultSet.getInt("idCuenta"));
+                cuentaModel.setIdEmpresa(resultSet.getInt("idEmpresa"));
+                cuentaModel.setCuenta(resultSet.getString("cuenta"));
+                cuentaModel.setCodigoCuenta(resultSet.getString("codigo"));
+                cuentaModel.setTipoCuenta(resultSet.getString("tipoCuenta"));
+                cuentaModel.setTipoSaldo(resultSet.getString("tipoSaldo"));
+                cuentaModel.setSaldo(resultSet.getDouble("saldo"));
+
+                cuentas.add(cuentaModel);
+            }
+
+            return cuentas;
+
         }
         catch (Exception e) {
             throw new RuntimeException(e);

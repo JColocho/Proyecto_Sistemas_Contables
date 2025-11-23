@@ -2,19 +2,18 @@ package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.models.CatalogoCuentaModel;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-public class AgregarCuentaController {
+import java.util.Optional;
 
-    @FXML
-    private Button btnAgregarCuenta;
+public class EditarCuentaController {
 
     @FXML
     private Button btnCancelar;
+
+    @FXML
+    private Button btnEditarCuenta;
 
     @FXML
     private ComboBox<String> cmbTipoCuenta;
@@ -25,6 +24,7 @@ public class AgregarCuentaController {
     @FXML
     private TextField txtCuenta;
 
+    public static CatalogoCuentaModel datosCuentaActual;
     public static int idEmpresaSesion;
 
     public void initialize() {
@@ -37,44 +37,54 @@ public class AgregarCuentaController {
                 "CAPITAL",
                 "INGRESOS O VENTAS",
                 "GASTOS",
-                "COSTOS",
-                "RETIROS"
+                "COSTOS"
         );
 
+        //Mostrar los datos actuales de la cuenta
+        txtCodigo.setText(datosCuentaActual.getCodigoCuenta());
+        txtCuenta.setText(datosCuentaActual.getCuenta());
+        cmbTipoCuenta.setValue(datosCuentaActual.getTipoCuenta());
 
-        btnAgregarCuenta.setOnAction(event -> {
+        btnEditarCuenta.setOnAction(event -> {
             //Capturar los datos ingresados del usuario
             String codigo = txtCodigo.getText().trim().replace(" ", "").toUpperCase();
             String cuenta = txtCuenta.getText().trim().replace("  ", " ").toUpperCase();
             String tipoCuenta = cmbTipoCuenta.getSelectionModel().getSelectedItem().toString();
 
-            //Validar que no este vacío o se ingresen datos ya existente en la base de datos
+            //Validar si hay campos vacíos o datos ya existentes en la base de datos
             CatalogoCuentaModel catalogoCuenta = new CatalogoCuentaModel();
             if(!codigo.isEmpty()){
                 if(!cuenta.isEmpty()){
                     if(!tipoCuenta.isEmpty()){
-                        if(!catalogoCuenta.codigoExiste(codigo, idEmpresaSesion)) {
-                            if (!catalogoCuenta.cuentaExiste(cuenta, idEmpresaSesion)) {
+                        if(!catalogoCuenta.codigoExiste(codigo, idEmpresaSesion) || codigo.equals(datosCuentaActual.getCodigoCuenta())) {
+                            if (!catalogoCuenta.cuentaExiste(cuenta, idEmpresaSesion) || cuenta.equals(datosCuentaActual.getCuenta())) {
 
-                                //Capturar todos los datos
-                                CatalogoCuentaModel catalogoCuentaModel = new CatalogoCuentaModel();
-                                catalogoCuentaModel.setCuenta(cuenta);
-                                catalogoCuentaModel.setCodigoCuenta(codigo);
-                                catalogoCuentaModel.setTipoCuenta(tipoCuenta);
-                                catalogoCuentaModel.setIdEmpresa(idEmpresaSesion);
+                                //Confirmación de actualización de los datos de la cuenta
+                                Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
+                                alertConfirm.setTitle("Confirmacion");
+                                alertConfirm.setHeaderText(null);
+                                alertConfirm.setContentText("¿Está seguro de actualizar esta cuenta?");
+                                Optional<ButtonType> result = alertConfirm.showAndWait();
 
-                                //Insertar la nueva cuenta al cátalogo
-                                catalogoCuentaModel.crearCuenta(catalogoCuentaModel);
+                                if (result.get() == ButtonType.OK) {
+                                    //Actualizar los datos de la cuenta
+                                    CatalogoCuentaModel catalogoCuentaModel = new CatalogoCuentaModel();
+                                    catalogoCuentaModel.setCuenta(cuenta);
+                                    catalogoCuentaModel.setCodigoCuenta(codigo);
+                                    catalogoCuentaModel.setTipoCuenta(tipoCuenta);
 
-                                //Mostrar mensaje de confirmación
-                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                                alert.setTitle("Cuenta Creada");
-                                alert.setHeaderText(null);
-                                alert.setContentText("Cuenta creada con exito.");
+                                    catalogoCuentaModel.editarCuenta(datosCuentaActual.getIdCuenta(), catalogoCuentaModel);
 
-                                //Cerrar la vista actual
-                                Stage stage = (Stage) btnAgregarCuenta.getScene().getWindow();
-                                stage.close();
+                                    //Mensaje de confirmación
+                                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                    alert.setTitle("Cuenta Editada");
+                                    alert.setHeaderText(null);
+                                    alert.setContentText("La cuenta se ha editado exitosamente.");
+                                    alert.show();
+
+                                    Stage stage = (Stage) btnEditarCuenta.getScene().getWindow();
+                                    stage.close();
+                                }
                             }
                             else {
                                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -123,4 +133,5 @@ public class AgregarCuentaController {
             stage.close();
         });
     }
+
 }
