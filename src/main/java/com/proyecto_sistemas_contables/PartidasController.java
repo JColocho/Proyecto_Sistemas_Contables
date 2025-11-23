@@ -36,6 +36,7 @@ public class PartidasController {
 
     public static int idUsuarioSesion;
     public static int idEmpresaSesion;
+    public static String rolUsuarioSesion;
 
     @FXML
     public void initialize() {
@@ -122,6 +123,10 @@ public class PartidasController {
                         DialogoUtil.showDialog("detalle-partida-view", "Detalle", stage);
                     });
 
+                    if ("Contador".equalsIgnoreCase(rolUsuarioSesion)) {
+                        btnEditar.setDisable(true);
+                        btnEliminar.setDisable(true);
+                    }
                     pane.setAlignment(Pos.CENTER);
                     pane.getChildren().addAll(btnVer,btnEditar, btnEliminar);
                 }

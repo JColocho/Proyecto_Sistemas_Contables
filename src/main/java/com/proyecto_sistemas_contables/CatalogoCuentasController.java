@@ -57,6 +57,7 @@ public class CatalogoCuentasController {
     private Button btnRefrescar;
 
     public static int idEmpresaSesion;
+    public static String rolUsuarioSesion;
 
     public void initialize() {
         //Cargar lista de tipo de cuentas a filtrar
@@ -142,21 +143,35 @@ public class CatalogoCuentasController {
                 });
 
                 btnEliminar.setOnAction(event -> {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Eliminar Cuenta");
-                    alert.setHeaderText("¿Está seguro de eliminar esta cuenta?");
-                    alert.setContentText("Esta acción no se puede revertir.");
 
-                    Optional<ButtonType> resultado = alert.showAndWait();
+                    //Validamos si la cuenta no ha sido usada
+                    CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                    if (!cuentaModel.cuentaEnUso(tbCuentas.getItems().get(getIndex()).getIdCuenta())){
 
-                    if (resultado.get() == ButtonType.OK) {
-                        CatalogoCuentaModel catalogoCuentaModel = getTableView().getItems().get(getIndex());
-                        catalogoCuentaModel.eliminarCuenta(catalogoCuentaModel.getIdCuenta(), idEmpresaSesion);
-                        cargarCuentas();
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Eliminar Cuenta");
+                        alert.setHeaderText("¿Está seguro de eliminar esta cuenta?");
+                        alert.setContentText("Esta acción no se puede revertir.");
+
+                        Optional<ButtonType> resultado = alert.showAndWait();
+
+                        if (resultado.get() == ButtonType.OK) {
+                            CatalogoCuentaModel catalogoCuentaModel = getTableView().getItems().get(getIndex());
+                            catalogoCuentaModel.eliminarCuenta(catalogoCuentaModel.getIdCuenta(), idEmpresaSesion);
+                            cargarCuentas();
+                        }
                     }
-
+                    else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Eliminar Cuenta");
+                        alert.setContentText("La cuenta que deseas eliminar ya esta en uso.");
+                        alert.showAndWait();
+                    }
                 });
-
+                if ("Contador".equalsIgnoreCase(rolUsuarioSesion)) {
+                    btnEditar.setDisable(true);
+                    btnEliminar.setDisable(true);
+                }
                 pane.setAlignment(Pos.CENTER);
                 pane.getChildren().addAll(btnEditar, btnEliminar);
             }
@@ -174,6 +189,10 @@ public class CatalogoCuentasController {
             Stage stage = (Stage) tbCuentas.getScene().getWindow();
             DialogoUtil.showDialog("agregar-cuenta-view", "Agregar cuenta", stage);
         });
+
+        if ("Contador".equalsIgnoreCase(rolUsuarioSesion)) {
+            btnAgregarCuenta.setVisible(false);
+        }
 
         btnLimpiar.setOnAction(event -> {
            txtBuscarCuenta.clear();

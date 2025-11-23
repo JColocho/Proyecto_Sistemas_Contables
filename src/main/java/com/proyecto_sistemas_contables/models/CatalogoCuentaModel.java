@@ -374,4 +374,22 @@ public class CatalogoCuentaModel {
             throw new RuntimeException(e);
         }
     }
+
+    //Metodo para saber si la cuenta ya estat en uso
+    public boolean cuentaEnUso(int idcuenta) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tbldetallepartida WHERE idCuenta = ?");
+            statement.setInt(1, idcuenta);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                return true;
+            }
+            return false;
+
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

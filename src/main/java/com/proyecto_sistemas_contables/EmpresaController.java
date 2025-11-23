@@ -74,7 +74,7 @@ public class EmpresaController {
     private FilteredList<EmpresaModel> listaFiltrada;
     private EmpresaModel empresaEditando = null;
     public static int idUsuarioSesion;
-    private String rolUsuario;
+    public static String rolUsuarioSesion;
 
     @FXML
     private void initialize() {
@@ -92,7 +92,6 @@ public class EmpresaController {
         formulario_empresa.setVisible(false);
 
         // Obtener rol del usuario y configurar permisos
-        obtenerRolUsuario();
         configurarPermisosPorRol();
 
         // Inicializar ComboBox de búsqueda
@@ -128,17 +127,8 @@ public class EmpresaController {
         configurarDobleClicFila();
     }
 
-    private void obtenerRolUsuario() {
-        try {
-            // Ajusta según tu implementación
-            this.rolUsuario = LoginController.rolUsuarioSesion;
-        } catch (Exception e) {
-            this.rolUsuario = "";
-        }
-    }
-
     private void configurarPermisosPorRol() {
-        if ("contador".equalsIgnoreCase(rolUsuario) || "auditor".equalsIgnoreCase(rolUsuario)) {
+        if ("Contador".equalsIgnoreCase(rolUsuarioSesion) || "Auditor".equalsIgnoreCase(rolUsuarioSesion)) {
             // Ocultar el botón de agregar empresa
             btn_agregar_empresa.setVisible(false);
             btn_agregar_empresa.setManaged(false);
@@ -160,6 +150,7 @@ public class EmpresaController {
         try {
             NavbarController.idUsuarioSesion = idUsuarioSesion;
             NavbarController.idEmpresaSesion = empresa.getId();
+            NavbarController.rolUsuarioSesion = rolUsuarioSesion;
 
             //Main.setRoot("navbar-view");
 
@@ -315,7 +306,7 @@ public class EmpresaController {
                 btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
 
                 // Ocultar botones si el rol es contador o auditor
-                if ("contador".equalsIgnoreCase(rolUsuario) || "auditor".equalsIgnoreCase(rolUsuario)) {
+                if ("contador".equalsIgnoreCase(rolUsuarioSesion) || "auditor".equalsIgnoreCase(rolUsuarioSesion)) {
                     btnEditar.setVisible(false);
                     btnEditar.setManaged(false);
                     btnEliminar.setVisible(false);

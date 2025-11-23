@@ -58,7 +58,7 @@ public class LoginController {
                     EmpresaController.idUsuarioSesion = usuario.idUsuarioSesion(txtUsuario.getText());
 
                     // Obtener el rol del usuario
-                    LoginController.rolUsuarioSesion = usuario.obtenerRolUsuario(txtUsuario.getText());
+                    EmpresaController.rolUsuarioSesion = usuario.obtenerRolUsuario(txtUsuario.getText());
 
                     try {
                         // Cerrar la ventana del login
