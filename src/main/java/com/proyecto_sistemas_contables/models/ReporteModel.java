@@ -329,33 +329,44 @@ public class ReporteModel {
     //BALANCE GENERAL
     public List<Map<String, Object>> obtenerBalanceGeneral(LocalDate fechaInicio, LocalDate fechaFin, int idEmpresa) throws SQLException {
         String sql = """
+    SELECT 
+        c.tipocuenta,
+        c.codigo,
+        c.cuenta,
+        COALESCE(antes.cargo_antes, 0) - COALESCE(antes.abono_antes, 0) + 
+        COALESCE(periodo.cargo_periodo, 0) - COALESCE(periodo.abono_periodo, 0) AS saldo_actual
+    FROM tblcatalogocuentas c 
+    LEFT JOIN (
         SELECT 
-            c.tipocuenta,
-            c.codigo,
-            c.cuenta,
-            c.saldo + COALESCE(movimientos.total_cargo, 0) - COALESCE(movimientos.total_abono, 0) AS saldo_actual
-        FROM tblcatalogocuentas c
-        LEFT JOIN (
-            SELECT 
-                dp.idcuenta,
-                SUM(dp.cargo) AS total_cargo,
-                SUM(dp.abono) AS total_abono
-            FROM tbldetallepartida dp
-            INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
-            WHERE p.fecha <= ? AND p.idempresa = ?
-            GROUP BY dp.idcuenta
-        ) AS movimientos ON c.idcuenta = movimientos.idcuenta
-        WHERE c.idempresa = ?
-        AND c.tipocuenta IN ('ACTIVO CORRIENTE', 'ACTIVO NO CORRIENTE', 'PASIVO CORRIENTE', 'PASIVO NO CORRIENTE', 'CAPITAL')
-        ORDER BY 
-            CASE c.tipocuenta
-                WHEN 'ACTIVO CORRIENTE' THEN 1
-                WHEN 'ACTIVO NO CORRIENTE' THEN 2
-                WHEN 'PASIVO CORRIENTE' THEN 3
-                WHEN 'PASIVO NO CORRIENTE' THEN 4
-                WHEN 'CAPITAL' THEN 5
-            END,
-            c.codigo
+            dp.idcuenta,
+            SUM(dp.cargo) AS cargo_antes,
+            SUM(dp.abono) AS abono_antes
+        FROM tbldetallepartida dp
+        INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
+        WHERE p.fecha < ? AND p.idempresa = ?
+        GROUP BY dp.idcuenta
+    ) AS antes ON c.idcuenta = antes.idcuenta
+    LEFT JOIN (
+        SELECT 
+            dp.idcuenta,
+            SUM(dp.cargo) AS cargo_periodo,
+            SUM(dp.abono) AS abono_periodo
+        FROM tbldetallepartida dp
+        INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
+        WHERE p.fecha BETWEEN ? AND ? AND p.idempresa = ?
+        GROUP BY dp.idcuenta
+    ) AS periodo ON c.idcuenta = periodo.idcuenta
+    WHERE c.idempresa = ?
+    AND c.tipocuenta IN ('ACTIVO CORRIENTE', 'ACTIVO NO CORRIENTE', 'PASIVO CORRIENTE', 'PASIVO NO CORRIENTE', 'CAPITAL')
+    ORDER BY 
+        CASE c.tipocuenta
+            WHEN 'ACTIVO CORRIENTE' THEN 1
+            WHEN 'ACTIVO NO CORRIENTE' THEN 2
+            WHEN 'PASIVO CORRIENTE' THEN 3
+            WHEN 'PASIVO NO CORRIENTE' THEN 4
+            WHEN 'CAPITAL' THEN 5
+        END,
+        c.codigo
     """;
 
         List<Map<String, Object>> resultado = new ArrayList<>();
@@ -367,9 +378,12 @@ public class ReporteModel {
         try (Connection conn = ConexionDB.connection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setDate(1, Date.valueOf(fechaFin));
+            ps.setDate(1, Date.valueOf(fechaInicio));  // Movimientos ANTES del periodo
             ps.setInt(2, idEmpresa);
-            ps.setInt(3, idEmpresa);
+            ps.setDate(3, Date.valueOf(fechaInicio));  // Movimientos EN el periodo
+            ps.setDate(4, Date.valueOf(fechaFin));
+            ps.setInt(5, idEmpresa);
+            ps.setInt(6, idEmpresa);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -441,7 +455,7 @@ public class ReporteModel {
             filaUtilidad.put("Monto", Math.abs(utilidadNeta));
             resultado.add(filaUtilidad);
 
-            totalCapital += utilidadNeta; // Sumar (o restar si es pérdida)
+            totalCapital += utilidadNeta;
         }
 
         // Agregar subtotal de capital
@@ -659,7 +673,7 @@ public class ReporteModel {
     }
 
     //ESTADO DE FLUJO DE EFECTIVO
-    public List<Map<String, Object>> obtenerFlujoEfectivo(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
+    public List<Map<String, Object>> obtenerFlujoEfectivo(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException{
         List<Map<String, Object>> resultado = new ArrayList<>();
 
         // SALDO INICIAL

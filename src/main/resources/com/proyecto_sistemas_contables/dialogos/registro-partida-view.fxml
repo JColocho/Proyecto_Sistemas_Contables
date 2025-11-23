@@ -14,14 +14,15 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="747.0" prefWidth="805.0" style="-fx-background-color: #DCDCDC;" stylesheets="@../static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.RegistroPartidaController">
+<AnchorPane prefHeight="780.0" prefWidth="805.0" style="-fx-background-color: #DCDCDC;" stylesheets="@../static/css/vistas.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.RegistroPartidaController">
    <children>
       <Label layoutX="278.0" layoutY="14.0" style="-fx-font-size: 25; -fx-font-weight: bold;" text="REGISTRO DE PARTIDAS">
          <font>
             <Font name="Inter 24pt Bold" size="4.0" />
          </font>
       </Label>
-      <TableView fx:id="tblRegistroDetalle" layoutX="24.0" layoutY="417.0" prefHeight="238.0" prefWidth="752.0">
+      <TableView fx:id="tblRegistroDetalle" layoutX="24.0" layoutY="417.0"
+                 prefHeight="280.0" prefWidth="752.0">
         <columns>
           <TableColumn fx:id="colCuenta" prefWidth="284.800012588501" text="Cuenta" />
           <TableColumn fx:id="colCargo" minWidth="0.0" prefWidth="170.39996337890625" text="Cargo" />
@@ -102,42 +103,42 @@
             <Font name="Inter Italic" size="12.0" />
          </font>
       </Text>
-      <Text layoutX="27.0" layoutY="678.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Cargos:">
+      <Text layoutX="27.0" layoutY="710.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Cargos:">
          <font>
             <Font name="Inter 24pt Bold" size="14.0" />
          </font>
       </Text>
-      <Text layoutX="27.0" layoutY="696.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Abonos:">
+      <Text layoutX="27.0" layoutY="728.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Abonos:">
          <font>
             <Font name="Inter 24pt Bold" size="14.0" />
          </font>
       </Text>
-      <Text layoutX="27.0" layoutY="714.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Diferencia:">
+      <Text layoutX="27.0" layoutY="746.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Diferencia:">
          <font>
             <Font name="Inter 24pt Bold" size="14.0" />
          </font>
       </Text>
-      <Text fx:id="textTotalCargos" layoutX="159.0" layoutY="678.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\$0.00">
+      <Text fx:id="textTotalCargos" layoutX="159.0" layoutY="710.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\$0.00">
          <font>
             <Font name="Inter 24pt Bold" size="14.0" />
          </font>
       </Text>
-      <Text fx:id="textTotalAbonos" layoutX="159.0" layoutY="696.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\$0.00">
+      <Text fx:id="textTotalAbonos" layoutX="159.0" layoutY="728.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\$0.00">
          <font>
             <Font name="Inter 24pt Bold" size="14.0" />
          </font>
       </Text>
-      <Text fx:id="textDiferencia" layoutX="159.0" layoutY="714.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\$0.00">
+      <Text fx:id="textDiferencia" layoutX="159.0" layoutY="746.0" strokeType="OUTSIDE" strokeWidth="0.0" text="\$0.00">
          <font>
             <Font name="Inter 24pt Bold" size="14.0" />
          </font>
       </Text>
-      <Button fx:id="btnRegistrarPartida" layoutX="525.0" layoutY="675.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="130.0" style="-fx-font-size: 13;" styleClass="btnVerde" text="Registrar Partida">
+      <Button fx:id="btnRegistrarPartida" layoutX="525.0" layoutY="710.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="130.0" style="-fx-font-size: 13;" styleClass="btnVerde" text="Registrar Partida">
          <font>
             <Font name="Inter 24pt Bold" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="btnCancelar" layoutX="669.0" layoutY="675.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="119.0" style="-fx-font-size: 13;" styleClass="btnRojo" text="Cancelar">
+      <Button fx:id="btnCancelar" layoutX="669.0" layoutY="710.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="119.0" style="-fx-font-size: 13;" styleClass="btnRojo" text="Cancelar">
          <font>
             <Font name="Inter 24pt Bold" size="12.0" />
          </font>
