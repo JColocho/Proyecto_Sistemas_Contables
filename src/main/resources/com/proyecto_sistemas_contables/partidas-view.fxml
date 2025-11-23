@@ -65,6 +65,7 @@
             <TableView fx:id="tbPartidas" prefHeight="400.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
                 <columns>
                     <TableColumn fx:id="clFecha" text="Fecha" />
+                    <TableColumn fx:id="clAsiento" text="Asiento" />
                     <TableColumn fx:id="clDetalle" text="Detalle" />
                     <TableColumn fx:id="clUsuario" text="Usuario" />
                     <TableColumn fx:id="clAccion" text="Acción" />

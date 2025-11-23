@@ -22,6 +22,7 @@ public class PartidasController {
 
     @FXML private TableView<PartidaModel> tbPartidas;
     @FXML private TableColumn<PartidaModel, Date> clFecha;
+    @FXML private TableColumn<PartidaModel, String> clAsiento;
     @FXML private TableColumn<PartidaModel, String> clDetalle;
     @FXML private TableColumn<PartidaModel, String> clUsuario;
     @FXML private TableColumn<PartidaModel, Void> clAccion;
@@ -44,12 +45,14 @@ public class PartidasController {
 
             // Ajustar los anchos en porcentaje
             clFecha.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.15));
-            clDetalle.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.40));
+            clAsiento.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.10));
+            clDetalle.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.30));
             clUsuario.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.25));
             clAccion.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.20));
 
 
             clFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+            clAsiento.setCellValueFactory(new PropertyValueFactory<>("asiento"));
             clDetalle.setCellValueFactory(new PropertyValueFactory<>("concepto"));
             clUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
             clAccion.setCellFactory(param -> new TableCell<>() {

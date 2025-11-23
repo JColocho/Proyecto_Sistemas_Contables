@@ -21,9 +21,10 @@ public class PartidaModel {
     public PartidaModel() {
     }
 
-    public PartidaModel(int idpartida, Date fecha, String concepto, String nombreusuario) {
+    public PartidaModel(int idpartida, Date fecha, int asiento, String concepto, String nombreusuario) {
         this.idPartida = idpartida;
         this.fecha = fecha;
+        this.asiento = asiento;
         this.concepto = concepto;
         this.nombreUsuario = nombreusuario;
     }
@@ -145,7 +146,7 @@ public class PartidaModel {
 
         if (tieneRango) {
             sql = """
-                SELECT p.idpartida, p.fecha, p.concepto, u.nombreusuario
+                SELECT p.idpartida, p.fecha, p.asiento, p.concepto, u.nombreusuario
                 FROM tblpartidas p
                 INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
                 WHERE p.fecha BETWEEN ? AND ? AND p.idempresa = ?";"
@@ -153,7 +154,7 @@ public class PartidaModel {
             """;
         } else {
             sql = """
-                SELECT p.idpartida, p.fecha, p.concepto, u.nombreusuario
+                SELECT p.idpartida, p.fecha, p.asiento, p.concepto, u.nombreusuario
                 FROM tblpartidas p
                 INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
                 WHERE p.idempresa = ?
@@ -179,6 +180,7 @@ public class PartidaModel {
                 lista.add(new PartidaModel(
                         rs.getInt("idpartida"),
                         rs.getDate("fecha"),
+                        rs.getInt("asiento"),
                         rs.getString("concepto"),
                         rs.getString("nombreusuario")
                 ));
