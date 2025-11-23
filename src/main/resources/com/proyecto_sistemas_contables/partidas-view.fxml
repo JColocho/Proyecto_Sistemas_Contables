@@ -24,7 +24,6 @@
                 <children>
                     <Label style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="📘 Partidas" />
                     <Region HBox.hgrow="ALWAYS" />
-                    <Button fx:id="btnActualizar" mnemonicParsing="false" prefHeight="45.0" prefWidth="140.0" style="-fx-font-size: 15;" styleClass="btnAzul" text="Actualizar" />
                     <Button fx:id="btnAgregarPartida" prefHeight="45.0" prefWidth="150.0" style="-fx-font-size: 15;" styleClass="btnVerde" text="Agregar partida" />
                 </children>
             </HBox>
@@ -65,6 +64,7 @@
             <TableView fx:id="tbPartidas" prefHeight="400.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12,0,0,3);">
                 <columns>
                     <TableColumn fx:id="clFecha" text="Fecha" />
+                    <TableColumn fx:id="clAsiento" text="Asiento" />
                     <TableColumn fx:id="clDetalle" text="Detalle" />
                     <TableColumn fx:id="clUsuario" text="Usuario" />
                     <TableColumn fx:id="clAccion" text="Acción" />

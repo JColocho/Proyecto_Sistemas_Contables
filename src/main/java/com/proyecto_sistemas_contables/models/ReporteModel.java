@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ReporteModel {
     private static final DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -875,6 +874,62 @@ public class ReporteModel {
             ps.setInt(7, idEmpresa);
 
             ps.executeUpdate();
+        }
+    }
+
+    public boolean reporteExistente(String tipoReporte, LocalDate desde, LocalDate hasta,int idEmpresa) throws SQLException {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblreportes " +
+                    "WHERE tipo_reporte = ? AND fecha_desde = ? AND fecha_hasta = ? AND idempresa = ?");
+            statement.setString(1, tipoReporte);
+            statement.setDate(2, Date.valueOf(desde));
+            statement.setDate(3, Date.valueOf(hasta));
+            statement.setInt(4, idEmpresa);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+
+            return false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int obtenerIdReporte(String tipoReporte, LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblreportes " +
+                    "WHERE tipo_reporte = ? AND fecha_desde = ? AND fecha_hasta = ? AND idempresa = ?");
+            statement.setString(1, tipoReporte);
+            statement.setDate(2, Date.valueOf(desde));
+            statement.setDate(3, Date.valueOf(hasta));
+            statement.setInt(4, idEmpresa);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                return rs.getInt("idreporte");
+            }
+
+            return 0;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void actualizarReporte(int idUsuario, int idReporte, String observaciones, int idEmpresa) throws SQLException {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE tblreportes SET " +
+                    "idusuario = ?, observaciones = ?, fecha_generacion = CURRENT_TIMESTAMP, " +
+                    "WHERE idempresa = ? AND idreporte = ?");
+            statement.setInt(1, idUsuario);
+            statement.setString(2, observaciones);
+            statement.setInt(3, idEmpresa);
+            statement.setInt(4, idReporte);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

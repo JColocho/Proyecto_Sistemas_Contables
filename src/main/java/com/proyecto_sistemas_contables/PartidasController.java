@@ -22,6 +22,7 @@ public class PartidasController {
 
     @FXML private TableView<PartidaModel> tbPartidas;
     @FXML private TableColumn<PartidaModel, Date> clFecha;
+    @FXML private TableColumn<PartidaModel, String> clAsiento;
     @FXML private TableColumn<PartidaModel, String> clDetalle;
     @FXML private TableColumn<PartidaModel, String> clUsuario;
     @FXML private TableColumn<PartidaModel, Void> clAccion;
@@ -44,12 +45,14 @@ public class PartidasController {
 
             // Ajustar los anchos en porcentaje
             clFecha.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.15));
-            clDetalle.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.40));
+            clAsiento.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.10));
+            clDetalle.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.30));
             clUsuario.prefWidthProperty().bind(tbPartidas .widthProperty().multiply(0.25));
             clAccion.prefWidthProperty().bind(tbPartidas.widthProperty().multiply(0.20));
 
 
             clFecha.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+            clAsiento.setCellValueFactory(new PropertyValueFactory<>("asiento"));
             clDetalle.setCellValueFactory(new PropertyValueFactory<>("concepto"));
             clUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
             clAccion.setCellFactory(param -> new TableCell<>() {
@@ -88,6 +91,9 @@ public class PartidasController {
                         EditarPartidaController.idUsuarioSesion = idUsuarioSesion;
                         Stage stage = (Stage) tbPartidas.getScene().getWindow();
                         DialogoUtil.showDialog("editar-partida-view", "Editar", stage);
+                        Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                        Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                        cargarPartidas(inicio, fin);
                     });
 
                     btnEliminar.setOnAction(event -> {
@@ -102,6 +108,10 @@ public class PartidasController {
                             partida.EliminarPartida(partida.getIdPartida(), idEmpresaSesion);
                             cargarPartidas(null, null);
                         }
+
+                        Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                        Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                        cargarPartidas(inicio, fin);
                     });
 
                     btnVer.setOnAction(event -> {
@@ -128,6 +138,10 @@ public class PartidasController {
             btnAgregarPartida.setOnAction(event -> {
                 Stage stage = (Stage) tbPartidas.getScene().getWindow();
                 DialogoUtil.showDialog("registro-partida-view", "Agregar partida", stage);
+
+                Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                cargarPartidas(inicio, fin);
             });
             btnBuscar.setOnAction(event -> {
                 Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
@@ -138,11 +152,6 @@ public class PartidasController {
                 dateInicial.setValue(null);
                 dateFinal.setValue(null);
                 cargarPartidas(null, null);
-            });
-            btnActualizar.setOnAction(event -> {
-                Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
-                Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
-                cargarPartidas(inicio, fin);
             });
         } catch (Exception e) {
             System.out.println(e.getMessage());

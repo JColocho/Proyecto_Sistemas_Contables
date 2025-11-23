@@ -173,7 +173,6 @@ public class EmpresaController {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("Sistema Contable - " + empresa.getNombre());
-            // DESPUÉS de que se cargue el navbar, cargar el dashboard con la empresa
             // Platform.runLater para asegurar que el navbar esté inicializado
             javafx.application.Platform.runLater(() -> {
                 NavbarController.cargarDashboardConEmpresa(empresa);
@@ -188,9 +187,7 @@ public class EmpresaController {
         }
     }
 
-    // ------------------------
     // Configurar validaciones numéricas
-    // ------------------------
     private void configurarValidacionesNumericas() {
         // Validación para NIT (solo números y guiones)
         txt_nit.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -214,9 +211,7 @@ public class EmpresaController {
         });
     }
 
-    // ------------------------
     // Configurar filtro de búsqueda
-    // ------------------------
     private void configurarFiltro() {
         // Crear FilteredList
         listaFiltrada = new FilteredList<>(listaEmpresas, p -> true);
@@ -267,9 +262,7 @@ public class EmpresaController {
         });
     }
 
-    // ------------------------
     // Responsive del formulario
-    // ------------------------
     private void hacerFormularioResponsive() {
         AnchorPane parent = (AnchorPane) formulario_empresa.getParent();
         double maxWidth = formulario_empresa.getPrefWidth();

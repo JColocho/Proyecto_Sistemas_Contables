@@ -316,10 +316,26 @@ public class EditarPartidaController {
                                                             cuentaModel.getAbono());
                                                 }
 
+                                                CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                                                //Actualizar el saldo de las cuentas
+                                                cuentaModel.actualizarSaldosCuentas(idEmpresaSesion);
+
                                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                                 alert.setTitle("Actualización de partida");
                                                 alert.setContentText("La actualización de la partida fue exitoso.");
                                                 alert.show();
+
+                                                if (!numeroDocActual.equals(txtNumeroDoc.getText())){
+                                                    File file = new File(RUTA_DESTINO + "/" + numeroDocActual + ".pdf");
+
+                                                    if (file.exists()) {
+                                                        if (file.delete()) {
+                                                            System.out.println("PDF eliminado.");
+                                                        } else {
+                                                            System.out.println("No se pudo eliminar el archivo.");
+                                                        }
+                                                    }
+                                                }
 
                                                 Stage stage = (Stage) btnActualizarPartida.getScene().getWindow();
                                                 stage.close();
@@ -519,14 +535,12 @@ public class EditarPartidaController {
     //Crea una copia del documento subido a documentos_partidas
     public boolean guardarCopiaPDF(String nombreDestino) {
         if (archivoSeleccionado == null) {
-            System.out.println("No hay archivo seleccionado para guardar.");
             return false;
         }
 
         try {
             File carpetaDestino = new File(RUTA_DESTINO);
             if (!carpetaDestino.exists()) {
-                System.out.println("La carpeta de destino no existe: " + RUTA_DESTINO);
                 return false;
             }
 
@@ -539,13 +553,10 @@ public class EditarPartidaController {
                     archivoDestino.toPath(),
                     StandardCopyOption.REPLACE_EXISTING
             );
-
-            System.out.println("Archivo guardado correctamente en: " + archivoDestino.getAbsolutePath());
             return true;
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error al guardar el archivo: " + e.getMessage());
             return false;
         }
     }

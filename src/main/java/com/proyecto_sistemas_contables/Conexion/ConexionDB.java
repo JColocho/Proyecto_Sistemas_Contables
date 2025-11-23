@@ -12,7 +12,6 @@ public class ConexionDB {
     public static Connection connection(){
         try {
             Connection conectar = DriverManager.getConnection(url,USER,PASS);
-            System.out.println("Conectado a la base");
             return conectar;
         } catch (SQLException e) {
             throw new RuntimeException(e);
