@@ -7,11 +7,12 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ReporteModel {
     private static final DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    // LIBRO DIARIO MEJORADO
+    // LIBRO DIARIO
     public List<Map<String, Object>> obtenerLibroDiario(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
         String sql = """
             SELECT 
@@ -63,97 +64,70 @@ public class ReporteModel {
         return resultado;
     }
 
-    // LIBRO MAYOR MEJORADO
+    // LIBRO MAYOR
     public List<Map<String, Object>> obtenerLibroMayor(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
+
         String sql = """
-            SELECT 
-                c.codigo,
-                c.cuenta,
-                p.fecha,
-                p.concepto,
-                CASE 
-                    WHEN dp.cargo > 0 THEN dp.cargo 
-                    ELSE NULL 
-                END AS cargo,
-                CASE 
-                    WHEN dp.abono > 0 THEN dp.abono 
-                    ELSE NULL 
-                END AS abono,
-                c.saldo AS saldo_inicial
-            FROM tblcatalogocuentas c
-            INNER JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
-            INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
-            WHERE p.fecha BETWEEN ? AND ? 
-            AND c.idempresa = ?
+        SELECT 
+            c.idcuenta,
+            c.codigo,
+            c.cuenta,
+            p.fecha,
+            p.concepto,
+            COALESCE(dp.cargo, 0) AS cargo,
+            COALESCE(dp.abono, 0) AS abono
+        FROM tblcatalogocuentas c
+        LEFT JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
+        LEFT JOIN tblpartidas p ON dp.idpartida = p.idpartida
             AND p.idempresa = ?
-            ORDER BY c.codigo, p.fecha
-        """;
+        WHERE c.idempresa = ?
+        ORDER BY c.codigo, p.fecha
+    """;
 
         List<Map<String, Object>> resultado = new ArrayList<>();
 
         try (Connection conn = ConexionDB.connection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setDate(1, Date.valueOf(desde));
-            ps.setDate(2, Date.valueOf(hasta));
-            ps.setInt(3, idEmpresa);
-            ps.setInt(4, idEmpresa);
+            ps.setInt(1, idEmpresa);
+            ps.setInt(2, idEmpresa);
 
             try (ResultSet rs = ps.executeQuery()) {
+
                 String cuentaActual = "";
-                double saldoAcumulado = 0;
+                List<Map<String, Object>> todosMovimientos = new ArrayList<>();
 
                 while (rs.next()) {
                     String codigo = rs.getString("codigo");
                     String cuenta = rs.getString("cuenta");
-                    String codigoCuenta = codigo + " - " + cuenta;
+                    String nombreCuenta = codigo + " - " + cuenta;
 
-                    // Si cambia la cuenta, agregar fila de encabezado
-                    if (!codigoCuenta.equals(cuentaActual)) {
-                        if (!cuentaActual.isEmpty()) {
-                            // Agregar fila de separación
-                            Map<String, Object> separador = new LinkedHashMap<>();
-                            separador.put("Cuenta", "");
-                            separador.put("Fecha", "");
-                            separador.put("Concepto", "");
-                            separador.put("Cargo", null);
-                            separador.put("Abono", null);
-                            separador.put("Saldo", null);
-                            resultado.add(separador);
-                        }
-
-                        cuentaActual = codigoCuenta;
-                        saldoAcumulado = rs.getDouble("saldo_inicial");
-
-                        // Encabezado de cuenta
-                        Map<String, Object> encabezado = new LinkedHashMap<>();
-                        encabezado.put("Cuenta", ">>> " + codigoCuenta);
-                        encabezado.put("Fecha", "");
-                        encabezado.put("Concepto", "Saldo Inicial");
-                        encabezado.put("Cargo", null);
-                        encabezado.put("Abono", null);
-                        encabezado.put("Saldo", saldoAcumulado);
-                        resultado.add(encabezado);
+                    // Si cambia de cuenta, procesar la anterior
+                    if (!nombreCuenta.equals(cuentaActual) && !cuentaActual.isEmpty()) {
+                        procesarCuenta(resultado, cuentaActual, todosMovimientos, desde, hasta);
+                        todosMovimientos = new ArrayList<>();
                     }
 
-                    // Agregar movimiento
-                    Map<String, Object> fila = new LinkedHashMap<>();
-                    fila.put("Cuenta", "");
-                    fila.put("Fecha", rs.getDate("fecha").toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                    fila.put("Concepto", rs.getString("concepto"));
+                    cuentaActual = nombreCuenta;
 
-                    Double cargo = rs.getObject("cargo") != null ? rs.getDouble("cargo") : null;
-                    Double abono = rs.getObject("abono") != null ? rs.getDouble("abono") : null;
+                    // Guardar todos los movimientos
+                    LocalDate fechaMov = rs.getDate("fecha") != null
+                            ? rs.getDate("fecha").toLocalDate()
+                            : null;
 
-                    fila.put("Cargo", cargo);
-                    fila.put("Abono", abono);
+                    if (fechaMov != null) {
+                        Map<String, Object> movimiento = new LinkedHashMap<>();
+                        movimiento.put("fecha", fechaMov);
+                        movimiento.put("concepto", rs.getString("concepto"));
+                        movimiento.put("cargo", rs.getDouble("cargo"));
+                        movimiento.put("abono", rs.getDouble("abono"));
+                        todosMovimientos.add(movimiento);
+                    }
+                }
 
-                    // Calcular saldo acumulado
-                    if (cargo != null) saldoAcumulado += cargo;
-                    if (abono != null) saldoAcumulado -= abono;
-
-                    fila.put("Saldo", saldoAcumulado);
-                    resultado.add(fila);
+                // Procesar última cuenta
+                if (!cuentaActual.isEmpty()) {
+                    procesarCuenta(resultado, cuentaActual, todosMovimientos, desde, hasta);
                 }
             }
         }
@@ -161,29 +135,103 @@ public class ReporteModel {
         return resultado;
     }
 
+    //Procesa una cuenta del Libro Mayor.
+    private void procesarCuenta(List<Map<String, Object>> resultado,
+                                String cuenta,
+                                List<Map<String, Object>> todosMovimientos,
+                                LocalDate desde,
+                                LocalDate hasta) {
+
+        //Calcular saldo inicial (antes del periodo)
+        double saldoInicial = 0.0;
+
+        for (Map<String, Object> mov : todosMovimientos) {
+            LocalDate fecha = (LocalDate) mov.get("fecha");
+            double cargo = (Double) mov.get("cargo");
+            double abono = (Double) mov.get("abono");
+
+            // Solo movimientos ANTES del periodo
+            if (fecha.isBefore(desde)) {
+                saldoInicial += cargo - abono;
+            }
+        }
+
+        //Agregar encabezado con saldo inicial
+        Map<String, Object> encabezado = new LinkedHashMap<>();
+        encabezado.put("Cuenta", ">>> " + cuenta);
+        encabezado.put("Fecha", "");
+        encabezado.put("Concepto", "Saldo Inicial");
+        encabezado.put("Cargo", null);
+        encabezado.put("Abono", null);
+        encabezado.put("Saldo", saldoInicial);
+        resultado.add(encabezado);
+
+        // Agregar movimientos del periodo
+        double saldo = saldoInicial;
+
+        for (Map<String, Object> mov : todosMovimientos) {
+            LocalDate fecha = (LocalDate) mov.get("fecha");
+            String concepto = (String) mov.get("concepto");
+            double cargo = (Double) mov.get("cargo");
+            double abono = (Double) mov.get("abono");
+
+            // Solo movimientos DENTRO del periodo
+            if (!fecha.isBefore(desde) && !fecha.isAfter(hasta)) {
+
+                // Calcular nuevo saldo (UNIVERSAL)
+                saldo += cargo - abono;
+
+                // Agregar fila
+                Map<String, Object> fila = new LinkedHashMap<>();
+                fila.put("Cuenta", "");
+                fila.put("Fecha", fecha.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                fila.put("Concepto", concepto);
+                fila.put("Cargo", cargo > 0 ? cargo : null);
+                fila.put("Abono", abono > 0 ? abono : null);
+                fila.put("Saldo", saldo);
+
+                resultado.add(fila);
+            }
+        }
+
+        //Agregar separador
+        Map<String, Object> separador = new LinkedHashMap<>();
+        separador.put("Cuenta", "");
+        separador.put("Fecha", "");
+        separador.put("Concepto", "");
+        separador.put("Cargo", null);
+        separador.put("Abono", null);
+        separador.put("Saldo", null);
+        resultado.add(separador);
+    }
+
+
     //ESTADO DE RESULTADOS
     public List<Map<String, Object>> obtenerEstadoResultados(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
+        // Query simplificada que obtiene TODOS los movimientos del periodo
         String sql = """
-            SELECT 
-                c.tipocuenta,
-                c.codigo,
-                c.cuenta,
-                COALESCE(SUM(dp.cargo), 0) - COALESCE(SUM(dp.abono), 0) AS saldo
-            FROM tblcatalogocuentas c
-            LEFT JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
-            LEFT JOIN tblpartidas p ON dp.idpartida = p.idpartida
-                AND p.fecha BETWEEN ? AND ?
-            WHERE c.idempresa = ?
-            AND c.tipocuenta IN ('INGRESOS O VENTAS', 'COSTOS', 'GASTOS')
-            GROUP BY c.idcuenta, c.codigo, c.cuenta, c.tipocuenta
-            ORDER BY 
-                CASE c.tipocuenta
-                    WHEN 'INGRESOS O VENTAS' THEN 1
-                    WHEN 'COSTOS' THEN 2
-                    WHEN 'GASTOS' THEN 3
-                END,
-                c.codigo
-        """;
+    SELECT
+        c.codigo,
+        c.cuenta,
+        c.tipocuenta,
+        SUM(COALESCE(dp.cargo, 0)) AS total_cargo,
+        SUM(COALESCE(dp.abono, 0)) AS total_abono
+    FROM tblpartidas p
+    INNER JOIN tbldetallepartida dp ON p.idpartida = dp.idpartida
+    INNER JOIN tblcatalogocuentas c ON dp.idcuenta = c.idcuenta
+    WHERE p.fecha BETWEEN ? AND ?
+      AND p.idempresa = ?
+      AND c.idempresa = ?
+      AND c.tipocuenta IN ('INGRESOS O VENTAS', 'COSTOS', 'GASTOS')
+    GROUP BY c.idcuenta, c.codigo, c.cuenta, c.tipocuenta
+    ORDER BY
+        CASE c.tipocuenta
+            WHEN 'INGRESOS O VENTAS' THEN 1
+            WHEN 'COSTOS' THEN 2
+            WHEN 'GASTOS' THEN 3
+        END,
+        c.codigo
+    """;
 
         List<Map<String, Object>> resultado = new ArrayList<>();
         double totalIngresos = 0, totalCostos = 0, totalGastos = 0;
@@ -192,16 +240,38 @@ public class ReporteModel {
         try (Connection conn = ConexionDB.connection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
+            // Asignar parámetros
             ps.setDate(1, Date.valueOf(desde));
             ps.setDate(2, Date.valueOf(hasta));
             ps.setInt(3, idEmpresa);
+            ps.setInt(4, idEmpresa);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String tipo = rs.getString("tipocuenta");
-                    double saldo = rs.getDouble("saldo");
+                    String codigo = rs.getString("codigo");
+                    String cuenta = rs.getString("cuenta");
+                    double totalCargo = rs.getDouble("total_cargo");
+                    double totalAbono = rs.getDouble("total_abono");
 
-                    // Agregar encabezado de sección si cambia el tipo
+                    // Calcular saldo según el tipo de cuenta
+                    double saldo;
+                    if (tipo.equals("INGRESOS O VENTAS")) {
+                        // Ingresos: naturaleza acreedora (ABONO - CARGO)
+                        saldo = totalAbono - totalCargo;
+                    } else {
+                        // Costos y Gastos: naturaleza deudora (CARGO - ABONO)
+                        saldo = totalCargo - totalAbono;
+                    }
+
+                    // Debug: imprimir información
+                    System.out.println(String.format("Cuenta: %s - %s | Tipo: %s | Cargo: %.2f | Abono: %.2f | Saldo: %.2f",
+                            codigo, cuenta, tipo, totalCargo, totalAbono, saldo));
+
+                    // Solo incluir cuentas con saldo diferente de cero
+                    if (Math.abs(saldo) < 0.01) continue;
+
+                    // Agregar encabezado de sección cuando cambia el tipo
                     if (!tipo.equals(tipoActual)) {
                         if (!tipoActual.isEmpty()) {
                             resultado.add(crearFilaVacia());
@@ -217,14 +287,18 @@ public class ReporteModel {
 
                     // Agregar cuenta
                     Map<String, Object> fila = new LinkedHashMap<>();
-                    fila.put("Concepto", "  " + rs.getString("codigo") + " - " + rs.getString("cuenta"));
+                    fila.put("Concepto", "  " + codigo + " - " + cuenta);
                     fila.put("Monto", Math.abs(saldo));
                     resultado.add(fila);
 
                     // Acumular totales
-                    if (tipo.equals("INGRESOS O VENTAS")) totalIngresos += Math.abs(saldo);
-                    else if (tipo.equals("COSTOS")) totalCostos += Math.abs(saldo);
-                    else if (tipo.equals("GASTOS")) totalGastos += Math.abs(saldo);
+                    if (tipo.equals("INGRESOS O VENTAS")) {
+                        totalIngresos += Math.abs(saldo);
+                    } else if (tipo.equals("COSTOS")) {
+                        totalCostos += Math.abs(saldo);
+                    } else if (tipo.equals("GASTOS")) {
+                        totalGastos += Math.abs(saldo);
+                    }
                 }
             }
         }
@@ -232,16 +306,28 @@ public class ReporteModel {
         // Agregar cálculos finales
         resultado.add(crearFilaVacia());
 
+        // Utilidad Bruta = Ingresos - Costos
         double utilidadBruta = totalIngresos - totalCostos;
         resultado.add(crearFilaTotal("UTILIDAD BRUTA", utilidadBruta));
 
+        // Utilidad Neta = Utilidad Bruta - Gastos
         double utilidadNeta = utilidadBruta - totalGastos;
         resultado.add(crearFilaTotal("UTILIDAD NETA", utilidadNeta));
+
+        // Debug: imprimir totales
+        System.out.println("\n=== RESUMEN ===");
+        System.out.println("Total Ingresos: $" + totalIngresos);
+        System.out.println("Total Costos: $" + totalCostos);
+        System.out.println("Total Gastos: $" + totalGastos);
+        System.out.println("Utilidad Bruta: $" + utilidadBruta);
+        System.out.println("Utilidad Neta: $" + utilidadNeta);
+        System.out.println("===============\n");
 
         return resultado;
     }
 
-    public List<Map<String, Object>> obtenerBalanceGeneral(LocalDate fecha, int idEmpresa) throws SQLException {
+    //BALANCE GENERAL
+    public List<Map<String, Object>> obtenerBalanceGeneral(LocalDate fechaInicio, LocalDate fechaFin, int idEmpresa) throws SQLException {
         String sql = """
         SELECT 
             c.tipocuenta,
@@ -281,7 +367,7 @@ public class ReporteModel {
         try (Connection conn = ConexionDB.connection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setDate(1, Date.valueOf(fecha));
+            ps.setDate(1, Date.valueOf(fechaFin));
             ps.setInt(2, idEmpresa);
             ps.setInt(3, idEmpresa);
 
@@ -314,7 +400,7 @@ public class ReporteModel {
                     }
 
                     // Agregar cuenta (solo si tiene saldo diferente de cero)
-                    if (Math.abs(saldo) >= 0.01) { // Tolerancia para decimales
+                    if (Math.abs(saldo) >= 0.01) {
                         Map<String, Object> fila = new LinkedHashMap<>();
                         fila.put("Concepto", "  " + rs.getString("codigo") + " - " + rs.getString("cuenta"));
                         fila.put("Monto", Math.abs(saldo));
@@ -341,10 +427,25 @@ public class ReporteModel {
             }
         }
 
-        // Agregar último subtotal
-        if (tipoActual.equals("CAPITAL")) {
-            resultado.add(crearFilaSubtotal("Total Capital", totalCapital));
+        // ========== CALCULAR Y AGREGAR UTILIDAD NETA DEL PERIODO ==========
+        double utilidadNeta = calcularUtilidadNeta(fechaInicio, fechaFin, idEmpresa);
+
+        // Agregar la utilidad neta al capital
+        if (Math.abs(utilidadNeta) >= 0.01) {
+            Map<String, Object> filaUtilidad = new LinkedHashMap<>();
+            if (utilidadNeta > 0) {
+                filaUtilidad.put("Concepto", "  Utilidad Neta del Periodo");
+            } else {
+                filaUtilidad.put("Concepto", "  Pérdida Neta del Periodo");
+            }
+            filaUtilidad.put("Monto", Math.abs(utilidadNeta));
+            resultado.add(filaUtilidad);
+
+            totalCapital += utilidadNeta; // Sumar (o restar si es pérdida)
         }
+
+        // Agregar subtotal de capital
+        resultado.add(crearFilaSubtotal("Total Capital", totalCapital));
 
         // Agregar totales finales
         resultado.add(crearFilaVacia());
@@ -354,108 +455,252 @@ public class ReporteModel {
         return resultado;
     }
 
+    //CALCULAR UTILIDAD NETA
+    private double calcularUtilidadNeta(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
+        String sql = """
+    SELECT
+        SUM(CASE
+            WHEN c.tipocuenta = 'INGRESOS O VENTAS'
+                THEN COALESCE(dp.abono, 0) - COALESCE(dp.cargo, 0)
+            WHEN c.tipocuenta IN ('COSTOS', 'GASTOS')
+                THEN COALESCE(dp.cargo, 0) - COALESCE(dp.abono, 0)
+            ELSE 0
+        END) AS utilidad_neta
+    FROM tblpartidas p
+    INNER JOIN tbldetallepartida dp ON p.idpartida = dp.idpartida
+    INNER JOIN tblcatalogocuentas c ON dp.idcuenta = c.idcuenta
+    WHERE p.fecha BETWEEN ? AND ?
+      AND p.idempresa = ?
+      AND c.idempresa = ?
+      AND c.tipocuenta IN ('INGRESOS O VENTAS', 'COSTOS', 'GASTOS')
+    """;
+
+        try (Connection conn = ConexionDB.connection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setDate(1, Date.valueOf(desde));
+            ps.setDate(2, Date.valueOf(hasta));
+            ps.setInt(3, idEmpresa);
+            ps.setInt(4, idEmpresa);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    double ingresos = 0;
+                    double costosGastos = 0;
+
+                    // Recalcular para obtener totales separados
+                    String sqlDetallado = """
+                SELECT
+                    c.tipocuenta,
+                    SUM(COALESCE(dp.cargo, 0)) AS total_cargo,
+                    SUM(COALESCE(dp.abono, 0)) AS total_abono
+                FROM tblpartidas p
+                INNER JOIN tbldetallepartida dp ON p.idpartida = dp.idpartida
+                INNER JOIN tblcatalogocuentas c ON dp.idcuenta = c.idcuenta
+                WHERE p.fecha BETWEEN ? AND ?
+                  AND p.idempresa = ?
+                  AND c.idempresa = ?
+                  AND c.tipocuenta IN ('INGRESOS O VENTAS', 'COSTOS', 'GASTOS')
+                GROUP BY c.tipocuenta
+                """;
+
+                    try (PreparedStatement ps2 = conn.prepareStatement(sqlDetallado)) {
+                        ps2.setDate(1, Date.valueOf(desde));
+                        ps2.setDate(2, Date.valueOf(hasta));
+                        ps2.setInt(3, idEmpresa);
+                        ps2.setInt(4, idEmpresa);
+
+                        try (ResultSet rs2 = ps2.executeQuery()) {
+                            while (rs2.next()) {
+                                String tipo = rs2.getString("tipocuenta");
+                                double cargo = rs2.getDouble("total_cargo");
+                                double abono = rs2.getDouble("total_abono");
+
+                                if (tipo.equals("INGRESOS O VENTAS")) {
+                                    ingresos += (abono - cargo);
+                                } else {
+                                    costosGastos += (cargo - abono);
+                                }
+                            }
+                        }
+                    }
+
+                    return ingresos - costosGastos;
+                }
+            }
+        }
+        return 0;
+    }
+
     //ESTADO DE CAMBIOS EN EL PATRIMONIO
     public List<Map<String, Object>> obtenerEstadoCapital(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
         List<Map<String, Object>> resultado = new ArrayList<>();
 
-        // Obtener saldo inicial del capital
-        double saldoInicial = obtenerSaldoCapitalFecha(desde.minusDays(1), idEmpresa);
+        //CALCULAR SALDO INICIAL DEL CAPITAL (antes del periodo)
+        double capitalInicial = calcularCapitalInicial(desde, idEmpresa);
 
         Map<String, Object> filaInicial = new LinkedHashMap<>();
-        filaInicial.put("Concepto", "Saldo Inicial");
-        filaInicial.put("Monto", saldoInicial);
+        filaInicial.put("Concepto", "Capital Inicial");
+        filaInicial.put("Monto", Math.abs(capitalInicial));
         resultado.add(filaInicial);
 
-        // Obtener movimientos del periodo
-        String sql = """
-            SELECT 
-                p.fecha,
-                p.concepto,
-                dp.cargo,
-                dp.abono
-            FROM tblcatalogocuentas c
-            INNER JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
-            INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
-            WHERE c.idempresa = ?
-            AND c.tipocuenta = 'CAPITAL'
-            AND p.fecha BETWEEN ? AND ?
-            ORDER BY p.fecha
-        """;
+        resultado.add(crearFilaVacia());
 
-        double aumentos = 0, disminuciones = 0;
+        //OBTENER MOVIMIENTOS DEL PERIODO (CAPITAL y RETIROS)
+        String sql = """
+        SELECT 
+            c.tipocuenta,
+            SUM(COALESCE(dp.cargo, 0)) AS total_cargo,
+            SUM(COALESCE(dp.abono, 0)) AS total_abono
+        FROM tblcatalogocuentas c
+        INNER JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
+        INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
+        WHERE c.idempresa = ?
+          AND p.idempresa = ?
+          AND c.tipocuenta IN ('CAPITAL', 'RETIROS')
+          AND p.fecha BETWEEN ? AND ?
+        GROUP BY c.tipocuenta
+    """;
+
+        double aportesCapital = 0;
+        double retiros = 0;
 
         try (Connection conn = ConexionDB.connection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, idEmpresa);
-            ps.setDate(2, Date.valueOf(desde));
-            ps.setDate(3, Date.valueOf(hasta));
+            ps.setInt(2, idEmpresa);
+            ps.setDate(3, Date.valueOf(desde));
+            ps.setDate(4, Date.valueOf(hasta));
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    double cargo = rs.getDouble("cargo");
-                    double abono = rs.getDouble("abono");
+                    String tipo = rs.getString("tipocuenta");
+                    double cargo = rs.getDouble("total_cargo");
+                    double abono = rs.getDouble("total_abono");
 
-                    if (cargo > 0) {
-                        aumentos += cargo;
-                    }
-                    if (abono > 0) {
-                        disminuciones += abono;
+                    if ("CAPITAL".equals(tipo)) {
+                        // Capital: Abonos aumentan el capital (aportes)
+                        // Cargos disminuyen el capital (retiros registrados en capital)
+                        aportesCapital += abono - cargo;
+                    } else if ("RETIROS".equals(tipo)) {
+                        // Retiros: Cargos son retiros del propietario
+                        retiros += cargo - abono;
                     }
                 }
             }
         }
 
-        // Agregar movimientos
-        resultado.add(crearFilaVacia());
-        resultado.add(crearFila("(+) Aumentos de Capital", aumentos));
-        resultado.add(crearFila("(-) Disminuciones de Capital", disminuciones));
+        //CALCULAR UTILIDAD NETA DEL PERIODO
+        double utilidadNeta = calcularUtilidadNeta(desde, hasta, idEmpresa);
 
-        // Calcular saldo final
-        double saldoFinal = saldoInicial + aumentos - disminuciones;
+        //AGREGAR MOVIMIENTOS AL RESULTADO
+        if (Math.abs(aportesCapital) > 0.01) {
+            resultado.add(crearFila("(+) Aportes de Capital", Math.abs(aportesCapital)));
+        }
+
+        if (Math.abs(utilidadNeta) > 0.01) {
+            if (utilidadNeta > 0) {
+                resultado.add(crearFila("(+) Utilidad Neta del Periodo", utilidadNeta));
+            } else {
+                resultado.add(crearFila("(-) Pérdida Neta del Periodo", Math.abs(utilidadNeta)));
+            }
+        }
+
+        if (Math.abs(retiros) > 0.01) {
+            resultado.add(crearFila("(-) Retiros", retiros));
+        }
+
+        //CALCULAR SALDO FINAL
+        double capitalFinal = Math.abs(capitalInicial) + aportesCapital + utilidadNeta - retiros;
+
         resultado.add(crearFilaVacia());
-        resultado.add(crearFilaTotal("SALDO FINAL", saldoFinal));
+        resultado.add(crearFilaTotal("CAPITAL FINAL", capitalFinal));
 
         return resultado;
+    }
+
+    //CALCULAR CAPITAL INICIAL
+    // Calcula el saldo del capital ANTES del periodo especificado.
+    private double calcularCapitalInicial(LocalDate fechaInicio, int idEmpresa) throws SQLException {
+        String sql = """
+        SELECT 
+            SUM(COALESCE(dp.cargo, 0)) AS total_cargo,
+            SUM(COALESCE(dp.abono, 0)) AS total_abono
+        FROM tblcatalogocuentas c
+        INNER JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
+        INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
+        WHERE c.idempresa = ?
+          AND p.idempresa = ?
+          AND c.tipocuenta IN ('CAPITAL', 'RETIROS')
+          AND p.fecha < ?
+    """;
+
+        try (Connection conn = ConexionDB.connection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idEmpresa);
+            ps.setInt(2, idEmpresa);
+            ps.setDate(3, Date.valueOf(fechaInicio));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    double cargo = rs.getDouble("total_cargo");
+                    double abono = rs.getDouble("total_abono");
+
+                    // Capital tiene naturaleza acreedora: Abono aumenta, Cargo disminuye
+                    double saldo = abono - cargo;
+
+                    return Math.abs(saldo);
+                }
+            }
+        }
+        return 0;
     }
 
     //ESTADO DE FLUJO DE EFECTIVO
     public List<Map<String, Object>> obtenerFlujoEfectivo(LocalDate desde, LocalDate hasta, int idEmpresa) throws SQLException {
         List<Map<String, Object>> resultado = new ArrayList<>();
 
-        //SALDO INICIAL
+        // SALDO INICIAL
         double saldoInicial = obtenerSaldoEfectivoFecha(desde.minusDays(1), idEmpresa);
-
-        Map<String, Object> filaInicial = new LinkedHashMap<>();
-        filaInicial.put("Concepto", "Saldo Inicial de Efectivo");
-        filaInicial.put("Monto", saldoInicial);
-        resultado.add(filaInicial);
+        resultado.add(crearFila("Saldo Inicial de Efectivo", saldoInicial));
         resultado.add(crearFilaVacia());
 
-        //OBTENER TODOS LOS MOVIMIENTOS DE EFECTIVO
-        String sqlMovimientos = """
-        SELECT 
-            c_otra.tipocuenta AS tipo_relacionado,
-            SUM(dp_efectivo.cargo) AS total_cargos,
-            SUM(dp_efectivo.abono) AS total_abonos
+        // CONSULTA (CORREGIDA)
+        String sql = """
+        SELECT
+            dp_efectivo.cargo AS cargo_caja,
+            dp_efectivo.abono AS abono_caja,
+            c_otra.tipocuenta AS tipo_relacionado
         FROM tblpartidas p
-        INNER JOIN tbldetallepartida dp_efectivo ON p.idpartida = dp_efectivo.idpartida
-        INNER JOIN tblcatalogocuentas c_efectivo ON dp_efectivo.idcuenta = c_efectivo.idcuenta
-        INNER JOIN tbldetallepartida dp_otra ON p.idpartida = dp_otra.idpartida 
+        INNER JOIN tbldetallepartida dp_efectivo 
+            ON p.idpartida = dp_efectivo.idpartida
+        INNER JOIN tblcatalogocuentas c_efectivo
+            ON dp_efectivo.idcuenta = c_efectivo.idcuenta
+        INNER JOIN tbldetallepartida dp_otra
+            ON p.idpartida = dp_otra.idpartida
             AND dp_otra.iddetalle != dp_efectivo.iddetalle
-        INNER JOIN tblcatalogocuentas c_otra ON dp_otra.idcuenta = c_otra.idcuenta
+        INNER JOIN tblcatalogocuentas c_otra
+            ON dp_otra.idcuenta = c_otra.idcuenta
         WHERE p.fecha BETWEEN ? AND ?
         AND p.idempresa = ?
         AND c_efectivo.idempresa = ?
-        AND c_efectivo.tipocuenta = 'ACTIVO CORRIENTE'
-        GROUP BY c_otra.tipocuenta
+        AND (
+            c_efectivo.cuenta ILIKE '%CAJA%' OR
+            c_efectivo.cuenta ILIKE '%EFECTIVO%' OR
+            c_efectivo.cuenta ILIKE '%BANCO%' OR
+            c_efectivo.cuenta ILIKE '%CHEQUE%' OR
+            c_efectivo.cuenta ILIKE '%FONDOS%' OR
+            c_efectivo.cuenta ILIKE '%DEPOSI%' 
+        )
     """;
 
         Map<String, Double> entradas = new HashMap<>();
         Map<String, Double> salidas = new HashMap<>();
 
         try (Connection conn = ConexionDB.connection();
-             PreparedStatement ps = conn.prepareStatement(sqlMovimientos)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setDate(1, Date.valueOf(desde));
             ps.setDate(2, Date.valueOf(hasta));
@@ -464,27 +709,30 @@ public class ReporteModel {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    String tipoRelacionado = rs.getString("tipo_relacionado");
-                    double cargos = rs.getDouble("total_cargos");
-                    double abonos = rs.getDouble("total_abonos");
 
-                    entradas.put(tipoRelacionado, entradas.getOrDefault(tipoRelacionado, 0.0) + cargos);
-                    salidas.put(tipoRelacionado, salidas.getOrDefault(tipoRelacionado, 0.0) + abonos);
+                    double cargoCaja = rs.getDouble("cargo_caja");
+                    double abonoCaja = rs.getDouble("abono_caja");
+                    String tipoRelacionado = rs.getString("tipo_relacionado");
+
+                    if (cargoCaja > 0) {
+                        entradas.put(tipoRelacionado, entradas.getOrDefault(tipoRelacionado, 0.0) + cargoCaja);
+                    }
+                    if (abonoCaja > 0) {
+                        salidas.put(tipoRelacionado, salidas.getOrDefault(tipoRelacionado, 0.0) + abonoCaja);
+                    }
                 }
             }
         }
 
-        //FLUJOS DE OPERACIÓN
+        // FLUJOS DE OPERACIÓN
+        resultado.add(crearFila(">>> FLUJOS DE OPERACIÓN", 0));
+
         double cobrosVentas = entradas.getOrDefault("INGRESOS O VENTAS", 0.0);
         double cobrosClientes = entradas.getOrDefault("ACTIVO CORRIENTE", 0.0);
+
         double pagosProveedores = salidas.getOrDefault("PASIVO CORRIENTE", 0.0);
         double pagosGastos = salidas.getOrDefault("GASTOS", 0.0);
         double pagosCostos = salidas.getOrDefault("COSTOS", 0.0);
-
-        Map<String, Object> encabOperacion = new LinkedHashMap<>();
-        encabOperacion.put("Concepto", ">>> FLUJOS DE OPERACIÓN");
-        encabOperacion.put("Monto", null);
-        resultado.add(encabOperacion);
 
         resultado.add(crearFila("Cobros a clientes", cobrosVentas + cobrosClientes));
         resultado.add(crearFila("Pagos a proveedores", -(pagosProveedores + pagosCostos)));
@@ -493,52 +741,44 @@ public class ReporteModel {
         double flujoOperacion = (cobrosVentas + cobrosClientes) - (pagosProveedores + pagosCostos + pagosGastos);
         resultado.add(crearFilaSubtotal("Efectivo neto de operación", flujoOperacion));
 
-        //FLUJOS DE INVERSIÓN
+        // INVERSIÓN
         resultado.add(crearFilaVacia());
+        resultado.add(crearFila(">>> FLUJOS DE INVERSIÓN", 0));
 
-        double compraActivosCorrientes = entradas.getOrDefault("ACTIVO NO CORRIENTE", 0.0);
-        double pagoActivosNoCorrientes = salidas.getOrDefault("ACTIVO NO CORRIENTE", 0.0);
+        double pagoActivosNoCorr = salidas.getOrDefault("ACTIVO NO CORRIENTE", 0.0);
+        resultado.add(crearFila("Compra de activos fijos", -pagoActivosNoCorr));
 
-        Map<String, Object> encabInversion = new LinkedHashMap<>();
-        encabInversion.put("Concepto", ">>> FLUJOS DE INVERSIÓN");
-        encabInversion.put("Monto", null);
-        resultado.add(encabInversion);
-
-        resultado.add(crearFila("Compra de activos fijos", -pagoActivosNoCorrientes));
-
-        double flujoInversion = -pagoActivosNoCorrientes;
+        double flujoInversion = -pagoActivosNoCorr;
         resultado.add(crearFilaSubtotal("Efectivo neto de inversión", flujoInversion));
 
-        // ==================== FLUJOS DE FINANCIAMIENTO ====================
+        // FINANCIAMIENTO
         resultado.add(crearFilaVacia());
+        resultado.add(crearFila(">>> FLUJOS DE FINANCIAMIENTO", 0));
 
-        double prestamosRecibidos = entradas.getOrDefault("PASIVO NO CORRIENTE", 0.0);
+        double prestamos = entradas.getOrDefault("PASIVO NO CORRIENTE", 0.0);
         double aportesCapital = entradas.getOrDefault("CAPITAL", 0.0);
         double pagosPrestamos = salidas.getOrDefault("PASIVO NO CORRIENTE", 0.0);
-        double retiroCapital = salidas.getOrDefault("CAPITAL", 0.0);
+        double retiros = salidas.getOrDefault("RETIROS", 0.0);
 
-        Map<String, Object> encabFinanciamiento = new LinkedHashMap<>();
-        encabFinanciamiento.put("Concepto", ">>> FLUJOS DE FINANCIAMIENTO");
-        encabFinanciamiento.put("Monto", null);
-        resultado.add(encabFinanciamiento);
-
-        resultado.add(crearFila("Préstamos obtenidos", prestamosRecibidos));
+        resultado.add(crearFila("Préstamos obtenidos", prestamos));
         resultado.add(crearFila("Aportes de capital", aportesCapital));
         resultado.add(crearFila("Pago de préstamos", -pagosPrestamos));
 
-        double flujoFinanciamiento = prestamosRecibidos + aportesCapital - pagosPrestamos - retiroCapital;
+        double flujoFinanciamiento = prestamos + aportesCapital - pagosPrestamos - retiros;
         resultado.add(crearFilaSubtotal("Efectivo neto de financiamiento", flujoFinanciamiento));
 
-        // ==================== SALDO FINAL ====================
+        // SALDO FINAL
         resultado.add(crearFilaVacia());
-        double aumentoEfectivo = flujoOperacion + flujoInversion + flujoFinanciamiento;
-        resultado.add(crearFila("Aumento/Disminución de efectivo", aumentoEfectivo));
 
-        double saldoFinal = saldoInicial + aumentoEfectivo;
+        double aumento = flujoOperacion + flujoInversion + flujoFinanciamiento;
+        resultado.add(crearFila("Aumento/Disminución de Efectivo", aumento));
+
+        double saldoFinal = saldoInicial + aumento;
         resultado.add(crearFilaTotal("SALDO FINAL DE EFECTIVO", saldoFinal));
 
         return resultado;
     }
+
 
     private Map<String, Object> crearFilaVacia() {
         Map<String, Object> fila = new LinkedHashMap<>();
@@ -566,35 +806,6 @@ public class ReporteModel {
         fila.put("Concepto", "=== " + concepto);
         fila.put("Monto", monto);
         return fila;
-    }
-
-    private double obtenerSaldoCapitalFecha(LocalDate fecha, int idEmpresa) throws SQLException {
-        String sql = """
-        SELECT 
-            COALESCE(SUM(saldo_cuenta), 0) AS total
-        FROM (
-            SELECT 
-                c.saldo + COALESCE(SUM(dp.cargo), 0) - COALESCE(SUM(dp.abono), 0) AS saldo_cuenta
-            FROM tblcatalogocuentas c
-            LEFT JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
-            LEFT JOIN tblpartidas p ON dp.idpartida = p.idpartida AND p.fecha <= ?
-            WHERE c.idempresa = ? AND c.tipocuenta = 'CAPITAL'
-            GROUP BY c.idcuenta, c.saldo
-        ) AS subconsulta
-    """;
-
-        try (Connection conn = ConexionDB.connection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDate(1, Date.valueOf(fecha));
-            ps.setInt(2, idEmpresa);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getDouble("total");
-                }
-            }
-        }
-        return 0.0;
     }
 
     private double obtenerSaldoEfectivoFecha(LocalDate fecha, int idEmpresa) throws SQLException {
@@ -625,46 +836,6 @@ public class ReporteModel {
                 }
             }
         }
-        return 0.0;
-    }
-
-    private double obtenerFlujoPorTipo(LocalDate desde, LocalDate hasta, int idEmpresa,
-                                       String tipoCuenta, String filtroNombre, boolean esCargo) throws SQLException {
-        String columna = esCargo ? "dp.cargo" : "dp.abono";
-        String filtroAdicional = (filtroNombre != null && !filtroNombre.trim().isEmpty())
-                ? "AND c.cuenta LIKE ? "
-                : "";
-
-        String sql = String.format("""
-        SELECT COALESCE(SUM(%s), 0) AS total
-        FROM tblcatalogocuentas c
-        INNER JOIN tbldetallepartida dp ON c.idcuenta = dp.idcuenta
-        INNER JOIN tblpartidas p ON dp.idpartida = p.idpartida
-        WHERE c.idempresa = ? 
-        AND c.tipocuenta = ?
-        AND p.fecha BETWEEN ? AND ?
-        %s
-        """, columna, filtroAdicional);
-
-        try (Connection conn = ConexionDB.connection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, idEmpresa);
-            ps.setString(2, tipoCuenta);
-            ps.setDate(3, Date.valueOf(desde));
-            ps.setDate(4, Date.valueOf(hasta));
-
-            if (filtroNombre != null && !filtroNombre.trim().isEmpty()) {
-                ps.setString(5, "%" + filtroNombre + "%");
-            }
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getDouble("total");
-                }
-            }
-        }
-
         return 0.0;
     }
 

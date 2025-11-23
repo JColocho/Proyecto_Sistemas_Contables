@@ -37,7 +37,8 @@ public class AgregarCuentaController {
                 "CAPITAL",
                 "INGRESOS O VENTAS",
                 "GASTOS",
-                "COSTOS"
+                "COSTOS",
+                "RETIROS"
         );
 
 

@@ -433,7 +433,7 @@ public class EditarPartidaController {
     //Método para cargar el cátalogo de cuentas
     private void cargarCuentas() {
         CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
-        ObservableList<String> cuentas = cuentaModel.obtenerNombreCuentas(1);
+        ObservableList<String> cuentas = cuentaModel.obtenerNombreCuentas(idEmpresaSesion);
 
         this.cmbCuentas.setItems(cuentas);
 

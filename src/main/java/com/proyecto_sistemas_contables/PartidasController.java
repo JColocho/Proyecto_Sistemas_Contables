@@ -151,7 +151,7 @@ public class PartidasController {
     }
 
     private void cargarPartidas(Date inicio, Date fin) {
-        ObservableList<PartidaModel> partidas = PartidaModel.obtenerPartidas(inicio, fin);
+        ObservableList<PartidaModel> partidas = PartidaModel.obtenerPartidas(inicio, fin, idEmpresaSesion);
         tbPartidas.setItems(partidas);
     }
 

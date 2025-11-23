@@ -69,7 +69,8 @@ public class CatalogoCuentasController {
                 "CAPITAL",
                 "INGRESOS O VENTAS",
                 "GASTOS",
-                "COSTOS"
+                "COSTOS",
+                "RETIROS"
         );
 
         //Por defecto este seleccionado la primera opción

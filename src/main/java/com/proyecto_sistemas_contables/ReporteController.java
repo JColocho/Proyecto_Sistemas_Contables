@@ -17,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.awt.*;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +30,9 @@ import java.util.List;
 import java.util.Map;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import java.text.DecimalFormat;
@@ -213,7 +217,7 @@ public class ReporteController {
                         data = reporteModel.obtenerEstadoResultados(desde, hasta, idEmpresaSesion);
 
                 case "Balance General" ->
-                        data = reporteModel.obtenerBalanceGeneral(hasta, idEmpresaSesion);
+                        data = reporteModel.obtenerBalanceGeneral(desde, hasta, idEmpresaSesion);
 
                 case "Estado de Cambios en el Patrimonio" ->
                         data = reporteModel.obtenerEstadoCapital(desde, hasta, idEmpresaSesion);
@@ -385,6 +389,7 @@ public class ReporteController {
 
             // Mostrar mensaje de éxito
             avisar("Éxito", "Reporte generado exitosamente en:\n" + destinoPDF.toAbsolutePath());
+            Desktop.getDesktop().open(destinoPDF.toFile());
 
 
         } catch (Exception ex) {
@@ -505,8 +510,8 @@ public class ReporteController {
              Document doc = new Document(pdf)) {
 
             // ==================== COLORES CORPORATIVOS ====================
-            DeviceRgb colorPrimario = new DeviceRgb(41, 128, 185);    // Azul profesional #2980B9
-            DeviceRgb colorSecundario = new DeviceRgb(52, 73, 94);    // Gris oscuro #34495E
+            DeviceRgb colorPrimario = new DeviceRgb(0, 153, 81);
+            DeviceRgb colorSecundario = new DeviceRgb(52, 73, 94);
 
             // ==================== ENCABEZADO ====================
             // Nombre de la empresa (grande, en negrita, centrado, color primario)
@@ -835,7 +840,7 @@ public class ReporteController {
             if (concepto != null) {
                 if (concepto.startsWith(">>>")) {
                     // Encabezado de sección
-                    bgColor = new DeviceRgb(41, 128, 185); // Azul
+                    bgColor = new DeviceRgb(0, 153, 81); // Verde
                     esNegrita = true;
                     concepto = concepto.replace(">>>", "").trim();
 
@@ -850,7 +855,7 @@ public class ReporteController {
 
                 } else if (concepto.startsWith("===")) {
                     // Total principal
-                    bgColor = new DeviceRgb(52, 73, 94); // Gris oscuro
+                    bgColor = new DeviceRgb(0, 122, 85); // verde
                     esNegrita = true;
                     concepto = concepto.replace("===", "").trim();
 
