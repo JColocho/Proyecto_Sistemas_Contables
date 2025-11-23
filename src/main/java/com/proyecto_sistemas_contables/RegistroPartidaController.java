@@ -317,6 +317,10 @@ public class RegistroPartidaController {
 
                                                limpiarRegistro();
 
+                                               CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                                               //Actualizar el saldo de las cuentas
+                                               cuentaModel.actualizarSaldosCuentas(idEmpresaSesion);
+
                                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                                alert.setTitle("Registro Partida");
                                                alert.setContentText("Partida registrada con exito.");

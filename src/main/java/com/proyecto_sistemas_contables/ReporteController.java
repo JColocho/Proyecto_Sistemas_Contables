@@ -388,7 +388,7 @@ public class ReporteController {
             );
 
             // Mostrar mensaje de éxito
-            avisar("Éxito", "Reporte generado exitosamente en:\n" + destinoPDF.toAbsolutePath());
+            avisar("Éxito", "Reporte generado exitosamente");
             Desktop.getDesktop().open(destinoPDF.toFile());
 
 
@@ -463,16 +463,23 @@ public class ReporteController {
             Path destinoCopia = carpetaLocal.resolve(nombreArchivo);
             Files.copy(destino.toPath(), destinoCopia, StandardCopyOption.REPLACE_EXISTING);
 
-            // Registrar el reporte en la base de datos
-            reporteModel.registrarReporteGenerado(
-                    idUsuarioEnSesion, tipo, desde, hasta,
-                    destinoCopia.toString(),
-                    txtObservaciones.getText(),
-                    idEmpresaSesion
-            );
+            if (reporteModel.reporteExistente(tipo,desde,hasta,idEmpresaSesion)){
+                int idReporte = reporteModel.obtenerIdReporte(tipo,desde,hasta,idEmpresaSesion);
+                reporteModel.actualizarReporte(idUsuarioEnSesion, idReporte,txtObservaciones.getText().trim(), idEmpresaSesion);
+            }
+            else {
+                // Registrar el reporte en la base de datos
+                reporteModel.registrarReporteGenerado(
+                        idUsuarioEnSesion, tipo, desde, hasta,
+                        destinoCopia.toString(),
+                        txtObservaciones.getText(),
+                        idEmpresaSesion
+                );
+            }
+
 
             // Mostrar mensaje de éxito
-            avisar("Éxito", "Reporte guardado en:\n" + destino.getAbsolutePath());
+            avisar("Éxito", "Reporte guardado en el destino seleccionado exitosamente");
 
         } catch (Exception ex) {
             avisar("Error PDF", ex.getMessage());

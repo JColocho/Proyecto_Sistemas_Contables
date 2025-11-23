@@ -91,6 +91,9 @@ public class PartidasController {
                         EditarPartidaController.idUsuarioSesion = idUsuarioSesion;
                         Stage stage = (Stage) tbPartidas.getScene().getWindow();
                         DialogoUtil.showDialog("editar-partida-view", "Editar", stage);
+                        Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                        Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                        cargarPartidas(inicio, fin);
                     });
 
                     btnEliminar.setOnAction(event -> {
@@ -105,6 +108,10 @@ public class PartidasController {
                             partida.EliminarPartida(partida.getIdPartida(), idEmpresaSesion);
                             cargarPartidas(null, null);
                         }
+
+                        Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                        Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                        cargarPartidas(inicio, fin);
                     });
 
                     btnVer.setOnAction(event -> {
@@ -131,6 +138,10 @@ public class PartidasController {
             btnAgregarPartida.setOnAction(event -> {
                 Stage stage = (Stage) tbPartidas.getScene().getWindow();
                 DialogoUtil.showDialog("registro-partida-view", "Agregar partida", stage);
+
+                Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
+                Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
+                cargarPartidas(inicio, fin);
             });
             btnBuscar.setOnAction(event -> {
                 Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
@@ -141,11 +152,6 @@ public class PartidasController {
                 dateInicial.setValue(null);
                 dateFinal.setValue(null);
                 cargarPartidas(null, null);
-            });
-            btnActualizar.setOnAction(event -> {
-                Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
-                Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
-                cargarPartidas(inicio, fin);
             });
         } catch (Exception e) {
             System.out.println(e.getMessage());

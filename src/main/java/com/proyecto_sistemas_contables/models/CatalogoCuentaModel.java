@@ -339,4 +339,39 @@ public class CatalogoCuentaModel {
             throw new RuntimeException(e);
         }
     }
+
+    //Metodo para calcular el saldo de las cuentas
+    public void actualizarSaldosCuentas(int idEmpresa) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("UPDATE tblcatalogocuentas AS c\n" +
+                    "SET \n" +
+                    "    saldo = ABS(COALESCE(m.saldo, 0)),   -- saldo POSITIVO\n" +
+                    "    tiposaldo = CASE\n" +
+                    "        WHEN m.saldo > 0 THEN 'DEUDOR'\n" +
+                    "        WHEN m.saldo < 0 THEN 'ACREEDOR'\n" +
+                    "        ELSE ''\n" +
+                    "    END\n" +
+                    "FROM (\n" +
+                    "    SELECT \n" +
+                    "        c2.idcuenta,\n" +
+                    "        -- Saldo contable real (puede ser negativo)\n" +
+                    "        COALESCE(SUM(dp.cargo), 0) - COALESCE(SUM(dp.abono), 0) AS saldo\n" +
+                    "    FROM tblcatalogocuentas c2\n" +
+                    "    LEFT JOIN tbldetallepartida dp ON c2.idcuenta = dp.idcuenta\n" +
+                    "    LEFT JOIN tblpartidas p ON dp.idpartida = p.idpartida\n" +
+                    "        AND p.idempresa = c2.idempresa\n" +
+                    "    WHERE c2.idempresa = ?\n" +
+                    "    GROUP BY c2.idcuenta\n" +
+                    ") AS m\n" +
+                    "WHERE c.idcuenta = m.idcuenta\n" +
+                    "  AND c.idempresa = ?;");
+            statement.setInt(1, idEmpresa);
+            statement.setInt(2, idEmpresa);
+            statement.executeUpdate();
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
