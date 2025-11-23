@@ -20,14 +20,15 @@
             <Pane HBox.hgrow="ALWAYS" />
             <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="872.0" spacing="5">
                 <Button fx:id="btnDashboard" onAction="#cambiarVista" prefWidth="96.0" styleClass="nav-button" text="Dashboard" />
-            <Button fx:id="btnEmpresas" onAction="#cambiarVista" styleClass="nav-button" text="Empresas" />
+                <Button fx:id="btnEmpresas" onAction="#cambiarVista" styleClass="nav-button" text="Empresas" />
                 <Button fx:id="btnUsuarios" onAction="#cambiarVista" styleClass="nav-button" text="Usuarios" />
                 <Button fx:id="btnAuditoria" onAction="#cambiarVista" styleClass="nav-button" text="Auditoría" />
                 <Button fx:id="btnCatalogo" onAction="#cambiarVista" styleClass="nav-button" text="Catálogo de cuentas" />
-            <Button fx:id="btnCuentasT" onAction="#cambiarVista" styleClass="nav-button" text="Cuentas T" />
+                <Button fx:id="btnCuentasT" onAction="#cambiarVista" styleClass="nav-button" text="Cuentas T" />
                 <Button fx:id="btnPartidas" onAction="#cambiarVista" styleClass="nav-button" text="Partidas" />
                 <Button fx:id="btnReporte" onAction="#cambiarVista" styleClass="nav-button" text="Generar reporte" />
                 <Button fx:id="btnDocumentos" onAction="#cambiarVista" styleClass="nav-button" text="Documentos" />
+                <Button fx:id="btnCerrarSesion" onAction="#cerrarSesion" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 5;" text="Cerrar sesión" />
             </HBox>
         </HBox>
     </top>

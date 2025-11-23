@@ -1,6 +1,7 @@
 package com.proyecto_sistemas_contables;
 
 import com.proyecto_sistemas_contables.models.EmpresaModel;
+import com.proyecto_sistemas_contables.models.UsuarioModel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -66,18 +67,33 @@ public class EmpresaController {
     @FXML
     private AnchorPane mainPane;
 
+    @FXML
+    private AnchorPane btn_agregar_empresa;
+
     private ObservableList<EmpresaModel> listaEmpresas = FXCollections.observableArrayList();
     private FilteredList<EmpresaModel> listaFiltrada;
     private EmpresaModel empresaEditando = null;
     public static int idUsuarioSesion;
+    private String rolUsuario;
+
     @FXML
     private void initialize() {
         Platform.runLater(() -> {
-            Stage stage = (Stage) mainPane.getScene().getWindow();
-            stage.setMaximized(false);
-            stage.setMaximized(true);
+            try {
+                if (mainPane.getScene() != null && mainPane.getScene().getWindow() != null) {
+                    Stage stage = (Stage) mainPane.getScene().getWindow();
+                    stage.setMaximized(false);
+                    stage.setMaximized(true);
+                }
+            } catch (Exception e) {
+                System.out.println("No se pudo maximizar la ventana: " + e.getMessage());
+            }
         });
         formulario_empresa.setVisible(false);
+
+        // Obtener rol del usuario y configurar permisos
+        obtenerRolUsuario();
+        configurarPermisosPorRol();
 
         // Inicializar ComboBox de búsqueda
         cb_buscar.setItems(FXCollections.observableArrayList(
@@ -110,6 +126,23 @@ public class EmpresaController {
 
         // Configurar doble clic en las filas
         configurarDobleClicFila();
+    }
+
+    private void obtenerRolUsuario() {
+        try {
+            // Ajusta según tu implementación
+            this.rolUsuario = LoginController.rolUsuarioSesion;
+        } catch (Exception e) {
+            this.rolUsuario = "";
+        }
+    }
+
+    private void configurarPermisosPorRol() {
+        if ("contador".equalsIgnoreCase(rolUsuario) || "auditor".equalsIgnoreCase(rolUsuario)) {
+            // Ocultar el botón de agregar empresa
+            btn_agregar_empresa.setVisible(false);
+            btn_agregar_empresa.setManaged(false);
+        }
     }
 
     private void configurarDobleClicFila() {
@@ -287,6 +320,14 @@ public class EmpresaController {
 
                 btnEditar.setStyle("-fx-background-color: rgb(210, 240, 240); -fx-text-fill: white; -fx-cursor: hand;");
                 btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
+
+                // Ocultar botones si el rol es contador o auditor
+                if ("contador".equalsIgnoreCase(rolUsuario) || "auditor".equalsIgnoreCase(rolUsuario)) {
+                    btnEditar.setVisible(false);
+                    btnEditar.setManaged(false);
+                    btnEliminar.setVisible(false);
+                    btnEliminar.setManaged(false);
+                }
 
                 btnEditar.setOnAction(event -> {
                     EmpresaModel empresa = getTableView().getItems().get(getIndex());

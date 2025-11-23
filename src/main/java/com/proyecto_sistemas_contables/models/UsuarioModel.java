@@ -210,6 +210,24 @@ public class UsuarioModel {
             throw new RuntimeException(e);
         }
     }
+    public String obtenerRolUsuario(String nombreUsuario) {
+        try {
+            Connection connection = ConexionDB.connection();
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT a.nivelacceso FROM tblaccesos a " +
+                    "INNER JOIN tblusuarios u ON u.idacceso = a.idacceso " +
+                    "WHERE u.nombreusuario='" + nombreUsuario + "'");
+
+            while (resultSet.next()) {
+                return resultSet.getString("nivelacceso");
+            }
+            resultSet.close();
+            return "";
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     // método para obtener usuarios (excluye el de la sesión actual)
