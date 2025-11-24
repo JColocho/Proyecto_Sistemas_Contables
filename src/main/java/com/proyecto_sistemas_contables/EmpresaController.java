@@ -162,6 +162,7 @@ public class EmpresaController {
 
             // Crear una nueva escena con el navbar
             Scene scene = new Scene(root);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/icon.png")));
             stage.setScene(scene);
             stage.setTitle("Sistema Contable - " + empresa.getNombre());
             // Platform.runLater para asegurar que el navbar esté inicializado

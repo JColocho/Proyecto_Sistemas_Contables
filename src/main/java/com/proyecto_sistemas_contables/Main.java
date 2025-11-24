@@ -30,17 +30,4 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
-    //Metodo para poder cambiar el contenido y escena
-    public static void setRoot(String fxml) {
-        try{
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(fxml+".fxml"));
-            mainScene.setRoot(fxmlLoader.load());
-            mainStage.setTitle("Sistema Contable");
-        }
-        catch (IOException e){
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
 }

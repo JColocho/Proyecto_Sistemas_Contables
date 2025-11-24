@@ -36,11 +36,6 @@ Antes de ejecutar el proyecto debe tener instalado lo siguiente:
 - Abrir el proyecto con el IDE instalado
 - Ejecuta la clase principal llamada "Main" que se encuentra en src/main/java/com/proyecto_sistemas_contables/Main.java
 
-### 🖥️ Ejecución de la aplicación
-Al estar en ejecución el proyecto se abrirá el formulario de inicio de sesión pero puede crearse un nuevo usuario y con eso estará listo para usar las funciones del proyecto.
-
-### Nota
-El archivo clavesAccesos.txt están las claves de acceso para la creación de un nuevo usuario
 
 ### Autores
 - Jairo Alexander Argueta Alvarenga
@@ -49,7 +44,3 @@ El archivo clavesAccesos.txt están las claves de acceso para la creación de un
 
 ### Repositorio
 [Sistema Contable](https://github.com/JColocho/Proyecto_Sistemas_Contables)
-
-### Aclaraciones
-Por motivos de tiempo solo se hizo registro de partidas con un usuario predefinido y una empresa predefinida con su propio catálogo de cuentas, 
-permite registrar partidas y el login si está completo con su respectivo registro de usuario, generación de reporte de Libro Diario y Mayor.
