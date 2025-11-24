@@ -90,6 +90,7 @@ public class NavbarController {
         EmpresaController.idUsuarioSesion = idUsuarioSesion;
         EmpresaController.rolUsuarioSesion = rolUsuarioSesion;
         CuentasTController.idEmpresaSesion = idEmpresaSesion;
+        DocumentosController.idEmpresaSesion = idEmpresaSesion;
 
         if ("Contador".equalsIgnoreCase(rolUsuarioSesion)) {
             btnUsuarios.setVisible(false);

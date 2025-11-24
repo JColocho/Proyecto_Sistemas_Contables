@@ -150,7 +150,7 @@ public class PartidaModel {
                 SELECT p.idpartida, p.fecha, p.asiento, p.concepto, u.nombreusuario
                 FROM tblpartidas p
                 INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
-                WHERE p.fecha BETWEEN ? AND ? AND p.idempresa = ?";"
+                WHERE p.fecha BETWEEN ? AND ? AND p.idempresa = ?
                 ORDER BY p.fecha DESC
             """;
         } else {
@@ -290,6 +290,84 @@ public class PartidaModel {
             PreparedStatement statementPartida = connection.prepareStatement("DELETE FROM tblpartidas WHERE idpartida = ?");
             statementPartida.setInt(1, idPartida);
             statementPartida.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ObservableList<PartidaModel> obtenerPartidaPorFecha(int idEmpresa, Date fecha) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblpartidas " +
+                    "WHERE idEmpresa = ? AND fecha = ?");
+            statement.setInt(1, idEmpresa);
+            statement.setDate(2, fecha);
+            ResultSet rs = statement.executeQuery();
+            ObservableList<PartidaModel> partida = FXCollections.observableArrayList();
+            while (rs.next()) {
+                PartidaModel partidaModel = new PartidaModel();
+                partidaModel.setIdPartida(rs.getInt("idpartida"));
+                partidaModel.setFecha(rs.getDate("fecha"));
+                partidaModel.setAsiento(rs.getInt("asiento"));
+                partidaModel.setConcepto(rs.getString("concepto"));
+                partidaModel.setTipoDocumento(rs.getString("tipodocumento"));
+                partidaModel.setNumeroDocumento(rs.getString("numerodocumento"));
+                partidaModel.setIdUsuario(rs.getInt("idusuario"));
+                partidaModel.setIdPartida(rs.getInt("idpartida"));
+                partida.add(partidaModel);
+            }
+            return partida;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ObservableList<PartidaModel> obtenerPartidaDocumento(int idEmpresa) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblpartidas " +
+                    "WHERE idEmpresa = ?");
+            statement.setInt(1, idEmpresa);
+            ResultSet rs = statement.executeQuery();
+            ObservableList<PartidaModel> partida = FXCollections.observableArrayList();
+            while (rs.next()) {
+                PartidaModel partidaModel = new PartidaModel();
+                partidaModel.setIdPartida(rs.getInt("idpartida"));
+                partidaModel.setFecha(rs.getDate("fecha"));
+                partidaModel.setAsiento(rs.getInt("asiento"));
+                partidaModel.setConcepto(rs.getString("concepto"));
+                partidaModel.setTipoDocumento(rs.getString("tipodocumento"));
+                partidaModel.setNumeroDocumento(rs.getString("numerodocumento"));
+                partidaModel.setIdUsuario(rs.getInt("idusuario"));
+                partidaModel.setIdPartida(rs.getInt("idpartida"));
+                partida.add(partidaModel);
+            }
+            return partida;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public ObservableList<PartidaModel> obtenerPartidaDocumentoPorTipo(int idEmpresa, String tipo) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblpartidas " +
+                    "WHERE idEmpresa = ? AND tipoDocumento ILIKE '%"+tipo+"%'");
+            statement.setInt(1, idEmpresa);
+            ResultSet rs = statement.executeQuery();
+            ObservableList<PartidaModel> partida = FXCollections.observableArrayList();
+            while (rs.next()) {
+                PartidaModel partidaModel = new PartidaModel();
+                partidaModel.setIdPartida(rs.getInt("idpartida"));
+                partidaModel.setFecha(rs.getDate("fecha"));
+                partidaModel.setAsiento(rs.getInt("asiento"));
+                partidaModel.setConcepto(rs.getString("concepto"));
+                partidaModel.setTipoDocumento(rs.getString("tipodocumento"));
+                partidaModel.setNumeroDocumento(rs.getString("numerodocumento"));
+                partidaModel.setIdUsuario(rs.getInt("idusuario"));
+                partidaModel.setIdPartida(rs.getInt("idpartida"));
+                partida.add(partidaModel);
+            }
+            return partida;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
