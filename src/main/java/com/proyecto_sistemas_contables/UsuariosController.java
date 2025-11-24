@@ -111,7 +111,7 @@ public class UsuariosController {
 
 
                 // Configuración base del botón activar/desactivar
-                btnEstado.setPrefWidth(80);
+                btnEstado.setPrefWidth(90);
                 btnEstado.setPrefHeight(30);
                 btnEstado.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-cursor: hand;");
 
