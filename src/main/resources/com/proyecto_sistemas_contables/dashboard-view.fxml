@@ -117,7 +117,7 @@
                                 <!-- Tarjeta Balance General -->
                                 <VBox alignment="TOP_CENTER" maxWidth="500.0" prefHeight="400.0" spacing="10.0" styleClass="card" HBox.hgrow="ALWAYS">
                                     <children>
-                                        <Label styleClass="seccion-titulo" text="Resumen del balance general" />
+                                        <Label styleClass="seccion-titulo" text="Resumen de cuentas" />
                                         <TabPane fx:id="tabPaneBalance" prefHeight="350.0" side="TOP" styleClass="custom-tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                                             <tabs>
                                                 <!-- TAB ACTIVOS -->
