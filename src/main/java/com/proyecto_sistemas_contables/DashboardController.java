@@ -26,6 +26,7 @@ public class DashboardController {
     private Label lblRolUsuario;
 
     private EmpresaModel empresaSeleccionada;
+    public static String rolUsuarioSesion;
 
     @FXML
     private void initialize() {
@@ -50,7 +51,7 @@ public class DashboardController {
             String nombreUsuario = usuarioModel.obtenerNombreUsuario(EmpresaController.idUsuarioSesion);
 
             // Obtener rol del usuario
-            String rol = LoginController.rolUsuarioSesion;
+            String rol = rolUsuarioSesion;
 
             // Mostrar en los labels
             lblNombreUsuario.setText(nombreUsuario);

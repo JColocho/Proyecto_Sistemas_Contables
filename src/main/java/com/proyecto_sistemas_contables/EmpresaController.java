@@ -56,7 +56,7 @@ public class EmpresaController {
     private TextField txt_nombre_empresa, txt_nit, txt_nrc, txt_direccion, txt_telefono, txt_correo;
 
     @FXML
-    private Button btn_agregar, btn_cancelar;
+    private Button btn_agregar, btnCerrarSesion;
 
     @FXML
     private TextField txt_buscar;
@@ -465,5 +465,38 @@ public class EmpresaController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+    @FXML
+    private void cerrarSesion() {
+        try {
+            // Limpiar datos de sesión
+            LoginController.rolUsuarioSesion = null;
+            EmpresaController.idUsuarioSesion = 0;
+            idUsuarioSesion = 0;
+
+            // Obtener el Stage actual y cerrarlo
+            Stage stageActual = (Stage) btnCerrarSesion.getScene().getWindow();
+            stageActual.close();
+
+            // Crear un nuevo Stage para el login
+            Stage loginStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("login-view.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            loginStage.setScene(scene);
+            loginStage.setTitle("Sistema Contable - Login");
+            loginStage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("No se pudo cerrar sesión: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 }
