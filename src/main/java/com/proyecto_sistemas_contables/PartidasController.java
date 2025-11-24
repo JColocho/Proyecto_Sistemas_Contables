@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.sql.Date;
 import java.util.Optional;
 
@@ -106,6 +107,7 @@ public class PartidasController {
                         Optional<ButtonType> resultado = alert.showAndWait();
                         if (resultado.get() == ButtonType.OK) {
                             PartidaModel partida = getTableView().getItems().get(getIndex());
+                            eliminarDocumentoPartida(partida.getNumeroDocumento(), idEmpresaSesion);
                             partida.EliminarPartida(partida.getIdPartida(), idEmpresaSesion);
                             cargarPartidas(null, null);
                         }
@@ -113,6 +115,8 @@ public class PartidasController {
                         Date inicio = dateInicial.getValue() != null ? java.sql.Date.valueOf(dateInicial.getValue()) : null;
                         Date fin = dateFinal.getValue() != null ? java.sql.Date.valueOf(dateFinal.getValue()) : null;
                         cargarPartidas(inicio, fin);
+
+
                     });
 
                     btnVer.setOnAction(event -> {
@@ -167,6 +171,30 @@ public class PartidasController {
     private void cargarPartidas(Date inicio, Date fin) {
         ObservableList<PartidaModel> partidas = PartidaModel.obtenerPartidas(inicio, fin, idEmpresaSesion);
         tbPartidas.setItems(partidas);
+    }
+
+    //Elimina el archivo PDF asociado a una partida
+    private void eliminarDocumentoPartida(String numeroDocumento, int idEmpresa) {
+        try {
+            // Construir la ruta del documento
+            EmpresaModel empresaModel = new EmpresaModel();
+            String rutaDocumento = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas/" +
+                    empresaModel.idBuscarEmpresa(idEmpresa) + "/" +
+                    numeroDocumento + ".pdf";
+
+            File archivo = new File(rutaDocumento);
+
+            // Verificar si el archivo existe
+            if (archivo.exists()) {
+                // Intentar eliminar el archivo
+                archivo.delete();
+
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al eliminar documento: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 
