@@ -56,7 +56,7 @@ public class EmpresaController {
     private TextField txt_nombre_empresa, txt_nit, txt_nrc, txt_direccion, txt_telefono, txt_correo;
 
     @FXML
-    private Button btn_agregar, btn_cancelar;
+    private Button btn_agregar, btnCerrarSesion;
 
     @FXML
     private TextField txt_buscar;
@@ -74,7 +74,7 @@ public class EmpresaController {
     private FilteredList<EmpresaModel> listaFiltrada;
     private EmpresaModel empresaEditando = null;
     public static int idUsuarioSesion;
-    private String rolUsuario;
+    public static String rolUsuarioSesion;
 
     @FXML
     private void initialize() {
@@ -92,7 +92,6 @@ public class EmpresaController {
         formulario_empresa.setVisible(false);
 
         // Obtener rol del usuario y configurar permisos
-        obtenerRolUsuario();
         configurarPermisosPorRol();
 
         // Inicializar ComboBox de búsqueda
@@ -128,17 +127,8 @@ public class EmpresaController {
         configurarDobleClicFila();
     }
 
-    private void obtenerRolUsuario() {
-        try {
-            // Ajusta según tu implementación
-            this.rolUsuario = LoginController.rolUsuarioSesion;
-        } catch (Exception e) {
-            this.rolUsuario = "";
-        }
-    }
-
     private void configurarPermisosPorRol() {
-        if ("contador".equalsIgnoreCase(rolUsuario) || "auditor".equalsIgnoreCase(rolUsuario)) {
+        if ("Contador".equalsIgnoreCase(rolUsuarioSesion) || "Auditor".equalsIgnoreCase(rolUsuarioSesion)) {
             // Ocultar el botón de agregar empresa
             btn_agregar_empresa.setVisible(false);
             btn_agregar_empresa.setManaged(false);
@@ -160,6 +150,7 @@ public class EmpresaController {
         try {
             NavbarController.idUsuarioSesion = idUsuarioSesion;
             NavbarController.idEmpresaSesion = empresa.getId();
+            NavbarController.rolUsuarioSesion = rolUsuarioSesion;
 
             //Main.setRoot("navbar-view");
 
@@ -171,6 +162,7 @@ public class EmpresaController {
 
             // Crear una nueva escena con el navbar
             Scene scene = new Scene(root);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/icon.png")));
             stage.setScene(scene);
             stage.setTitle("Sistema Contable - " + empresa.getNombre());
             // Platform.runLater para asegurar que el navbar esté inicializado
@@ -315,7 +307,7 @@ public class EmpresaController {
                 btnEliminar.setStyle("-fx-background-color: rgb(243, 66, 53); -fx-text-fill: white; -fx-cursor: hand;");
 
                 // Ocultar botones si el rol es contador o auditor
-                if ("contador".equalsIgnoreCase(rolUsuario) || "auditor".equalsIgnoreCase(rolUsuario)) {
+                if ("contador".equalsIgnoreCase(rolUsuarioSesion) || "auditor".equalsIgnoreCase(rolUsuarioSesion)) {
                     btnEditar.setVisible(false);
                     btnEditar.setManaged(false);
                     btnEliminar.setVisible(false);
@@ -473,5 +465,38 @@ public class EmpresaController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+    @FXML
+    private void cerrarSesion() {
+        try {
+            // Limpiar datos de sesión
+            LoginController.rolUsuarioSesion = null;
+            EmpresaController.idUsuarioSesion = 0;
+            idUsuarioSesion = 0;
+
+            // Obtener el Stage actual y cerrarlo
+            Stage stageActual = (Stage) btnCerrarSesion.getScene().getWindow();
+            stageActual.close();
+
+            // Crear un nuevo Stage para el login
+            Stage loginStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("login-view.fxml")
+            );
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            loginStage.setScene(scene);
+            loginStage.setTitle("Sistema Contable - Login");
+            loginStage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("No se pudo cerrar sesión: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 }

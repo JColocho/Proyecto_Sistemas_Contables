@@ -1,6 +1,8 @@
 package com.proyecto_sistemas_contables.models;
 
 import com.proyecto_sistemas_contables.Conexion.ConexionDB;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.sql.Date;
@@ -9,6 +11,61 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ReporteModel {
+    private int idReporte;
+    private int idEmpresa;
+    private String tipoReporte;
+    private LocalDate fechaDesde;
+    private LocalDate fechaHasta;
+    private String rutaReporte;
+
+    public int getIdReporte() {
+        return idReporte;
+    }
+
+    public void setIdReporte(int idReporte) {
+        this.idReporte = idReporte;
+    }
+
+    public int getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    public void setIdEmpresa(int idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    public String getTipoReporte() {
+        return tipoReporte;
+    }
+
+    public void setTipoReporte(String tipoReporte) {
+        this.tipoReporte = tipoReporte;
+    }
+
+    public LocalDate getFechaDesde() {
+        return fechaDesde;
+    }
+
+    public void setFechaDesde(LocalDate fechaDesde) {
+        this.fechaDesde = fechaDesde;
+    }
+
+    public LocalDate getFechaHasta() {
+        return fechaHasta;
+    }
+
+    public void setFechaHasta(LocalDate fechaHasta) {
+        this.fechaHasta = fechaHasta;
+    }
+
+    public String getRutaReporte() {
+        return rutaReporte;
+    }
+
+    public void setRutaReporte(String rutaReporte) {
+        this.rutaReporte = rutaReporte;
+    }
+
     private static final DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     // LIBRO DIARIO
@@ -954,5 +1011,58 @@ public class ReporteModel {
         }
 
         return info;
+    }
+
+    public ObservableList<ReporteModel> obtenerReportes(int idEmpresa){
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblreportes WHERE idempresa = ?");
+            statement.setInt(1, idEmpresa);
+
+            ResultSet rs = statement.executeQuery();
+            ObservableList<ReporteModel> reportes = FXCollections.observableArrayList();
+            while (rs.next()) {
+                ReporteModel reporte = new ReporteModel();
+                reporte.setIdReporte(rs.getInt("idreporteg"));
+                reporte.setTipoReporte(rs.getString("tipo_reporte"));
+                reporte.setRutaReporte(rs.getString("ruta_pdf"));
+                reporte.setFechaDesde(LocalDate.parse(rs.getString("fecha_desde")));
+                reporte.setFechaHasta(LocalDate.parse(rs.getString("fecha_hasta")));
+
+                reportes.add(reporte);
+            }
+
+            return reportes;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ObservableList<ReporteModel> obtenerReportesPorTipo(int idEmpresa, String tipoReporte){
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblreportes WHERE idempresa = ? AND tipo_reporte = ?");
+            statement.setInt(1, idEmpresa);
+            statement.setString(2, tipoReporte);
+
+            ResultSet rs = statement.executeQuery();
+            ObservableList<ReporteModel> reportes = FXCollections.observableArrayList();
+            while (rs.next()) {
+                ReporteModel reporte = new ReporteModel();
+                reporte.setIdReporte(rs.getInt("idreporteg"));
+                reporte.setTipoReporte(rs.getString("tipo_reporte"));
+                reporte.setRutaReporte(rs.getString("ruta_pdf"));
+                reporte.setFechaDesde(LocalDate.parse(rs.getString("fecha_desde")));
+                reporte.setFechaHasta(LocalDate.parse(rs.getString("fecha_hasta")));
+
+                reportes.add(reporte);
+            }
+
+            return reportes;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

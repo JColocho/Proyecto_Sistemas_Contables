@@ -198,9 +198,8 @@ public class CatalogoCuentaModel {
             ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
 
             Connection connection = ConexionDB.connection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = ? AND tipoCuenta = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = ? AND tipoCuenta ILIKE '%" + tipoCuenta + "%'");
             statement.setInt(1, idEmpresa);
-            statement.setString(2, tipoCuenta);
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -316,7 +315,8 @@ public class CatalogoCuentaModel {
             ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
             Connection connection = ConexionDB.connection();
 
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas WHERE idEmpresa = '" + idEmpresa + "' AND cuenta ILIKE '%" + nombreCuenta + "%'");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tblcatalogocuentas " +
+                    "WHERE idEmpresa = '" + idEmpresa + "' AND cuenta ILIKE '%" + nombreCuenta + "%'");
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -373,5 +373,28 @@ public class CatalogoCuentaModel {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    //Metodo para saber si la cuenta ya estat en uso
+    public boolean cuentaEnUso(int idcuenta) {
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM tbldetallepartida WHERE idCuenta = ?");
+            statement.setInt(1, idcuenta);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                return true;
+            }
+            return false;
+
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return codigoCuenta + "\t" + cuenta;
     }
 }

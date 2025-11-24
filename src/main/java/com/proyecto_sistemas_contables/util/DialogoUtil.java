@@ -2,6 +2,7 @@ package com.proyecto_sistemas_contables.util;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -23,6 +24,7 @@ public class DialogoUtil {
             stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(owner);
+            stage.getIcons().add(new Image(DialogoUtil.class.getResourceAsStream("/com/proyecto_sistemas_contables/static/img/icon.png")));
             stage.setResizable(false);
             stage.showAndWait();
 

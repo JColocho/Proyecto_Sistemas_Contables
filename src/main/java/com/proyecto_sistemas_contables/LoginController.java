@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class LoginController {
@@ -58,7 +59,8 @@ public class LoginController {
                     EmpresaController.idUsuarioSesion = usuario.idUsuarioSesion(txtUsuario.getText());
 
                     // Obtener el rol del usuario
-                    LoginController.rolUsuarioSesion = usuario.obtenerRolUsuario(txtUsuario.getText());
+                    EmpresaController.rolUsuarioSesion = usuario.obtenerRolUsuario(txtUsuario.getText());
+                    DashboardController.rolUsuarioSesion = usuario.obtenerRolUsuario(txtUsuario.getText());
 
                     try {
                         // Cerrar la ventana del login
@@ -72,6 +74,7 @@ public class LoginController {
                         );
                         Parent root = loader.load();
                         Scene scene = new Scene(root);
+                        empresaStage.getIcons().add(new Image(getClass().getResourceAsStream("/com/proyecto_sistemas_contables/static/img/icon.png")));
                         empresaStage.setScene(scene);
                         empresaStage.setTitle("Sistema Contable - Seleccionar Empresa");
                         empresaStage.show();

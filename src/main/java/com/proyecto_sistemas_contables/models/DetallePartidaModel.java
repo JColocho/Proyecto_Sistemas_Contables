@@ -108,4 +108,30 @@ public class DetallePartidaModel {
             throw new RuntimeException(e);
         }
     }
+    public static ObservableList<DetallePartidaModel> obtenerDetallePorCuenta(int idCuenta, int idEmpresaSesion) {
+        ObservableList<DetallePartidaModel> lista = FXCollections.observableArrayList();
+        try{
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement("SELECT " +
+                    "dp.iddetalle, dp.idpartida, dp.idcuenta, c.cuenta, dp.cargo, dp.abono " +
+                    "FROM tbldetallepartida dp INNER JOIN tblcatalogocuentas c ON dp.idcuenta = c.idcuenta WHERE dp.idcuenta = ? AND c.idempresa = ?");
+            statement.setInt(1, idCuenta);
+            statement.setInt(2, idEmpresaSesion);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                DetallePartidaModel detallePartidaModel = new DetallePartidaModel();
+                detallePartidaModel.setIdDetalle(resultSet.getInt("iddetalle"));
+                detallePartidaModel.setIdPartida(resultSet.getInt("idpartida"));
+                detallePartidaModel.setIdCuenta(resultSet.getInt("idcuenta"));
+                detallePartidaModel.setCuenta(resultSet.getString("cuenta"));
+                detallePartidaModel.setCargo(resultSet.getDouble("cargo"));
+                detallePartidaModel.setAbono(resultSet.getDouble("abono"));
+                lista.add(detallePartidaModel);
+            }
+            return lista;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

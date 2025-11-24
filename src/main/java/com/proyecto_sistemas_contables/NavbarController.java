@@ -58,6 +58,7 @@ public class NavbarController {
 
     public static int idUsuarioSesion;
     public static int idEmpresaSesion;
+    public static String rolUsuarioSesion;
 
     @FXML
     private void initialize() {
@@ -83,9 +84,21 @@ public class NavbarController {
         ReporteController.idEmpresaSesion = idEmpresaSesion;
         PartidasController.idUsuarioSesion = idUsuarioSesion;
         PartidasController.idEmpresaSesion = idEmpresaSesion;
+        PartidasController.rolUsuarioSesion = rolUsuarioSesion;
         CatalogoCuentasController.idEmpresaSesion = idEmpresaSesion;
+        CatalogoCuentasController.rolUsuarioSesion = rolUsuarioSesion;
         EmpresaController.idUsuarioSesion = idUsuarioSesion;
+        EmpresaController.rolUsuarioSesion = rolUsuarioSesion;
+        CuentasTController.idEmpresaSesion = idEmpresaSesion;
+        DocumentosController.idEmpresaSesion = idEmpresaSesion;
 
+        if ("Contador".equalsIgnoreCase(rolUsuarioSesion)) {
+            btnUsuarios.setVisible(false);
+            btnAuditoria.setVisible(false);
+            btnDocumentos.setVisible(false);
+        } else if ("Auditor".equalsIgnoreCase(rolUsuarioSesion)) {
+            btnUsuarios.setVisible(false);
+        }
         // CONFIGURAR PERMISOS SEGÚN EL ROL
         configurarPermisosPorRol();
     }
@@ -192,31 +205,28 @@ public class NavbarController {
         if (source == btnDashboard) {
             loadView("dashboard-view.fxml");
         } else if (source == btnUsuarios) {
-            // Verificar permiso antes de cargar
-            if (AccesoModel.puedeGestionarUsuarios(idUsuarioSesion)) {
-                loadView("usuarios-view.fxml");
-            }
-        } else if (source == btnAuditoria) {
-            // Verificar permiso antes de cargar
-            if (AccesoModel.puedeGestionarAuditorias(idUsuarioSesion)) {
-                loadView("auditoria-view.fxml");
-            }
-        } else if (source == btnPartidas) {
+            loadView("usuarios-view.fxml");
+        }
+        else if (source == btnAuditoria) {
+            loadView("auditoria-view.fxml");
+        }
+        else if (source == btnPartidas) {
             loadView("partidas-view.fxml");
-        } else if (source == btnReporte) {
+        }
+        else if (source == btnReporte) {
             loadView("reporte-view.fxml");
-        } else if (source == btnDocumentos) {
-            // Verificar permiso antes de cargar
-            if (AccesoModel.puedeGestionarDocumentos(idUsuarioSesion)) {
-                loadView("documentos-view.fxml");
-            }
-        } else if (source == btnEmpresas) {
+        }
+        else if (source == btnDocumentos) {
+            loadView("documentos-view.fxml");
+        }
+        else if (source == btnEmpresas) {
             irAVistaEmpresas();
-        } else if (source == btnCatalogo) {
-            // Verificar permiso antes de cargar
-            if (AccesoModel.puedeGestionarCatalogo(idUsuarioSesion)) {
-                loadView("catalogo-cuentas-view.fxml");
-            }
+        }
+        else if (source == btnCatalogo) {
+            loadView("catalogo-cuentas-view.fxml");
+        }
+        else if (source == btnCuentasT){
+            loadView("cuentas-t-view.fxml");
         }
     }
 
@@ -243,9 +253,7 @@ public class NavbarController {
         }
     }
 
-    /**
-     * Cambia completamente la ventana a la vista de empresas (sin navbar)
-     */
+    //Cambia completamente la ventana a la vista de empresas (sin navbar)
     private void irAVistaEmpresas() {
         try {
             EmpresaController.idUsuarioSesion = idUsuarioSesion;
@@ -266,26 +274,9 @@ public class NavbarController {
         }
     }
 
-    // ============================================
-    // MÉTODOS PÚBLICOS ESTÁTICOS PARA NAVEGACIÓN
-    // ============================================
 
-    /**
-     * Carga una vista desde cualquier otro controlador
-     * @param fxmlName Nombre del archivo FXML a cargar
-     */
-    public static void cargarVista(String fxmlName) {
-        if (instance != null) {
-            instance.loadView(fxmlName);
-        } else {
-            System.err.println("Error: NavbarController no está inicializado");
-        }
-    }
 
-    /**
-     * Carga el dashboard y le pasa una empresa específica
-     * @param empresa La empresa seleccionada
-     */
+    //Carga el dashboard y le pasa una empresa específica/
     public static void cargarDashboardConEmpresa(EmpresaModel empresa) {
         if (instance != null) {
             try {

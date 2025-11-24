@@ -62,6 +62,7 @@
                </font></TextField>
             <ComboBox fx:id="cb_buscar" layoutX="460.0" layoutY="45.0" prefWidth="200.0" />
             <Label layoutX="387.0" layoutY="56.0" text="Buscar por:" />
+            <Button fx:id="btnCerrarSesion" layoutX="1052.0" layoutY="34.0" mnemonicParsing="false" onAction="#cerrarSesion" prefHeight="44.0" prefWidth="114.0" styleClass="btnRojo" text="Cerrar Sesión" />
 
                                  </children>
       </AnchorPane>
