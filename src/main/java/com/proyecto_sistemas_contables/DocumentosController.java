@@ -1,5 +1,6 @@
 package com.proyecto_sistemas_contables;
 
+import com.proyecto_sistemas_contables.models.EmpresaModel;
 import com.proyecto_sistemas_contables.models.PartidaModel;
 import com.proyecto_sistemas_contables.models.ReporteModel;
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -71,8 +73,12 @@ public class DocumentosController {
     private Button btnLimpiarFecha;
 
     public static int idEmpresaSesion;
+    private String rutaDocumentoPartida;
 
-    public void initialize() {
+    public void initialize() throws SQLException {
+        EmpresaModel empresaModel = new EmpresaModel();
+        rutaDocumentoPartida = "src/main/resources/com/proyecto_sistemas_contables/documentos_partidas/" + empresaModel.idBuscarEmpresa(idEmpresaSesion);
+
         clDocumento.setCellValueFactory(new PropertyValueFactory<>("tipoReporte"));
         clDesde.setCellValueFactory(new PropertyValueFactory<>("fechaDesde"));
         clHasta.setCellValueFactory(new PropertyValueFactory<>("fechaHasta"));
@@ -152,7 +158,16 @@ public class DocumentosController {
             }
         });
         btnDescargarReporte.setOnAction(event -> {
-            descargarReporte();
+            if (tvReportes.getSelectionModel().getSelectedItem() != null) {
+                descargarReporte();
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Seleccione un Reporte para poder descargarlo.");
+                alert.showAndWait();
+            }
         });
 
         btnLimpiarFecha.setOnAction(event -> {
@@ -173,7 +188,33 @@ public class DocumentosController {
                 tvDocumentosPartidas.setItems(partidaModel.obtenerPartidaPorFecha(idEmpresaSesion, java.sql.Date.valueOf(dpFechaPartida.getValue())));
             }
         });
+
+        btnVerDocumento.setOnAction(event -> {
+            if (tvDocumentosPartidas.getSelectionModel().getSelectedItem() != null) {
+                try {
+                    Desktop.getDesktop().open(new File(
+                             rutaDocumentoPartida + "/" +tvDocumentosPartidas.getSelectionModel().getSelectedItem().getNumeroDocumento() + ".pdf"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Seleccione un Documento para poder verlo");
+                alert.showAndWait();
+            }
+        });
+
+        btnDescargarPartida.setOnAction(event -> {
+            if (tvDocumentosPartidas.getSelectionModel().getSelectedItem() != null) {
+                descargarDocumentoPartida();
+            }
+        });
     }
+
+    //Carga el contenido de los tableView
     private void cargarTabla(){
         ReporteModel reporte = new ReporteModel();
         tvReportes.setItems(reporte.obtenerReportes(idEmpresaSesion));
@@ -181,7 +222,7 @@ public class DocumentosController {
         PartidaModel partida = new PartidaModel();
         tvDocumentosPartidas.setItems(partida.obtenerPartidaDocumento(idEmpresaSesion));
     }
-
+    //Descarga una copia del reporte
     private void descargarReporte() {
         ReporteModel reporteSeleccionado = tvReportes.getSelectionModel().getSelectedItem();
 
@@ -241,12 +282,87 @@ public class DocumentosController {
             e.printStackTrace();
         }
     }
+    //Mostrar alertas
     private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
         Alert alert = new Alert(tipo);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    //Descarga una copia del documento de partida
+    private void descargarDocumentoPartida() {
+        PartidaModel partidaSeleccionada = tvDocumentosPartidas.getSelectionModel().getSelectedItem();
+
+        if (partidaSeleccionada == null) {
+            mostrarAlerta("Advertencia", "Por favor, seleccione un documento para guardar.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            // Construir ruta del archivo original
+            String rutaArchivoOriginal = rutaDocumentoPartida + "/" +
+                    partidaSeleccionada.getNumeroDocumento() + ".pdf";
+            File archivoOriginal = new File(rutaArchivoOriginal);
+
+            if (!archivoOriginal.exists()) {
+                mostrarAlerta("Error", "El archivo del documento no existe en la ruta especificada.", Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Configurar FileChooser
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Guardar Documento");
+
+            // Generar nombre sugerido para el archivo
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            // Convertir java.sql.Date a LocalDate si es necesario
+            LocalDate fecha;
+            if (partidaSeleccionada.getFecha() instanceof java.sql.Date) {
+                fecha = ((java.sql.Date) partidaSeleccionada.getFecha()).toLocalDate();
+            } else {
+                fecha = partidaSeleccionada.getFecha().toLocalDate();
+            }
+
+            String nombreSugerido = partidaSeleccionada.getTipoDocumento().replace(" ", "_") +
+                    "_" + partidaSeleccionada.getNumeroDocumento() +
+                    "_Asiento_" + partidaSeleccionada.getAsiento() +
+                    "_" + fecha.format(formatter) +
+                    ".pdf";
+
+            fileChooser.setInitialFileName(nombreSugerido);
+
+            // Filtro para archivos PDF
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf");
+            fileChooser.getExtensionFilters().add(extFilter);
+
+            // Establecer directorio inicial (Documentos del usuario)
+            String userHome = System.getProperty("user.home");
+            File documentsDir = new File(userHome, "Documents");
+            if (documentsDir.exists()) {
+                fileChooser.setInitialDirectory(documentsDir);
+            }
+
+            // Mostrar diálogo para guardar
+            Stage stage = (Stage) tvDocumentosPartidas.getScene().getWindow();
+            File archivoDestino = fileChooser.showSaveDialog(stage);
+
+            if (archivoDestino != null) {
+                // Copiar archivo
+                Path origen = archivoOriginal.toPath();
+                Path destino = archivoDestino.toPath();
+
+                Files.copy(origen, destino, StandardCopyOption.REPLACE_EXISTING);
+
+                mostrarAlerta("Éxito", "El documento se guardó correctamente.", Alert.AlertType.INFORMATION);
+            }
+
+        } catch (IOException e) {
+            mostrarAlerta("Error", "No se pudo guardar el archivo: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
+        }
     }
 
 }
