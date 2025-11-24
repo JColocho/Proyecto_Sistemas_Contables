@@ -20,7 +20,7 @@
                         <Font name="Inter Regular" size="36.0" />
                     </font>
                 </Label>
-                <TextField fx:id="txtNombre" layoutX="54.0" layoutY="151.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" />
+                <TextField fx:id="txtNombre" layoutX="54.0" layoutY="151.0" prefHeight="32.0" prefWidth="306.0" />
                 <Label layoutX="54.0" layoutY="132.0" style="-fx-font-style: Inter;" text="Nombre">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
@@ -29,17 +29,17 @@
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
                </font></Label>
-            <TextField fx:id="txtNombreUsuario" layoutX="54.0" layoutY="211.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" />
+            <TextField fx:id="txtNombreUsuario" layoutX="54.0" layoutY="211.0" prefHeight="32.0" prefWidth="306.0" />
             <Label layoutX="54.0" layoutY="192.0" style="-fx-font-style: Inter;" text="Nombre de usuario">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
                </font></Label>
-            <TextField fx:id="txtApellido" layoutX="515.0" layoutY="145.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" />
+            <TextField fx:id="txtApellido" layoutX="515.0" layoutY="145.0" prefHeight="32.0" prefWidth="306.0" />
             <Label layoutX="515.0" layoutY="126.0" style="-fx-font-style: Inter;" text="Apellido">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
                </font></Label>
-            <TextField fx:id="txtCorreo" layoutX="515.0" layoutY="211.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;" />
+            <TextField fx:id="txtCorreo" layoutX="515.0" layoutY="211.0" prefHeight="32.0" prefWidth="306.0" />
             <Label layoutX="515.0" layoutY="192.0" style="-fx-font-style: Inter;" text="Correo">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
@@ -48,7 +48,7 @@
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
                </font></Label>
-            <ComboBox fx:id="cmbNivelAcceso" layoutX="54.0" layoutY="367.0" prefHeight="26.0" prefWidth="306.0" promptText="Selecciona el nivel de acceso para el usuario" style="-fx-background-color: #fffffff;" />
+            <ComboBox fx:id="cmbNivelAcceso" layoutX="54.0" layoutY="367.0" prefHeight="26.0" prefWidth="306.0" promptText="Selecciona el nivel de acceso para el usuario" />
             <Label layoutX="57.0" layoutY="345.0" style="-fx-font-style: Inter;" text="Nivel de acceso">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />
@@ -58,8 +58,8 @@
                   <Image url="@../static/img/icon-new-user.png" />
                </image>
             </ImageView>
-            <PasswordField fx:id="txtClavePWD" layoutX="54.0" layoutY="275.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-radius: 5; -fx-background-color: #ffffff;" />
-            <PasswordField fx:id="txtConfirmClavePWD" layoutX="515.0" layoutY="275.0" prefHeight="32.0" prefWidth="306.0" style="-fx-background-radius: 5; -fx-background-color: #ffffff;" />
+            <PasswordField fx:id="txtClavePWD" layoutX="54.0" layoutY="275.0" prefHeight="32.0" prefWidth="306.0" />
+            <PasswordField fx:id="txtConfirmClavePWD" layoutX="515.0" layoutY="275.0" prefHeight="32.0" prefWidth="306.0" />
             <CheckBox fx:id="chkMostrarClave" layoutX="57.0" layoutY="316.0" mnemonicParsing="false" text="Mostrar contraseña">
                <font>
                   <Font name="Inter 24pt Bold" size="12.0" />

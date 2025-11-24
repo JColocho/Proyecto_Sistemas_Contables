@@ -3,171 +3,258 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane style="-fx-background-color: #D9D9D9;" stylesheets="@static/css/dashboard.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.DashboardController">
-   <children>
-       <!--  contenedor principal     -->
-      <VBox spacing="10.0" stylesheets="@static/css/dashboard.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
-         <children>
-            <VBox alignment="TOP_CENTER" spacing="5.0" styleClass="top-seccion" stylesheets="@static/css/dashboard.css" VBox.vgrow="ALWAYS">
-               <children>
-                   <Label prefHeight="35.0" prefWidth="578.0" text="Panel de gestión financiera" />
-                   <Label prefHeight="35.0" prefWidth="596.0" text="Resumen contable y financiero" />
-               </children>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </VBox>
-            <HBox alignment="CENTER" spacing="20.0" styleClass="center-seccion" stylesheets="@static/css/dashboard.css" VBox.vgrow="ALWAYS">
-               <children>
-
-                   <HBox alignment="CENTER" maxHeight="100.0" prefHeight="120.0" spacing="10.0" stylesheets="@static/css/dashboard.css" VBox.vgrow="ALWAYS">
-                       <children>
-                           <VBox alignment="CENTER" prefHeight="89.0" prefWidth="97.0" spacing="5.0" VBox.vgrow="ALWAYS">
-                               <children>
-                                   <Label alignment="CENTER" text="Ingresos totales" />
-                                   <Label fx:id="lblIngresosTotales" text="\$ 40,000.00" />
-                               </children>
-                           </VBox>
-
-                           <ImageView fitHeight="41.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
-                               <image>
-                                   <Image url="@static/img/imagen.png" />
-                               </image>
-                           </ImageView>
-                       </children>
-
-                       <styleClass>
-                           <String fx:value="card" />
-                           <String fx:value="card-ingresos" />
-                       </styleClass>
-
-                       <padding>
-                           <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
-                       </padding>
-                   </HBox>
-                  <HBox alignment="CENTER" maxHeight="100.0" prefHeight="120.0" spacing="10.0" stylesheets="@static/css/dashboard.css" VBox.vgrow="ALWAYS">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="89.0" prefWidth="97.0" spacing="5.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <Label alignment="CENTER" text="Gastos totales" />
-                              <Label fx:id="lblGastosTotales" text="\$ 20,000.00" />
-                           </children>
+<AnchorPane style="-fx-background-color: #D9D9D9;" stylesheets="@static/css/dashboard.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.DashboardController">
+    <children>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <content>
+                <VBox spacing="20.0" style="-fx-background-color: #D9D9D9;" VBox.vgrow="ALWAYS">
+                    <children>
+                        <!-- Sección superior con título -->
+                        <VBox alignment="CENTER" pickOnBounds="false" spacing="5.0" styleClass="top-seccion">
+                            <children>
+                                <Label styleClass="titulo-principal" text="Panel de gestión financiera" />
+                                <Label styleClass="subtitulo-principal" text="Resumen contable y financiero" />
+                            </children>
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
                         </VBox>
-                        <ImageView fitHeight="41.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@static/img/imagen.png" />
-                           </image>
-                        </ImageView>
-                     </children>
-                     <styleClass>
-                        <String fx:value="card" />
-                        <String fx:value="card-gastos" />
-                     </styleClass>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
-                     </padding>
-                  </HBox>
-                  <HBox alignment="CENTER" maxHeight="100.0" prefHeight="120.0" spacing="10.0" stylesheets="@static/css/dashboard.css" VBox.vgrow="ALWAYS">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="89.0" prefWidth="97.0" spacing="5.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <Label fx:id="lblTextoUtilidadPerdida" alignment="CENTER" text="Utilidad" />
-                              <Label fx:id="lblUtilidadPerdida" text="\$ 10,000.00" />
-                           </children>
-                        </VBox>
-                        <ImageView fitHeight="41.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@static/img/imagen.png" />
-                           </image>
-                        </ImageView>
-                     </children>
-                     <styleClass>
-                        <String fx:value="card" />
-                        <String fx:value="card-utilidad" />
-                     </styleClass>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
-                     </padding>
-                  </HBox>
 
+                        <!-- Tarjetas de resumen (Ingresos, Gastos, Utilidad) -->
+                        <HBox alignment="CENTER" spacing="20.0" styleClass="center-seccion">
+                            <children>
+                                <!-- Tarjeta Ingresos -->
+                                <HBox alignment="CENTER" maxWidth="350.0" prefHeight="120.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                                    <styleClass>
+                                        <String fx:value="card" />
+                                        <String fx:value="card-ingresos" />
+                                    </styleClass>
+                                    <children>
+                                        <VBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label styleClass="card-titulo" text="Ingresos totales" />
+                                                <Label fx:id="lblIngresosTotales" styleClass="card-monto" text="\$0.00" />
+                                            </children>
+                                        </VBox>
+                                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@static/img/ingresos.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                                    </padding>
+                                </HBox>
 
-               </children>
-            </HBox>
-            <HBox alignment="CENTER" spacing="20.0" styleClass="bottom-seccion" stylesheets="@static/css/dashboard.css" VBox.vgrow="ALWAYS">
-               <children>
-                  <VBox alignment="TOP_CENTER" spacing="5.0" styleClass="card" stylesheets="@static/css/dashboard.css" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="232.0" text="Resumen del balance general" />
-                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
-                          <tabs>
-                            <Tab text="Activos">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="100.0">
-                                       <children>
-                                          <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
-                                             <padding>
-                                                <Insets top="10.0" />
-                                             </padding>
-                                          </VBox>
-                                       </children>
-                                    </AnchorPane>
-                              </content>
-                            </Tab>
-                              <Tab text="Pasivos">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="100.0">
-                                       <children>
-                                          <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
-                                             <padding>
-                                                <Insets top="10.0" />
-                                             </padding>
-                                          </VBox>
-                                       </children>
-                                    </AnchorPane>
-                                 </content>
-                              </Tab>
-                              <Tab text="Capital contable">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="100.0">
-                                       <children>
-                                          <VBox alignment="TOP_CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
-                                             <padding>
-                                                <Insets top="10.0" />
-                                             </padding>
-                                          </VBox>
-                                       </children>
-                                    </AnchorPane>
-                                 </content>
-                              </Tab>
-                          </tabs>
-                        </TabPane>
-                     </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </VBox>
-                  <VBox alignment="TOP_CENTER" spacing="5.0" styleClass="card" stylesheets="@static/css/dashboard.css">
-                     <children>
-                        <Label alignment="CENTER" prefHeight="17.0" prefWidth="232.0" text="Últimas transacciones" />
-                     </children>
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                  </VBox>
-               </children>
-            </HBox>
-         </children>
-         <padding>
-            <Insets bottom="10.0" />
-         </padding>
-      </VBox>
-   </children>
+                                <!-- Tarjeta Gastos -->
+                                <HBox alignment="CENTER" maxWidth="350.0" prefHeight="120.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                                    <styleClass>
+                                        <String fx:value="card" />
+                                        <String fx:value="card-gastos" />
+                                    </styleClass>
+                                    <children>
+                                        <VBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label styleClass="card-titulo" text="Gastos totales" />
+                                                <Label fx:id="lblGastosTotales" styleClass="card-monto" text="\$0.00" />
+                                            </children>
+                                        </VBox>
+                                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@static/img/gastos.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                                    </padding>
+                                </HBox>
+
+                                <!-- Tarjeta Utilidad/Pérdida -->
+                                <HBox alignment="CENTER" maxWidth="350.0" prefHeight="120.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                                    <styleClass>
+                                        <String fx:value="card" />
+                                        <String fx:value="card-utilidad" />
+                                    </styleClass>
+                                    <children>
+                                        <VBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label fx:id="lblTextoUtilidadPerdida" styleClass="card-titulo" text="Utilidad o pérdida" />
+                                                <Label fx:id="lblUtilidadPerdida" styleClass="card-monto" text="\$0.00" />
+                                            </children>
+                                        </VBox>
+                                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@static/img/utilidad_y_perdidas.png" />
+                                            </image>
+                                        </ImageView>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                                    </padding>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets left="20.0" right="20.0" />
+                            </padding>
+                        </HBox>
+
+                        <!-- Sección inferior con Balance y Transacciones -->
+                        <HBox alignment="TOP_CENTER" spacing="20.0" styleClass="bottom-seccion" VBox.vgrow="ALWAYS">
+                            <children>
+                                <!-- Tarjeta Balance General -->
+                                <VBox alignment="TOP_CENTER" maxWidth="500.0" prefHeight="400.0" spacing="10.0" styleClass="card" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="seccion-titulo" text="Resumen del balance general" />
+                                        <TabPane fx:id="tabPaneBalance" prefHeight="350.0" side="TOP" styleClass="custom-tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                                            <tabs>
+                                                <!-- TAB ACTIVOS -->
+                                                <Tab styleClass="custom-tab" text="Activos">
+                                                    <content>
+                                                        <VBox spacing="5.0" style="-fx-background-color: white;">
+                                                            <children>
+                                                                <TableView fx:id="tblActivos" styleClass="balance-table" VBox.vgrow="ALWAYS">
+                                                                    <columns>
+                                                                        <TableColumn fx:id="clActivoCuenta" prefWidth="180.0" text="Cuenta" />
+                                                                        <TableColumn fx:id="clActivoTipo" prefWidth="100.0" text="Tipo Saldo" />
+                                                                        <TableColumn fx:id="clActivoSaldo" prefWidth="100.0" text="Saldo" />
+                                                                    </columns>
+                                                                    <columnResizePolicy>
+                                                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                                    </columnResizePolicy>
+                                                                </TableView>
+                                                                <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="total-box">
+                                                                    <children>
+                                                                        <Label styleClass="total-label" text="Total Activos:" />
+                                                                        <Label fx:id="lblTotalActivos" styleClass="total-value" text="\$0.00" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
+                                                                </HBox>
+                                                            </children>
+                                                            <padding>
+                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                            </padding>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+
+                                                <!-- TAB PASIVOS -->
+                                                <Tab styleClass="custom-tab" text="Pasivos">
+                                                    <content>
+                                                        <VBox spacing="5.0" style="-fx-background-color: white;">
+                                                            <children>
+                                                                <TableView fx:id="tblPasivos" styleClass="balance-table" VBox.vgrow="ALWAYS">
+                                                                    <columns>
+                                                                        <TableColumn fx:id="clPasivoCuenta" prefWidth="180.0" text="Cuenta" />
+                                                                        <TableColumn fx:id="clPasivoTipo" prefWidth="100.0" text="Tipo Saldo" />
+                                                                        <TableColumn fx:id="clPasivoSaldo" prefWidth="100.0" text="Saldo" />
+                                                                    </columns>
+                                                                    <columnResizePolicy>
+                                                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                                    </columnResizePolicy>
+                                                                </TableView>
+                                                                <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="total-box">
+                                                                    <children>
+                                                                        <Label styleClass="total-label" text="Total Pasivos:" />
+                                                                        <Label fx:id="lblTotalPasivos" styleClass="total-value" text="\$0.00" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
+                                                                </HBox>
+                                                            </children>
+                                                            <padding>
+                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                            </padding>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+
+                                                <!-- TAB CAPITAL CONTABLE -->
+                                                <Tab styleClass="custom-tab" text="Capital">
+                                                    <content>
+                                                        <VBox spacing="5.0" style="-fx-background-color: white;">
+                                                            <children>
+                                                                <TableView fx:id="tblCapital" styleClass="balance-table" VBox.vgrow="ALWAYS">
+                                                                    <columns>
+                                                                        <TableColumn fx:id="clCapitalCuenta" prefWidth="180.0" text="Cuenta" />
+                                                                        <TableColumn fx:id="clCapitalTipo" prefWidth="100.0" text="Tipo Saldo" />
+                                                                        <TableColumn fx:id="clCapitalSaldo" prefWidth="100.0" text="Saldo" />
+                                                                    </columns>
+                                                                    <columnResizePolicy>
+                                                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                                    </columnResizePolicy>
+                                                                </TableView>
+                                                                <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="total-box">
+                                                                    <children>
+                                                                        <Label styleClass="total-label" text="Total Capital:" />
+                                                                        <Label fx:id="lblTotalCapital" styleClass="total-value" text="\$0.00" />
+                                                                    </children>
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
+                                                                </HBox>
+                                                            </children>
+                                                            <padding>
+                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                            </padding>
+                                                        </VBox>
+                                                    </content>
+                                                </Tab>
+                                            </tabs>
+                                        </TabPane>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                    </padding>
+                                </VBox>
+
+                                <!-- Tarjeta Últimas Transacciones -->
+                                <VBox alignment="TOP_CENTER" maxWidth="700.0" prefHeight="400.0" spacing="10.0" styleClass="card" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="seccion-titulo" text="Últimas partidas" />
+                                        <TableView fx:id="tblTransacciones" prefHeight="340.0" stylesheets="@static/css/vistas.css" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="clFecha" prefWidth="80.0" text="Fecha" />
+                                                <TableColumn fx:id="clConcepto" prefWidth="250.0" text="Concepto" />
+                                                <TableColumn fx:id="clUsuario" prefWidth="100.0" text="Usuario" />
+                                                <TableColumn fx:id="clVerDetalles" prefWidth="100.0" text="Detalles" />
+                                                <TableColumn fx:id="clDocumento" prefWidth="120.0" text="Documento" />
+                                            </columns>
+                                            <columnResizePolicy>
+                                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                            </columnResizePolicy>
+                                        </TableView>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                    </padding>
+                                </VBox>
+                            </children>
+                            <padding>
+                                <Insets left="20.0" right="20.0" />
+                            </padding>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="20.0" />
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
 </AnchorPane>

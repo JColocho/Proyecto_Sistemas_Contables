@@ -291,4 +291,38 @@ public class PartidaModel {
             throw new RuntimeException(e);
         }
     }
+
+    //Método para obtener las últimas N partidas
+    public static ObservableList<PartidaModel> obtenerUltimasPartidas(int limite, int idEmpresa) {
+        ObservableList<PartidaModel> lista = FXCollections.observableArrayList();
+        String sql = """
+        SELECT p.idpartida, p.fecha, p.concepto, u.nombreusuario
+        FROM tblpartidas p
+        INNER JOIN tblusuarios u ON p.idusuario = u.idusuario
+        WHERE p.idempresa = ?
+        ORDER BY p.fecha DESC, p.idpartida DESC
+        LIMIT ?
+    """;
+
+        try (Connection connection = ConexionDB.connection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, idEmpresa);
+            statement.setInt(2, limite);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                lista.add(new PartidaModel(
+                        rs.getInt("idpartida"),
+                        rs.getDate("fecha"),
+                        rs.getString("concepto"),
+                        rs.getString("nombreusuario")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
 }

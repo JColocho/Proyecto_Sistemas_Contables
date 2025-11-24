@@ -339,4 +339,40 @@ public class CatalogoCuentaModel {
             throw new RuntimeException(e);
         }
     }
+
+
+    //Metodo para buscar cuenta según similitud del TIPO de cuenta
+    public ObservableList<CatalogoCuentaModel> obtenerCuentasPorTipoSimilitud(String tipoBusqueda, int idEmpresa) {
+        try{
+            ObservableList<CatalogoCuentaModel> cuentas = FXCollections.observableArrayList();
+            Connection connection = ConexionDB.connection();
+
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM tblcatalogocuentas WHERE idEmpresa = ? AND tipoCuenta ILIKE ?"
+            );
+            statement.setInt(1, idEmpresa);
+            statement.setString(2, "%" + tipoBusqueda + "%");
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                CatalogoCuentaModel cuentaModel = new CatalogoCuentaModel();
+                cuentaModel.setIdCuenta(resultSet.getInt("idCuenta"));
+                cuentaModel.setIdEmpresa(resultSet.getInt("idEmpresa"));
+                cuentaModel.setCuenta(resultSet.getString("cuenta"));
+                cuentaModel.setCodigoCuenta(resultSet.getString("codigo"));
+                cuentaModel.setTipoCuenta(resultSet.getString("tipoCuenta"));
+                cuentaModel.setTipoSaldo(resultSet.getString("tipoSaldo"));
+                cuentaModel.setSaldo(resultSet.getDouble("saldo"));
+
+                cuentas.add(cuentaModel);
+            }
+
+            return cuentas;
+
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

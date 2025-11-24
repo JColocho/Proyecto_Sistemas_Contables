@@ -26,7 +26,7 @@ public class DialogoUtil {
             stage.setResizable(false);
             stage.showAndWait();
 
-            // 🔹 Devuelve lo que el controlador ponga con stage.setUserData()
+            //Devuelve lo que el controlador ponga con stage.setUserData()
             return (T) stage.getUserData();
 
         } catch (IOException e) {
