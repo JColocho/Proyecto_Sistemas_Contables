@@ -64,7 +64,6 @@ public class AccesoModel {
                 AccesoModel acceso = new AccesoModel();
                 acceso.setIdAcceso(rs.getInt("idacceso"));
                 acceso.setNivelAcceso(rs.getString("nivelacceso"));
-                acceso.setClaveAcceso(rs.getString("claveacceso"));
                 lista.add(acceso);
             }
 
