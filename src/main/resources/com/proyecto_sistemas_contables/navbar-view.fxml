@@ -11,15 +11,15 @@
 <BorderPane fx:id="mainPane" prefHeight="48.0" prefWidth="987.0" stylesheets="@static/css/navbar.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.NavbarController">
     <!-- Navbar -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="1011.0" spacing="30" style="-fx-background-color: #009951; -fx-padding: 10;">
+        <HBox alignment="CENTER_LEFT" prefHeight="48.0" spacing="15" style="-fx-background-color: #009951; -fx-padding: 10;">
             <ImageView fitHeight="24" fitWidth="24" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@static/img/logo.png" />
                 </image>
             </ImageView>
             <Pane HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="872.0" spacing="5">
-                <Button fx:id="btnDashboard" onAction="#cambiarVista" prefWidth="96.0" styleClass="nav-button" text="Dashboard" />
+            <HBox alignment="CENTER_RIGHT" spacing="5" HBox.hgrow="ALWAYS">
+                <Button fx:id="btnDashboard" onAction="#cambiarVista" styleClass="nav-button" text="Dashboard" />
                 <Button fx:id="btnEmpresas" onAction="#cambiarVista" styleClass="nav-button" text="Empresas" />
                 <Button fx:id="btnUsuarios" onAction="#cambiarVista" styleClass="nav-button" text="Usuarios" />
                 <Button fx:id="btnAuditoria" onAction="#cambiarVista" styleClass="nav-button" text="Auditoría" />
