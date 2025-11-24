@@ -470,4 +470,27 @@ public class UsuarioModel {
         }
     }
 
+    //Metodo para validar si el usuario está activo
+    public boolean validarUsuarioActivo(String nombreUsuario) {
+        try {
+            Connection connection = ConexionDB.connection();
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT activo FROM tblusuarios WHERE nombreusuario = ?"
+            );
+            statement.setString(1, nombreUsuario);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return resultSet.getBoolean("activo");
+            }
+
+            resultSet.close();
+            return false; // Si no se encuentra el usuario, retornar false
+
+        } catch (SQLException e) {
+            System.out.println("Error al validar usuario activo: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
 }

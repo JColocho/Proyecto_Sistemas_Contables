@@ -56,6 +56,17 @@ public class LoginController {
                 UsuarioModel usuario = new UsuarioModel();
                 //Validamos que las credenciales ingresadas sean correctas
                 if (usuario.inicioSesion(txtUsuario.getText(), txtClave.getText())) {
+
+                    // VALIDAR SI EL USUARIO ESTÁ ACTIVO
+                    if (!usuario.validarUsuarioActivo(txtUsuario.getText())) {
+                        Alert alerta = new Alert(Alert.AlertType.ERROR);
+                        alerta.setTitle("Usuario inactivo");
+                        alerta.setHeaderText("Acceso denegado");
+                        alerta.setContentText("Tu cuenta ha sido desactivada. Contacta al administrador.");
+                        alerta.show();
+                        return; // Detener el proceso de inicio de sesión
+                    }
+
                     EmpresaController.idUsuarioSesion = usuario.idUsuarioSesion(txtUsuario.getText());
 
                     // Obtener el rol del usuario
