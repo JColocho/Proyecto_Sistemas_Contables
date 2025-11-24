@@ -8,17 +8,17 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane fx:id="mainPane" prefHeight="48.0" prefWidth="987.0" stylesheets="@static/css/navbar.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.NavbarController">
+<BorderPane fx:id="mainPane" prefHeight="48.0" prefWidth="1043.0" stylesheets="@static/css/navbar.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.proyecto_sistemas_contables.NavbarController">
     <!-- Navbar -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="48.0" spacing="15" style="-fx-background-color: #009951; -fx-padding: 10;">
+        <HBox alignment="CENTER_LEFT" prefHeight="48.0" prefWidth="1022.0" spacing="15" style="-fx-background-color: #009951; -fx-padding: 10;">
             <ImageView fitHeight="24" fitWidth="24" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@static/img/logo.png" />
                 </image>
             </ImageView>
             <Pane HBox.hgrow="ALWAYS" />
-            <HBox alignment="CENTER_RIGHT" spacing="5" HBox.hgrow="ALWAYS">
+            <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="950.0" spacing="5" HBox.hgrow="ALWAYS">
                 <Button fx:id="btnDashboard" onAction="#cambiarVista" styleClass="nav-button" text="Dashboard" />
                 <Button fx:id="btnEmpresas" onAction="#cambiarVista" styleClass="nav-button" text="Empresas" />
                 <Button fx:id="btnUsuarios" onAction="#cambiarVista" styleClass="nav-button" text="Usuarios" />
@@ -28,7 +28,7 @@
                 <Button fx:id="btnPartidas" onAction="#cambiarVista" styleClass="nav-button" text="Partidas" />
                 <Button fx:id="btnReporte" onAction="#cambiarVista" styleClass="nav-button" text="Generar reporte" />
                 <Button fx:id="btnDocumentos" onAction="#cambiarVista" styleClass="nav-button" text="Documentos" />
-                <Button fx:id="btnCerrarSesion" onAction="#cerrarSesion" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 5;" text="Cerrar sesión" />
+                <Button fx:id="btnCerrarSesion" onAction="#cerrarSesion" styleClass="btnRojo" stylesheets="@static/css/vistas.css" text="Cerrar sesión" />
             </HBox>
         </HBox>
     </top>
